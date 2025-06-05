@@ -42,20 +42,39 @@ public class RockBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (FindFirstObjectByType<Combatjudge>().GetSetMoments() != SetMoments.GlowRock)
+        {
+            shiny = false;
+        }
+        if (shiny)
+        {
+            itself.color = Color.yellow;
+            
+        }
+        else
+        {
+            itself.color = Color.black;
+        }
     }
 
     private void OnMouseDown()
     {
-        print(inscription.ToString());
+        if (shiny)
+        {
+            FindFirstObjectByType<Combatjudge>().MoveToRock(this);
+        }
+        
     }
 
-    public Transform[] getNeighbor(int al)
+    public RockBehavior[] getNeighbor(int al)
     {
         int many = father.many;
-        Transform[] neighbors = new Transform[2];
-        neighbors[0] = father.transform.GetChild((numbchild + al) % many);
-        neighbors[1] = father.transform.GetChild((numbchild - al) % many);
+        print(many);
+        RockBehavior[] neighbors = new RockBehavior[2];
+        int oneside = ((numbchild + al) % many);
+        int otherside = ((numbchild - al+many) % many);
+        neighbors[0] = father.transform.GetChild(oneside).GetComponent<RockBehavior>();
+        neighbors[1] = father.transform.GetChild(otherside).GetComponent<RockBehavior>();
         return neighbors;
     }
 
@@ -85,7 +104,7 @@ public class RockBehavior : MonoBehaviour
             return;
         }
         int a = 0;
-        for (int i = 0; a < playersOn.Length; i++)
+        for (int i = 0; i < playersOn.Length; i++)
         {
             if (playersOn[i] == token)
             {
@@ -104,5 +123,17 @@ public class RockBehavior : MonoBehaviour
             }
         }
         playersOn = newPlay;
+    }
+
+    public bool manyOn()
+    {
+        if(playersOn != null)
+        {
+            return playersOn.Length > 1;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

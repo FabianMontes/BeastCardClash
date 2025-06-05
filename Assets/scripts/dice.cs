@@ -35,14 +35,18 @@ public class dice : MonoBehaviour
         {
             roling = true;
         }
-        
+
 
     }
 
     private void OnMouseExit()
-    {
-        roling = false;
-        FindFirstObjectByType<Combatjudge>().roled(value);
+    { 
+        if (roling)
+        {
+            roling = false;
+            FindFirstObjectByType<Combatjudge>().roled(value); 
+        }
+
     }
 
     private void OnMouseUp()
@@ -50,8 +54,9 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
+            FindFirstObjectByType<Combatjudge>().roled(value);
         }
-        FindFirstObjectByType<Combatjudge>().roled(value);
+        
     }
 
 

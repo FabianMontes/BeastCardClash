@@ -19,9 +19,6 @@ public class PlayZone : MonoBehaviour
     [SerializeField] public float RockScale=1;
     [SerializeField] GameObject rockPrefab;
 
-    int lastmany= 0;
-    SetupConfig lastconfig = SetupConfig.normal;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() // Crear zona de batalla
     {

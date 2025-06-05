@@ -6,7 +6,7 @@ public class PlayerToken : MonoBehaviour
     public RockBehavior rocky;
     public Player player;
 
-    RockBehavior lastRock;
+    public RockBehavior lastRock;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -48,6 +48,7 @@ public class PlayerToken : MonoBehaviour
                 transform.position = rocky.transform.position;
                 rocky.AddPlayer(this);
                 lastRock = rocky ;
+                FindFirstObjectByType<Combatjudge>().ArriveAtRock();
             }
             
         }

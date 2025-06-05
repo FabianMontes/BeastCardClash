@@ -1,5 +1,8 @@
+using NUnit.Framework.Constraints;
 using System;
+using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum Elements
 {
@@ -11,13 +14,18 @@ public enum SetMoments
     PickDice,RollDice,RevealDice,
     GlowRock, MoveToRock,SelecCombat,
     PickCard,Reveal, Result,
-    End
+    End, Loop
 
 }
 
 public enum Results
 {
     one,two, draw
+}
+
+public enum CombatType
+{
+    fire, earth, water, air, full
 }
 
 [DefaultExecutionOrder(-1)]
@@ -36,6 +44,7 @@ public class Combatjudge : MonoBehaviour
     [SerializeField] int initialLives;
 
     public int diceRolled;
+    public CombatType combatType;
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -71,7 +80,6 @@ public class Combatjudge : MonoBehaviour
             players[i].setPlayerLive(initialLives);
             players[i].visualPlayer = i;
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
-            print(rocky);
             players[i].initialStone = rocky;
             
 
@@ -86,6 +94,14 @@ public class Combatjudge : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        for (int i = 0; i <= 9; i++)
+        {
+            if (Input.GetKeyDown(i.ToString()))
+            {
+                AsignarNumeros(i);
+            }
+        }
+
         switch (setMoments)
         {
             case SetMoments.PickDice:
@@ -106,6 +122,10 @@ public class Combatjudge : MonoBehaviour
                 break;
             case SetMoments.Result:
                 break;
+            case SetMoments.Loop:
+                playerTurn = (playerTurn + 1) % manyPlayers;
+                setMoments = SetMoments.PickDice;
+                break;
             case SetMoments.End:
                 break;
         }
@@ -115,7 +135,7 @@ public class Combatjudge : MonoBehaviour
     {
         int countelements = Enum.GetValues(typeof(Elements)).Length;
         int halflements = countelements / 2;
-        int diferer = Math.Abs((int)one.element - (int)two.element) % countelements;
+        int diferer = (one.element - two.element + countelements) % countelements;
         if (countelements % 2 == 0)
         {
             
@@ -166,12 +186,60 @@ public class Combatjudge : MonoBehaviour
 
     public void roled(int value)
     {
-        print(value);
+        RockBehavior lander = players[playerTurn].playerToken.rocky;
+        RockBehavior[] rocker = lander.getNeighbor(value);
+        rocker[0].shiny = true;
+        rocker[1].shiny = true;
+        setMoments = SetMoments.GlowRock;
 
     }
 
     public SetMoments GetSetMoments()
     {
         return setMoments;
+    }
+    public void ArriveAtRock()
+    {
+        setMoments =  SetMoments.Loop;
+        return;
+
+        RockBehavior rocky =  players[playerTurn].playerToken.rocky;
+        if (rocky.manyOn() || rocky.inscription == Inscription.pick)
+        {
+            setMoments = SetMoments.SelecCombat;
+            
+        }
+        else
+        {
+            setMoments = SetMoments.PickCard;
+            combatType = (CombatType)(int)rocky.inscription;
+        }
+
+
+    }
+
+    public void MoveToRock(RockBehavior rocker)
+    {
+        players[playerTurn].playerToken.rocky = rocker;
+        setMoments = SetMoments.MoveToRock;
+    }
+
+    void AsignarNumeros(int baseIndex)
+    {
+        baseIndex = baseIndex % manyPlayers;
+        for (int i = 0; i < manyPlayers; i++)
+        {
+            if (i == baseIndex)
+            {
+                players[i].visualPlayer = 0;
+            }
+            else
+            {
+                // Calcular distancia circular desde baseIndex
+                int offset = (i - baseIndex + manyPlayers) % manyPlayers;
+                players[i].visualPlayer = offset;
+            }
+        }
+
     }
 }

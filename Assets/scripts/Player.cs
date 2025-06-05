@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
-    [SerializeField] PlayerToken playerToken;
+    [SerializeField] public PlayerToken playerToken;
     [SerializeField] public int visualPlayer = 0;
     [SerializeField] public RockBehavior initialStone;
 
