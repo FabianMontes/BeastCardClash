@@ -1,10 +1,9 @@
 using NUnit.Framework.Constraints;
 using System;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public enum Elements
+public enum Element
 {
     fire, earth, water, air
 }
@@ -133,19 +132,19 @@ public class Combatjudge : MonoBehaviour
 
     public Results indvCombat(Card one,Card two)
     {
-        int countelements = Enum.GetValues(typeof(Elements)).Length;
+        int countelements = Enum.GetValues(typeof(Element)).Length;
         int halflements = countelements / 2;
-        int diferer = (one.element - two.element + countelements) % countelements;
+        int diferer = (one.GetElement() - two.GetElement() + countelements) % countelements;
         if (countelements % 2 == 0)
         {
             
             if (diferer == 0 || diferer == halflements) 
             {
-                if (one.value > two.value)
+                if (one.GetValue() > two.GetValue())
                 {
                     return Results.one;
                 }
-                else if (one.value < two.value)
+                else if (one.GetValue() < two.GetValue())
                 {
                     return Results.two;
                 }
@@ -163,11 +162,11 @@ public class Combatjudge : MonoBehaviour
         {
             if(diferer == 0)
             {
-                if (one.value > two.value)
+                if (one.GetValue() > two.GetValue())
                 {
                     return Results.one;
                 }
-                else if (one.value < two.value)
+                else if (one.GetValue() < two.GetValue())
                 {
                     return Results.two;
                 }

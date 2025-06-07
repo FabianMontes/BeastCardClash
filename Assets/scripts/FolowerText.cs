@@ -14,7 +14,7 @@ public class FolowerText : MonoBehaviour
     Player player;
     [SerializeField] TypeFollow typeFollow;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Start()  
     {
         textMeshPro = GetComponent<TextMeshProUGUI>();
         text = textMeshPro.text;

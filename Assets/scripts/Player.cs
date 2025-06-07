@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
         }
         playerToken.player = this;
         playerToken.rocky = initialStone;
+
+
     }
 
     // Update is called once per frame
