@@ -42,7 +42,7 @@ public class RockBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (FindFirstObjectByType<Combatjudge>().GetSetMoments() != SetMoments.GlowRock)
+        if (Combatjudge.combatjudge.GetSetMoments() != SetMoments.GlowRock)
         {
             shiny = false;
         }

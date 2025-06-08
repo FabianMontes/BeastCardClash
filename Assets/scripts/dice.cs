@@ -12,7 +12,7 @@ public class dice : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        maxValue = FindFirstObjectByType<Combatjudge>().maxDice;
+        maxValue = Combatjudge.combatjudge.maxDice;
         roling = false;
         texter = GetComponentInChildren<TextMeshPro>();
 
@@ -31,7 +31,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (FindFirstObjectByType<Combatjudge>().GetSetMoments() == SetMoments.PickDice)
+        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
         {
             roling = true;
         }
@@ -44,7 +44,7 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            FindFirstObjectByType<Combatjudge>().roled(value); 
+            Combatjudge.combatjudge.roled(value); 
         }
 
     }
@@ -54,7 +54,7 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            FindFirstObjectByType<Combatjudge>().roled(value);
+            Combatjudge.combatjudge.roled(value);
         }
         
     }

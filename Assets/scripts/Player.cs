@@ -13,9 +13,11 @@ public class Player : MonoBehaviour
     [SerializeField] int playerLive;
     [SerializeField] Specie specie;
     [SerializeField] Card[] originalDeck;
+    [SerializeField] int HandSize = 6;
 
     Card[] actualDeck;
     Card[] hand;
+    private Card picked;
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
@@ -43,13 +45,22 @@ public class Player : MonoBehaviour
         playerToken.player = this;
         playerToken.rocky = initialStone;
 
+        /// create provitionalDeck
+        /// 
+
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(lastVisualPlayer != visualPlayer)
+
+        for (int i = 0; i < originalDeck.Length; i++)
+        {
+            print(originalDeck[i].GetID());
+        }
+        if (lastVisualPlayer != visualPlayer)
         {
             transform.GetChild(lastVisualPlayer).gameObject.SetActive(false);
             transform.GetChild(visualPlayer).gameObject.SetActive(true);
@@ -86,4 +97,34 @@ public class Player : MonoBehaviour
     { 
         playerToken.rocky = rocker;
     }
+
+    public Card getPicked()
+    {
+        return picked;
+    }
+
+    public void PickCard(int index)
+    {
+        if (index >= hand.Length || index < 0){
+            if (picked != null)
+            {
+                Card[] newDeck = new Card[actualDeck.Length+1];
+
+            }
+            picked = null;
+        };
+        picked = hand[index];
+        Card[] handnew = new Card[hand.Length-1];
+        for (int i = 0; i < hand.Length; i++)
+        {
+            if(i != index)
+            {
+                handnew[i] = hand[i];
+            }
+        }
+
+        hand = handnew;
+
+    }
+
 }

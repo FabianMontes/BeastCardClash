@@ -45,10 +45,21 @@ public class Combatjudge : MonoBehaviour
     public int diceRolled;
     public CombatType combatType;
 
+    public static Combatjudge combatjudge;
+
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if(combatjudge == null)
+        {
+            combatjudge = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         setMoments = SetMoments.PickDice;
         Player[] playeres = FindObjectsByType<Player>(FindObjectsSortMode.InstanceID);
 

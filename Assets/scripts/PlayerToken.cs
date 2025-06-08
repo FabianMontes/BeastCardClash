@@ -48,7 +48,7 @@ public class PlayerToken : MonoBehaviour
                 transform.position = rocky.transform.position;
                 rocky.AddPlayer(this);
                 lastRock = rocky ;
-                FindFirstObjectByType<Combatjudge>().ArriveAtRock();
+                Combatjudge.combatjudge.ArriveAtRock();
             }
             
         }
