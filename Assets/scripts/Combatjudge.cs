@@ -252,4 +252,22 @@ public class Combatjudge : MonoBehaviour
         }
 
     }
+
+    public bool pickElement(Element element)
+    {
+        if(SetMoments.SelecCombat == setMoments)
+        {
+            try
+            {
+                combatType = (CombatType)(int)element;
+                setMoments = SetMoments.PickCard;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 }

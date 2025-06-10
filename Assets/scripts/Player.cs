@@ -14,10 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] Specie specie;
     [SerializeField] Card[] originalDeck;
     [SerializeField] int HandSize = 6;
-
-    Card[] actualDeck;
-    Card[] hand;
-    private Card picked;
+    int avalaibleCard = 0;
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
@@ -100,30 +97,20 @@ public class Player : MonoBehaviour
 
     public Card getPicked()
     {
-        return picked;
+        return GetComponentInChildren<HolderPlay>().GetPicked();
     }
 
-    public void PickCard(int index)
+    public void DrawCard(int index,int HandDex)
     {
-        if (index >= hand.Length || index < 0){
-            if (picked != null)
-            {
-                Card[] newDeck = new Card[actualDeck.Length+1];
+        Transform deck = transform.GetChild(0).GetChild(0);
 
-            }
-            picked = null;
+        if (index >= deck.childCount || index < 0){
+            return;
         };
-        picked = hand[index];
-        Card[] handnew = new Card[hand.Length-1];
-        for (int i = 0; i < hand.Length; i++)
-        {
-            if(i != index)
-            {
-                handnew[i] = hand[i];
-            }
-        }
-
-        hand = handnew;
+        Card card = deck.GetChild(index).GetComponent<Card>();
+        deck.GetChild(index).gameObject.SetActive(false);
+        Transform hand = transform.GetChild(0).GetChild(1);
+        hand.GetChild(HandDex).GetComponent<HandCard>().SetCard(card);
 
     }
 

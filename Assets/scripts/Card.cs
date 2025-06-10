@@ -6,6 +6,7 @@ public class Card: MonoBehaviour
     [SerializeField] private int value;
     [SerializeField] private Element element;
     private string identifie;
+    [SerializeField] public int indexer = 0;
 
     private void Start()
     {

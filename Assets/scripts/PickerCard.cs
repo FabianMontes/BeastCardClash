@@ -53,7 +53,6 @@ public class PickerCard : MonoBehaviour
                 textMeshPro.text = card.GetID();
             }
         }
-        
 
         
     }
