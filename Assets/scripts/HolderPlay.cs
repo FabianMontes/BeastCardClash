@@ -17,4 +17,13 @@ public class HolderPlay: MonoBehaviour
         }
         cardPicked = null;
     }
+
+    public void PlayCard(Card card)
+    {
+        if (cardPicked != null)
+        {
+            LosePick();
+        }
+        cardPicked = card;
+    }
 }

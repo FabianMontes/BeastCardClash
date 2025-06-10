@@ -60,7 +60,7 @@ public class Combatjudge : MonoBehaviour
             Destroy(gameObject);
         }
 
-        setMoments = SetMoments.PickDice;
+        setMoments = SetMoments.Loop;
         Player[] playeres = FindObjectsByType<Player>(FindObjectsSortMode.InstanceID);
 
         if (playeres.Length > manyPlayers)
@@ -88,7 +88,7 @@ public class Combatjudge : MonoBehaviour
                 players[i] = playeres[i];
             }
             players[i].setPlayerLive(initialLives);
-            players[i].visualPlayer = i;
+            players[i].visualPlayer = i+1;
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
             players[i].initialStone = rocky;
             
@@ -134,6 +134,10 @@ public class Combatjudge : MonoBehaviour
                 break;
             case SetMoments.Loop:
                 playerTurn = (playerTurn + 1) % manyPlayers;
+                for (int i = 0; i<manyPlayers; i++)
+                {
+                    players[i].RefillHand();
+                }
                 setMoments = SetMoments.PickDice;
                 break;
             case SetMoments.End:
@@ -210,8 +214,6 @@ public class Combatjudge : MonoBehaviour
     }
     public void ArriveAtRock()
     {
-        setMoments =  SetMoments.Loop;
-        return;
 
         RockBehavior rocky =  players[playerTurn].playerToken.rocky;
         if (rocky.manyOn() || rocky.inscription == Inscription.pick)
@@ -241,12 +243,12 @@ public class Combatjudge : MonoBehaviour
         {
             if (i == baseIndex)
             {
-                players[i].visualPlayer = 0;
+                players[i].visualPlayer = 1;
             }
             else
             {
                 // Calcular distancia circular desde baseIndex
-                int offset = (i - baseIndex + manyPlayers) % manyPlayers;
+                int offset = (i - baseIndex + manyPlayers) % manyPlayers + 1;
                 players[i].visualPlayer = offset;
             }
         }

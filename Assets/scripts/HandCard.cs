@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 
+[DefaultExecutionOrder(-4)]
 
 public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -24,7 +25,9 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
         player = GetComponentInParent<Player>();
         prevSetMoment = SetMoments.PickDice;
+        button = transform.GetComponent<Button>();
         Visib(false);
+        SetCard(card);
     }
 
     // Update is called once per frame
@@ -39,7 +42,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                     Visib(true);
 
             }
-            if (momo == SetMoments.Loop || momo == SetMoments.End)
+            if (momo != SetMoments.PickCard)
             {
                 Visib(false);
             }
@@ -48,9 +51,9 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             prevSetMoment = momo;
         }
 
-        if (prevSetMoment == SetMoments.PickCard)
+        if (player.getPicked() != null)
         {
-         
+            Visib(false);
         }
 
 
@@ -79,15 +82,41 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (card == null)
         {
             textMeshPro.text = "";
+            transform.GetComponent<Image>().enabled = false;
         }
         else
         {
             textMeshPro.text = card.GetID();
+
+            Image image = transform.GetComponent<Image>();
+
+            image.enabled = true;
+            switch (card.GetElement())
+            {
+                case Element.fire:
+                    image.color = Color.red;
+                    break;
+                case Element.earth:
+                    image.color = Color.green;
+                    break;
+                case Element.water:
+                    image.color = Color.blue;
+                    break;
+                case Element.air:
+                    image.color = Color.white;
+                    break;
+            }
         }
     }
 
     public void SelectedCard()
     {
+        player.PlayCard(card);
+        SetCard(null);
+    }
 
+    public Card GetCard()
+    {
+        return card;
     }
 }

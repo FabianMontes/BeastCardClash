@@ -7,7 +7,7 @@ public class PickerCard : MonoBehaviour
 {
     TextMeshProUGUI textMeshPro;
     Player player;
-    
+    [SerializeField] HolderPlay holderPlay;
 
 
     SetMoments prevSetMoment;

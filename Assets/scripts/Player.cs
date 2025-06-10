@@ -12,12 +12,14 @@ public class Player : MonoBehaviour
     [Header("PlayerData")]
     [SerializeField] int playerLive;
     [SerializeField] Specie specie;
-    [SerializeField] Card[] originalDeck;
-    [SerializeField] int HandSize = 6;
+    [SerializeField] int deckSize;
+    [SerializeField] int handSize = 6;
     int avalaibleCard = 0;
+    int cardPlayed = 0;
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
+    [SerializeField] GameObject cardPrefab;
     [SerializeField] public PlayerToken playerToken;
     [SerializeField] public int visualPlayer = 0;
     [SerializeField] public RockBehavior initialStone;
@@ -28,7 +30,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         lastVisualPlayer = visualPlayer;
-        transform.GetChild(0).gameObject.SetActive(false);
+        transform.GetChild(4).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(false);
         transform.GetChild(2).gameObject.SetActive(false);
         transform.GetChild(3).gameObject.SetActive(false);
@@ -45,18 +47,22 @@ public class Player : MonoBehaviour
         /// create provitionalDeck
         /// 
 
-        
 
+
+        for (int i = 0; i < deckSize; i++)
+        {
+            Card card = Instantiate(cardPrefab, transform.GetChild(0).GetChild(0)).GetComponent<Card>();
+            card.indexer = i;
+        }
+
+        /// create Hand
+        
     }
 
+    
     // Update is called once per frame
     void Update()
     {
-
-        for (int i = 0; i < originalDeck.Length; i++)
-        {
-            print(originalDeck[i].GetID());
-        }
         if (lastVisualPlayer != visualPlayer)
         {
             transform.GetChild(lastVisualPlayer).gameObject.SetActive(false);
@@ -114,4 +120,36 @@ public class Player : MonoBehaviour
 
     }
 
+    public void PlayCard(Card card)
+    {
+        GetComponentInChildren<HolderPlay>().PlayCard(card);
+    }
+
+    private void DrawCard(int index)
+    {
+        int cardDrawedindex = UnityEngine.Random.Range(0,deckSize);
+        Transform deck = transform.GetChild(0).GetChild(0);
+        Transform hand = transform.GetChild(0).GetChild(1);
+        while (!deck.GetChild(cardDrawedindex).gameObject.activeSelf)
+        {
+            cardDrawedindex= (cardDrawedindex+1) % deckSize;
+        }
+
+        hand.GetChild(index).GetComponent<HandCard>().SetCard(deck.GetChild(cardDrawedindex).GetComponent<Card>());
+        deck.GetChild(cardDrawedindex).gameObject.SetActive(false);
+
+    }
+
+    public void RefillHand()
+    {
+        Transform hand = transform.GetChild(0).GetChild(1);
+        for (int i = 0; i < handSize; i++)
+        {
+            if (hand.GetChild(i).GetComponent<HandCard>().GetCard() == null)
+            {
+                DrawCard(i);
+            }
+
+        }
+    }
 }

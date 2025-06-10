@@ -1,16 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 [DefaultExecutionOrder(-5)]
 public class Card: MonoBehaviour
 {
     [SerializeField] private int value;
     [SerializeField] private Element element;
-    private string identifie;
+    public string identifie;
     [SerializeField] public int indexer = 0;
 
     private void Start()
     {
-        value = UnityEngine.Random.Range(0, 11);
+        value = UnityEngine.Random.Range(1, 11);
         element = (Element)UnityEngine.Random.Range(0, Enum.GetNames(typeof(Element)).Length);
         identifie = value.ToString() + element.ToString();
     }
