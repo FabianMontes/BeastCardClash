@@ -14,14 +14,15 @@ public class Player : MonoBehaviour
     [SerializeField] Specie specie;
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
-    int avalaibleCard = 0;
-    int cardPlayed = 0;
+    public int avalaibleCard = 0;
+    
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject cardPrefab;
     [SerializeField] public PlayerToken playerToken;
     [SerializeField] public int visualPlayer = 0;
+    [SerializeField] public int indexPlayer = -1;
     [SerializeField] public RockBehavior initialStone;
 
     int lastVisualPlayer;
@@ -68,6 +69,17 @@ public class Player : MonoBehaviour
             transform.GetChild(lastVisualPlayer).gameObject.SetActive(false);
             transform.GetChild(visualPlayer).gameObject.SetActive(true);
             lastVisualPlayer = visualPlayer;
+        }
+        if(Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && IsFigthing())
+        {
+            if(avalaibleCard == 0)
+            {
+                Transform hand = transform.GetChild(0).GetChild(1);
+                for (int i = 0;i < handSize; i++)
+                {
+                    hand.GetChild(i).GetComponent<HandCard>().ForceReveal();
+                }
+            }
         }
     }
 
@@ -151,5 +163,26 @@ public class Player : MonoBehaviour
             }
 
         }
+    }
+    public bool IsFigthing()
+    {
+        int figthers = Combatjudge.combatjudge.GetPlayersFigthing();
+        
+        int a = 0;
+        while(figthers > 0)
+        {
+
+            int red = figthers % 2;
+            figthers = (int)Mathf.Floor(figthers / 2);
+            
+            if (a == indexPlayer)
+            {
+                
+                return red != 0;
+            }
+            
+            a++;
+        }
+        return false;
     }
 }

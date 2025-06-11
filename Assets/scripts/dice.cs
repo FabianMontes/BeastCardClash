@@ -44,7 +44,7 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.roled(value); 
+            Combatjudge.combatjudge.Roled(value); 
         }
 
     }
@@ -54,7 +54,7 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.roled(value);
+            Combatjudge.combatjudge.Roled(value);
         }
         
     }

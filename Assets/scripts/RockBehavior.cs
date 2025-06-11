@@ -69,7 +69,6 @@ public class RockBehavior : MonoBehaviour
     public RockBehavior[] getNeighbor(int al)
     {
         int many = father.many;
-        print(many);
         RockBehavior[] neighbors = new RockBehavior[2];
         int oneside = ((numbchild + al) % many);
         int otherside = ((numbchild - al+many) % many);
@@ -135,5 +134,21 @@ public class RockBehavior : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public int GetPlayersOn()
+    {
+        int many = 0;
+        foreach (PlayerToken p in playersOn)
+        {
+            many += (int)Mathf.Pow(2,p.player.indexPlayer);
+        }
+
+        return many;
+    }
+
+    public int ManyPlayerOn()
+    {
+        return playersOn.Length;
     }
 }

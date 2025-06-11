@@ -27,7 +27,7 @@ public class PickerCard : MonoBehaviour
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if (momo != prevSetMoment)
         {
-            if(momo == SetMoments.PickCard)
+            if(momo == SetMoments.PickCard && player.IsFigthing())
             {
                 Visib(true);
                 

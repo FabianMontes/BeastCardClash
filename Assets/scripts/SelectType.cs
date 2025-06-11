@@ -35,9 +35,9 @@ public class SelectType : MonoBehaviour
         transform.GetComponent<Image>().enabled = isVisible;
     }
 
-    public void pickElement(Element element)
+    public void PickElement(int element)
     {
-        if (Combatjudge.combatjudge.pickElement(element))
+        if (Combatjudge.combatjudge.pickElement((Element)element))
         {
             Visib(false);
         }

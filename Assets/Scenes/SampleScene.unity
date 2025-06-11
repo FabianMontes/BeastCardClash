@@ -736,10 +736,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc88d21afac0bf4495322c8a91de401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manyPlayers: 4
+  manyPlayers: 2
   player: {fileID: 8697360924836537486, guid: 3fd4b4f799390584b96e80ef92308c0f, type: 3}
   playerTurn: -1
-  setMoments: 0
+  setMoments: 10
   maxDice: 6
   initialLives: 5
   diceRolled: 0
@@ -1287,7 +1287,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5333920905816893408, guid: dcd61108ebca1f94fbd1019ac3fdd085, type: 3}
       propertyPath: many
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

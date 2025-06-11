@@ -119,7 +119,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 301881760436633566}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4354801716469504824}
+        m_TargetAssemblyTypeName: SelectType, Assembly-CSharp
+        m_MethodName: PickElement
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1224307919419230083
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +224,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.9
+  m_fontSize: 46.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -424,7 +436,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.1
+  m_fontSize: 42.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -574,7 +586,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.25
+  m_fontSize: 25.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -648,7 +660,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4923242886106768393
 RectTransform:
   m_ObjectHideFlags: 0
@@ -726,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2608954883597049136
 RectTransform:
   m_ObjectHideFlags: 0
@@ -805,7 +817,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5813906063296667499
 RectTransform:
   m_ObjectHideFlags: 0
@@ -958,7 +970,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.9
+  m_fontSize: 46.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1095,7 +1107,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.25
+  m_fontSize: 25.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1244,7 +1256,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.9
+  m_fontSize: 46.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1477,7 +1489,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.1
+  m_fontSize: 42.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1690,7 +1702,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2349592090885896048
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2027,7 +2039,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50.6
+  m_fontSize: 52.95
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2254,7 +2266,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.1
+  m_fontSize: 42.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2404,7 +2416,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.1
+  m_fontSize: 42.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2580,7 +2592,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8141999040324251274}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4354801716469504824}
+        m_TargetAssemblyTypeName: SelectType, Assembly-CSharp
+        m_MethodName: PickElement
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7492205970034226333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2674,7 +2698,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.25
+  m_fontSize: 25.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2850,7 +2874,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6468106908504739430}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4354801716469504824}
+        m_TargetAssemblyTypeName: SelectType, Assembly-CSharp
+        m_MethodName: PickElement
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!1 &8570867232484422810
 GameObject:
   m_ObjectHideFlags: 0
@@ -3128,10 +3164,12 @@ MonoBehaviour:
   specie: 0
   deckSize: 12
   handSize: 6
+  avalaibleCard: 0
   tokenPrefab: {fileID: 6461416782824158601, guid: bcef3dd17339fd449aeda4b8048de20e, type: 3}
   cardPrefab: {fileID: 6136769937937318594, guid: 1ed70332260916f46a6cb59fab466b68, type: 3}
   playerToken: {fileID: 0}
   visualPlayer: 0
+  indexPlayer: -1
   initialStone: {fileID: 0}
 --- !u!1 &8720122373670442445
 GameObject:
@@ -3252,7 +3290,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3814454672954252693}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4354801716469504824}
+        m_TargetAssemblyTypeName: SelectType, Assembly-CSharp
+        m_MethodName: PickElement
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8973175655485394632
 GameObject:
   m_ObjectHideFlags: 0
@@ -3346,7 +3396,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.25
+  m_fontSize: 25.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3411,6 +3461,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (2)
@@ -3517,6 +3571,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (4)
@@ -3623,6 +3681,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (3)
@@ -3729,6 +3791,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (1)
@@ -3835,6 +3901,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card
@@ -3937,6 +4007,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4065986328114212622}
     m_Modifications:
+    - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 14.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (5)

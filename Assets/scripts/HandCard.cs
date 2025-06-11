@@ -36,10 +36,18 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if (momo != prevSetMoment)
         {
-            if (momo == SetMoments.PickCard)
+            if (momo == SetMoments.PickCard && player.IsFigthing())
             {
                 if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                {
                     Visib(true);
+                    player.avalaibleCard++;
+                }
+                else
+                {
+                    
+                }
+                    
 
             }
             if (momo != SetMoments.PickCard)
@@ -64,6 +72,11 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         //transform.GetChild(0).gameObject.SetActive(isVisible);
         button.interactable = isVisible;
+    }
+
+    public void ForceReveal()
+    {
+        Visib(true );
     }
 
     public void OnPointerEnter(PointerEventData eventData)

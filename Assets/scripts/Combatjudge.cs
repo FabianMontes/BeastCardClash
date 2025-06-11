@@ -19,7 +19,7 @@ public enum SetMoments
 
 public enum Results
 {
-    one,two, draw
+    lose, draw, win
 }
 
 public enum CombatType
@@ -44,8 +44,10 @@ public class Combatjudge : MonoBehaviour
 
     public int diceRolled;
     public CombatType combatType;
-
+    private int playersFigthing;
+    private int manyplayersFigthing;
     public static Combatjudge combatjudge;
+    private bool all;
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -89,6 +91,7 @@ public class Combatjudge : MonoBehaviour
             }
             players[i].setPlayerLive(initialLives);
             players[i].visualPlayer = i+1;
+            players[i].indexPlayer = i;
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
             players[i].initialStone = rocky;
             
@@ -111,6 +114,7 @@ public class Combatjudge : MonoBehaviour
                 AsignarNumeros(i);
             }
         }
+        
 
         switch (setMoments)
         {
@@ -127,10 +131,62 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.SelecCombat:
                 break;
             case SetMoments.PickCard:
+                all = true;
+                foreach( Player  player in players)
+                {
+                    if(player.getPicked()== null && player.IsFigthing())
+                    {
+                        all = false;
+                        break;
+                    }
+                    
+                }
+                if (all)
+                {
+                    setMoments = SetMoments.Reveal;
+                }
+                
                 break;
             case SetMoments.Reveal:
+                setMoments = SetMoments.Result;
                 break;
             case SetMoments.Result:
+                Card[] card = new Card[manyPlayers];
+                int a = 0;
+                foreach (Player player in players)
+                {
+                    card[a] = player.getPicked();
+                    a++;
+                }
+
+                Results[,] results = new Results[manyPlayers,manyPlayers];
+                for (int i = 0; i < manyPlayers; i++)
+                {
+                    for (int j = 0; j < manyPlayers; j++)
+                    {
+                        results[i,j] = IndvCombat(card[i], card[j]);
+                    }
+                }
+
+                int[] destiny = new int[manyPlayers];
+                for(int i = 0; i < manyPlayers; i++)
+                {
+                    destiny[i] = 0;
+                    for (int j = 0; j < manyPlayers; j++)
+                    {
+                        int resulta = (int)results[i, j] - 1;
+                        if (destiny[i] == 0) {
+                            destiny[i] = resulta;
+                        }else if(destiny[i] != resulta &&resulta != 0)
+                        {
+                            destiny[i] = 0;
+                            break;
+                        }
+                    }
+                    players[i].addPlayerLive(destiny[i]);
+                }
+
+                setMoments = SetMoments.Loop;
                 break;
             case SetMoments.Loop:
                 playerTurn = (playerTurn + 1) % manyPlayers;
@@ -139,14 +195,19 @@ public class Combatjudge : MonoBehaviour
                     players[i].RefillHand();
                 }
                 setMoments = SetMoments.PickDice;
+                playersFigthing = 0;
                 break;
             case SetMoments.End:
                 break;
         }
     }
 
-    public Results indvCombat(Card one,Card two)
+    public Results IndvCombat(Card one,Card two)
     {
+        if(one == null || two == null)
+        {
+            return Results.draw;
+        }
         int countelements = Enum.GetValues(typeof(Element)).Length;
         int halflements = countelements / 2;
         int diferer = (one.GetElement() - two.GetElement() + countelements) % countelements;
@@ -157,11 +218,11 @@ public class Combatjudge : MonoBehaviour
             {
                 if (one.GetValue() > two.GetValue())
                 {
-                    return Results.one;
+                    return Results.win;
                 }
                 else if (one.GetValue() < two.GetValue())
                 {
-                    return Results.two;
+                    return Results.lose;
                 }
                 else
                 {
@@ -170,7 +231,7 @@ public class Combatjudge : MonoBehaviour
             }
             else
             {
-                    return diferer > halflements ? Results.one : Results.two;
+                    return diferer > halflements ? Results.win : Results.lose;
             }
         }
         else       
@@ -179,11 +240,11 @@ public class Combatjudge : MonoBehaviour
             {
                 if (one.GetValue() > two.GetValue())
                 {
-                    return Results.one;
+                    return Results.win;
                 }
                 else if (one.GetValue() < two.GetValue())
                 {
-                    return Results.two;
+                    return Results.lose;
                 }
                 else
                 {
@@ -192,13 +253,13 @@ public class Combatjudge : MonoBehaviour
             }
             else
             {
-                return diferer>halflements ? Results.one : Results.two;
+                return diferer>halflements ? Results.win : Results.lose;
             }
         }
         
     }
 
-    public void roled(int value)
+    public void Roled(int value)
     {
         RockBehavior lander = players[playerTurn].playerToken.rocky;
         RockBehavior[] rocker = lander.getNeighbor(value);
@@ -216,7 +277,19 @@ public class Combatjudge : MonoBehaviour
     {
 
         RockBehavior rocky =  players[playerTurn].playerToken.rocky;
-        if (rocky.manyOn() || rocky.inscription == Inscription.pick)
+        if (rocky.manyOn())
+        {
+            playersFigthing = rocky.GetPlayersOn();
+            manyplayersFigthing = rocky.ManyPlayerOn();
+
+        }
+        else
+        {
+            playersFigthing = (int)Mathf.Pow(2, manyPlayers)-1;
+            
+            manyplayersFigthing = manyPlayers;
+        }
+        if (rocky.inscription == Inscription.pick)
         {
             setMoments = SetMoments.SelecCombat;
             
@@ -266,10 +339,16 @@ public class Combatjudge : MonoBehaviour
             }
             catch (Exception e)
             {
+                print(e);
                 return false;
             }
             return true;
         }
         return false;
+    }
+
+    public int GetPlayersFigthing()
+    {
+        return playersFigthing;
     }
 }
