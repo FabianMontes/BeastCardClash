@@ -10,14 +10,13 @@ enum TypeFollow
 public class FolowerText : MonoBehaviour
 {
     TextMeshProUGUI textMeshPro;
-    string text;
     Player player;
     [SerializeField] TypeFollow typeFollow;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()  
     {
         textMeshPro = GetComponent<TextMeshProUGUI>();
-        text = textMeshPro.text;
+        string text = textMeshPro.text;
         player = GetComponentInParent<Player>();
         if(player != null)
         {
@@ -39,7 +38,7 @@ public class FolowerText : MonoBehaviour
     {
         if(typeFollow == TypeFollow.live)
         {
-            text = player.GetPlayerLive().ToString();
+            textMeshPro.text = player.GetPlayerLive().ToString(); ;
         }
     }
 

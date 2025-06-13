@@ -165,9 +165,11 @@ public class Combatjudge : MonoBehaviour
                     for (int j = 0; j < manyPlayers; j++)
                     {
                         results[i,j] = IndvCombat(card[i], card[j]);
+                        print(results[i,j]);
                     }
+                    print("dd");
                 }
-
+                
                 int[] destiny = new int[manyPlayers];
                 for(int i = 0; i < manyPlayers; i++)
                 {
@@ -183,6 +185,7 @@ public class Combatjudge : MonoBehaviour
                             break;
                         }
                     }
+                    print(destiny[i]);
                     players[i].addPlayerLive(destiny[i]);
                 }
 
@@ -193,9 +196,11 @@ public class Combatjudge : MonoBehaviour
                 for (int i = 0; i<manyPlayers; i++)
                 {
                     players[i].RefillHand();
+                    players[i].ThrowCard();
                 }
                 setMoments = SetMoments.PickDice;
                 playersFigthing = 0;
+                
                 break;
             case SetMoments.End:
                 break;
@@ -207,6 +212,15 @@ public class Combatjudge : MonoBehaviour
         if(one == null || two == null)
         {
             return Results.draw;
+        }
+
+        print(combatType);
+        if(combatType != CombatType.full)
+        {
+            if(one.GetElement() != two.GetElement())
+            {
+                return (int)one.GetElement() == (int)combatType ? Results.win : Results.lose;
+            }
         }
         int countelements = Enum.GetValues(typeof(Element)).Length;
         int halflements = countelements / 2;
@@ -350,5 +364,9 @@ public class Combatjudge : MonoBehaviour
     public int GetPlayersFigthing()
     {
         return playersFigthing;
+    }
+    public bool FocusONTurn()
+    {
+        return players[playerTurn].visualPlayer == 1;
     }
 }

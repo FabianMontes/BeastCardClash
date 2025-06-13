@@ -31,7 +31,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
+        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.FocusONTurn())
         {
             roling = true;
         }

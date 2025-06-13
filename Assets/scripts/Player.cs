@@ -185,4 +185,9 @@ public class Player : MonoBehaviour
         }
         return false;
     }
+
+    public void ThrowCard()
+    {
+        GetComponentInChildren<HolderPlay>().PlayCard(null);
+    }
 }

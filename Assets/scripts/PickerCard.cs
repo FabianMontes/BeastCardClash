@@ -25,8 +25,8 @@ public class PickerCard : MonoBehaviour
     void Update()
     {
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
-        if (momo != prevSetMoment)
-        {
+        //if (momo != prevSetMoment)
+        //{
             if(momo == SetMoments.PickCard && player.IsFigthing())
             {
                 Visib(true);
@@ -38,21 +38,18 @@ public class PickerCard : MonoBehaviour
             }
 
 
-                prevSetMoment = momo;
-        }
-
-        if(prevSetMoment == SetMoments.PickCard)
+          //      prevSetMoment = momo;
+        //}
+        Card card = player.getPicked();
+        if (card == null)
         {
-            Card card = player.getPicked();
-            if (card == null)
-            {
-                textMeshPro.text = "";
-            }
-            else
-            {
-                textMeshPro.text = card.GetID();
-            }
+            textMeshPro.text = "";
         }
+        else
+        {
+            textMeshPro.text = card.GetID();
+        }
+        
 
         
     }
