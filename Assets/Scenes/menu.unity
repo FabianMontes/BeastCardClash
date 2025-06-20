@@ -176,10 +176,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: UnWilclash
+  m_text: 'Wilclash
+
+    Degree'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 437187f9e5c7c4e4abc2acfaeb3928a5, type: 2}
-  m_sharedMaterial: {fileID: 4178872359169343339, guid: 437187f9e5c7c4e4abc2acfaeb3928a5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: bb1573894d2507849a815a074e4f6dd0, type: 2}
+  m_sharedMaterial: {fileID: 4956288098682399471, guid: bb1573894d2507849a815a074e4f6dd0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -203,15 +205,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70.25
+  m_fontSize: 53.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 299
+  m_fontSizeMax: 302.18
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
