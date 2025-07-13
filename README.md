@@ -43,8 +43,35 @@ Beast Card Clash combina:
 2. Abre el proyecto con **Unity Hub**.
 
 ## 🔧 Estructura del proyecto (inestable)
+> ⚠️ **Nota:** Solo incluye las carpetas
 
-
+- `Main`
+    - `Assets`
+        - `Fonts`
+            - `asset`
+            - `ttf`
+        - `Scenes`
+        - `Settings`
+        - `Sonido`
+        - `TextMesh Pro`
+            - `Fonts`
+            - `Resources`
+                - `Fonts & Materials`
+                - `Sprite Assets`
+                - `Style Sheets`
+            - `Shaders`
+            - `Sprites`
+        - `TutorialInfo`
+            - `Icons`
+            - `Scripts`
+                - `Editor`
+        - `prefabs`
+            - `Cards`
+        - `Scripts`
+        - `Sprites`
+            - `Inscripccions`
+    - `Packages`
+    - `ProyectSettings`
 
 ## 🧠 Créditos
 Beast Card Clash es desarrollado por [BCC], un equipo creativo enfocado en experiencias lúdicas educativas que resaltan elementos culturales y naturales de Colombia.
