@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PickerCard : MonoBehaviour
 {
     TextMeshProUGUI textMeshPro;
-    Player player;
+    Figther player;
     [SerializeField] HolderPlay holderPlay;
 
 
@@ -16,7 +16,7 @@ public class PickerCard : MonoBehaviour
     void Start()  
     {
         textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
-        player = GetComponentInParent<Player>();
+        player = GetComponentInParent<Figther>();
         prevSetMoment = SetMoments.PickDice;
         Visib(false);
     }

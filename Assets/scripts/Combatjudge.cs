@@ -34,7 +34,7 @@ public class Combatjudge : MonoBehaviour
     [Header("Players")]
     [SerializeField] int manyPlayers;
     [SerializeField] GameObject player;
-    Player[] players;
+    Figther[] players;
 
     [Header("GameRules")]
     [SerializeField] int playerTurn;
@@ -63,7 +63,7 @@ public class Combatjudge : MonoBehaviour
         }
 
         setMoments = SetMoments.Loop;
-        Player[] playeres = FindObjectsByType<Player>(FindObjectsSortMode.InstanceID);
+        Figther[] playeres = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
 
         if (playeres.Length > manyPlayers)
         {
@@ -75,13 +75,13 @@ public class Combatjudge : MonoBehaviour
 
         int div = zone.many/ manyPlayers;
 
-        players = new Player[manyPlayers];
+        players = new Figther[manyPlayers];
 
         for (int i = 0; i < manyPlayers; i++)
         {
             if (playeres.Length <= i )
             {
-                players[i] = Instantiate(player).GetComponent<Player>();
+                players[i] = Instantiate(player).GetComponent<Figther>();
                 players[i].transform.SetParent(canvas.transform, false);
                 players[i].randomSpecie();
             }
@@ -132,7 +132,7 @@ public class Combatjudge : MonoBehaviour
                 break;
             case SetMoments.PickCard:
                 all = true;
-                foreach( Player  player in players)
+                foreach( Figther  player in players)
                 {
                     if(player.getPicked()== null && player.IsFigthing())
                     {
@@ -153,7 +153,7 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.Result:
                 Card[] card = new Card[manyPlayers];
                 int a = 0;
-                foreach (Player player in players)
+                foreach (Figther player in players)
                 {
                     card[a] = player.getPicked();
                     a++;

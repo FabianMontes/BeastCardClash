@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerToken : MonoBehaviour
 {
     public RockBehavior rocky;
-    public Player player;
+    public Figther player;
 
     public RockBehavior lastRock;
 

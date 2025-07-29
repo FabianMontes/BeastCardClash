@@ -11,7 +11,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] int handPos;
     [SerializeField] Card card;
     TextMeshProUGUI textMeshPro;
-    Player player;
+    Figther player;
     Button button;
 
 
@@ -23,7 +23,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     void Start()
     {
         textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
-        player = GetComponentInParent<Player>();
+        player = GetComponentInParent<Figther>();
         prevSetMoment = SetMoments.PickDice;
         button = transform.GetComponent<Button>();
         Visib(false);

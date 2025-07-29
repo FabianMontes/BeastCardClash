@@ -7,7 +7,7 @@ public enum Specie {
 }
 
 [DefaultExecutionOrder(0)]
-public class Player : MonoBehaviour
+public class Figther : MonoBehaviour
 {
     [Header("PlayerData")]
     [SerializeField] int playerLive;
