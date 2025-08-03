@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
 using UnityEngine.EventSystems;
 
 [DefaultExecutionOrder(-4)]
@@ -13,9 +12,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     TextMeshProUGUI textMeshPro;
     Player player;
     Button button;
-
-
-
 
     SetMoments prevSetMoment;
 
@@ -45,27 +41,18 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 }
                 else
                 {
-                    
-                }
-                    
 
+                }
             }
             if (momo != SetMoments.PickCard)
             {
                 Visib(false);
             }
 
-
             prevSetMoment = momo;
         }
 
-        if (player.getPicked() != null)
-        {
-            Visib(false);
-        }
-
-
-
+        if (player.getPicked() != null) Visib(false);
     }
 
     private void Visib(bool isVisible)
@@ -76,7 +63,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void ForceReveal()
     {
-        Visib(true );
+        Visib(true);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -86,7 +73,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        
+
     }
 
     public void SetCard(Card card)

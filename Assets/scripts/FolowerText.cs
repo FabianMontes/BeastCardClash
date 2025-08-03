@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -13,12 +12,12 @@ public class FolowerText : MonoBehaviour
     Player player;
     [SerializeField] TypeFollow typeFollow;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()  
+    void Start()
     {
         textMeshPro = GetComponent<TextMeshProUGUI>();
         string text = textMeshPro.text;
         player = GetComponentInParent<Player>();
-        if(player != null)
+        if (player != null)
         {
             switch (typeFollow)
             {
@@ -36,11 +35,9 @@ public class FolowerText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(typeFollow == TypeFollow.live)
+        if (typeFollow == TypeFollow.live)
         {
             textMeshPro.text = player.GetPlayerLive().ToString(); ;
         }
     }
-
-
 }

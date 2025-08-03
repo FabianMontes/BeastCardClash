@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class dice : MonoBehaviour
 {
-
     int value = 0;
     int maxValue;
     TextMeshPro texter;
@@ -15,7 +14,6 @@ public class dice : MonoBehaviour
         maxValue = Combatjudge.combatjudge.maxDice;
         roling = false;
         texter = GetComponentInChildren<TextMeshPro>();
-
     }
 
     // Update is called once per frame
@@ -35,18 +33,15 @@ public class dice : MonoBehaviour
         {
             roling = true;
         }
-
-
     }
 
     private void OnMouseExit()
-    { 
+    {
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.Roled(value); 
+            Combatjudge.combatjudge.Roled(value);
         }
-
     }
 
     private void OnMouseUp()
@@ -56,8 +51,5 @@ public class dice : MonoBehaviour
             roling = false;
             Combatjudge.combatjudge.Roled(value);
         }
-        
     }
-
-
 }

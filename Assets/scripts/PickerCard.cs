@@ -9,11 +9,10 @@ public class PickerCard : MonoBehaviour
     Player player;
     [SerializeField] HolderPlay holderPlay;
 
-
     SetMoments prevSetMoment;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()  
+    void Start()
     {
         textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
         player = GetComponentInParent<Player>();
@@ -27,31 +26,13 @@ public class PickerCard : MonoBehaviour
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         //if (momo != prevSetMoment)
         //{
-            if(momo == SetMoments.PickCard && player.IsFigthing())
-            {
-                Visib(true);
-                
-            }
-            if(momo == SetMoments.Loop || momo == SetMoments.End)
-            {
-                Visib(false);
-            }
-
-
-          //      prevSetMoment = momo;
+        if (momo == SetMoments.PickCard && player.IsFigthing()) Visib(true);
+        if (momo == SetMoments.Loop || momo == SetMoments.End) Visib(false);
+        //    prevSetMoment = momo;
         //}
-        Card card = player.getPicked();
-        if (card == null)
-        {
-            textMeshPro.text = "";
-        }
-        else
-        {
-            textMeshPro.text = card.GetID();
-        }
-        
 
-        
+        Card card = player.getPicked();
+        textMeshPro.text = card == null ? "" : card.GetID();
     }
 
     private void Visib(bool isVisible)

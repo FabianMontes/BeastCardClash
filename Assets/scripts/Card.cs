@@ -1,19 +1,19 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
+
 [DefaultExecutionOrder(-5)]
-public class Card: MonoBehaviour
+public class Card : MonoBehaviour
 {
-    [SerializeField] private int value;
     [SerializeField] private Element element;
-    public string identifie;
+    [SerializeField] private int value;
     [SerializeField] public int indexer = 0;
+    public string identifier;
 
     private void Start()
     {
         value = UnityEngine.Random.Range(1, 11);
         element = (Element)UnityEngine.Random.Range(0, Enum.GetNames(typeof(Element)).Length);
-        identifie = value.ToString() + element.ToString();
+        identifier = value.ToString() + element.ToString();
     }
 
     public int GetValue()
@@ -25,17 +25,14 @@ public class Card: MonoBehaviour
     {
         return element;
     }
-    public String GetID()
+
+    public string GetID()
     {
-        return identifie;
+        return identifier;
     }
 
     void Update()
     {
-        
-        
+
     }
-
-
-
 }

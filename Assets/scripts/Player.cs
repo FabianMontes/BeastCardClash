@@ -1,8 +1,8 @@
 using System;
-using Unity.Mathematics;
 using UnityEngine;
 
-public enum Specie { 
+public enum Specie
+{
     chameleon, bear, snake, frog
 }
 
@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
     public int avalaibleCard = 0;
-    
 
     [Header("ExtraData")]
     [SerializeField] GameObject tokenPrefab;
@@ -37,18 +36,11 @@ public class Player : MonoBehaviour
         transform.GetChild(3).gameObject.SetActive(false);
         transform.GetChild(visualPlayer).gameObject.SetActive(true);
 
-        if(playerToken == null)
-        {
-            playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
-            
-        }
+        if (playerToken == null) playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
         playerToken.player = this;
         playerToken.rocky = initialStone;
 
-        /// create provitionalDeck
-        /// 
-
-
+        // Create provitionalDeck
 
         for (int i = 0; i < deckSize; i++)
         {
@@ -56,11 +48,9 @@ public class Player : MonoBehaviour
             card.indexer = i;
         }
 
-        /// create Hand
-        
+        // Create Hand
     }
 
-    
     // Update is called once per frame
     void Update()
     {
@@ -70,12 +60,12 @@ public class Player : MonoBehaviour
             transform.GetChild(visualPlayer).gameObject.SetActive(true);
             lastVisualPlayer = visualPlayer;
         }
-        if(Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && IsFigthing())
+        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && IsFigthing())
         {
-            if(avalaibleCard == 0)
+            if (avalaibleCard == 0)
             {
                 Transform hand = transform.GetChild(0).GetChild(1);
-                for (int i = 0;i < handSize; i++)
+                for (int i = 0; i < handSize; i++)
                 {
                     hand.GetChild(i).GetComponent<HandCard>().ForceReveal();
                 }
@@ -105,11 +95,11 @@ public class Player : MonoBehaviour
 
     public void randomSpecie()
     {
-        specie = (Specie) UnityEngine.Random.Range(0,Enum.GetValues(typeof(Specie)).Length);
+        specie = (Specie)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Specie)).Length);
     }
 
     public void movePlayer(RockBehavior rocker)
-    { 
+    {
         playerToken.rocky = rocker;
     }
 
@@ -118,18 +108,16 @@ public class Player : MonoBehaviour
         return GetComponentInChildren<HolderPlay>().GetPicked();
     }
 
-    public void DrawCard(int index,int HandDex)
+    public void DrawCard(int index, int HandDex)
     {
         Transform deck = transform.GetChild(0).GetChild(0);
 
-        if (index >= deck.childCount || index < 0){
-            return;
-        };
+        if (index >= deck.childCount || index < 0) return;
+        
         Card card = deck.GetChild(index).GetComponent<Card>();
         deck.GetChild(index).gameObject.SetActive(false);
         Transform hand = transform.GetChild(0).GetChild(1);
         hand.GetChild(HandDex).GetComponent<HandCard>().SetCard(card);
-
     }
 
     public void PlayCard(Card card)
@@ -139,17 +127,16 @@ public class Player : MonoBehaviour
 
     private void DrawCard(int index)
     {
-        int cardDrawedindex = UnityEngine.Random.Range(0,deckSize);
+        int cardDrawedindex = UnityEngine.Random.Range(0, deckSize);
         Transform deck = transform.GetChild(0).GetChild(0);
         Transform hand = transform.GetChild(0).GetChild(1);
         while (!deck.GetChild(cardDrawedindex).gameObject.activeSelf)
         {
-            cardDrawedindex= (cardDrawedindex+1) % deckSize;
+            cardDrawedindex = (cardDrawedindex + 1) % deckSize;
         }
 
         hand.GetChild(index).GetComponent<HandCard>().SetCard(deck.GetChild(cardDrawedindex).GetComponent<Card>());
         deck.GetChild(cardDrawedindex).gameObject.SetActive(false);
-
     }
 
     public void RefillHand()
@@ -157,32 +144,24 @@ public class Player : MonoBehaviour
         Transform hand = transform.GetChild(0).GetChild(1);
         for (int i = 0; i < handSize; i++)
         {
-            if (hand.GetChild(i).GetComponent<HandCard>().GetCard() == null)
-            {
-                DrawCard(i);
-            }
-
+            if (hand.GetChild(i).GetComponent<HandCard>().GetCard() == null) DrawCard(i);
         }
     }
     public bool IsFigthing()
     {
         int figthers = Combatjudge.combatjudge.GetPlayersFigthing();
-        
         int a = 0;
-        while(figthers > 0)
-        {
 
+        while (figthers > 0)
+        {
             int red = figthers % 2;
             figthers = (int)Mathf.Floor(figthers / 2);
-            
-            if (a == indexPlayer)
-            {
-                
-                return red != 0;
-            }
-            
+
+            if (a == indexPlayer) return red != 0;
+
             a++;
         }
+        
         return false;
     }
 

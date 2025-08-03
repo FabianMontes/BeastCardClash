@@ -8,22 +8,16 @@ public class HolderPlay: MonoBehaviour
     {
         return cardPicked;
     }
+    
     public void LosePick()
     {
-        if (cardPicked != null)
-        {
-            cardPicked.gameObject.SetActive(true);
-
-        }
+        if (cardPicked != null) cardPicked.gameObject.SetActive(true);
         cardPicked = null;
     }
 
     public void PlayCard(Card card)
     {
-        if (cardPicked != null)
-        {
-            LosePick();
-        }
+        if (cardPicked != null) LosePick();
         cardPicked = card;
     }
 }
