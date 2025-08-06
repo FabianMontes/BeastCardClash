@@ -115,7 +115,7 @@ public class RockBehavior : MonoBehaviour
         int many = 0;
         foreach (PlayerToken p in playersOn)
         {
-            many += (int)Mathf.Pow(2, p.player.indexPlayer);
+            many += (int)Mathf.Pow(2,p.player.indexFigther);
         }
 
         return many;

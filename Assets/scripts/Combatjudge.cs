@@ -86,8 +86,9 @@ public class Combatjudge : MonoBehaviour
                 players[i] = playeres[i];
             }
             players[i].setPlayerLive(initialLives);
-            players[i].visualPlayer = i + 1;
-            players[i].indexPlayer = i;
+            players[i].visualFigther = i+1;
+            players[i].indexFigther = i;
+
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
             players[i].initialStone = rocky;
         }
@@ -311,13 +312,13 @@ public class Combatjudge : MonoBehaviour
         {
             if (i == baseIndex)
             {
-                players[i].visualPlayer = 1;
+                players[i].visualFigther = 1;
             }
             else
             {
                 // Calcular distancia circular desde baseIndex
                 int offset = (i - baseIndex + manyPlayers) % manyPlayers + 1;
-                players[i].visualPlayer = offset;
+                players[i].visualFigther = offset;
             }
         }
 
@@ -348,6 +349,6 @@ public class Combatjudge : MonoBehaviour
     }
     public bool FocusONTurn()
     {
-        return players[playerTurn].visualPlayer == 1;
+        return players[playerTurn].visualFigther == 1;
     }
 }

@@ -9,8 +9,8 @@ public enum Specie
 [DefaultExecutionOrder(0)]
 public class Figther : MonoBehaviour
 {
-    [Header("PlayerData")]
-    [SerializeField] int playerLive;
+    [Header("FigtherData")]
+    [SerializeField] int figtherLive;
     [SerializeField] Specie specie;
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
@@ -20,8 +20,8 @@ public class Figther : MonoBehaviour
     [SerializeField] GameObject tokenPrefab;
     [SerializeField] GameObject cardPrefab;
     [SerializeField] public PlayerToken playerToken;
-    [SerializeField] public int visualPlayer = 0;
-    [SerializeField] public int indexPlayer = -1;
+    [SerializeField] public int visualFigther = 0;
+    [SerializeField] public int indexFigther = -1;
     [SerializeField] public RockBehavior initialStone;
 
     int lastVisualPlayer;
@@ -29,12 +29,12 @@ public class Figther : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        lastVisualPlayer = visualPlayer;
+        lastVisualPlayer = visualFigther;
         transform.GetChild(4).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(false);
         transform.GetChild(2).gameObject.SetActive(false);
         transform.GetChild(3).gameObject.SetActive(false);
-        transform.GetChild(visualPlayer).gameObject.SetActive(true);
+        transform.GetChild(visualFigther).gameObject.SetActive(true);
 
         if (playerToken == null) playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
         playerToken.player = this;
@@ -54,11 +54,11 @@ public class Figther : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (lastVisualPlayer != visualPlayer)
+        if (lastVisualPlayer != visualFigther)
         {
             transform.GetChild(lastVisualPlayer).gameObject.SetActive(false);
-            transform.GetChild(visualPlayer).gameObject.SetActive(true);
-            lastVisualPlayer = visualPlayer;
+            transform.GetChild(visualFigther).gameObject.SetActive(true);
+            lastVisualPlayer = visualFigther;
         }
         if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && IsFigthing())
         {
@@ -80,17 +80,17 @@ public class Figther : MonoBehaviour
 
     public int GetPlayerLive()
     {
-        return playerLive;
+        return figtherLive;
     }
 
     public void setPlayerLive(int pL)
     {
-        playerLive = pL;
+        figtherLive = pL;
     }
 
     public void addPlayerLive(int pL)
     {
-        playerLive += pL;
+        figtherLive += pL;
     }
 
     public void randomSpecie()
@@ -157,8 +157,7 @@ public class Figther : MonoBehaviour
             int red = figthers % 2;
             figthers = (int)Mathf.Floor(figthers / 2);
 
-            if (a == indexPlayer) return red != 0;
-
+            if (a == indexFigther) return red != 0;
             a++;
         }
         
