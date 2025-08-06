@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class SelectType : MonoBehaviour
 {
-
     SetMoments prevSetMoment;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,16 +18,13 @@ public class SelectType : MonoBehaviour
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if (momo != prevSetMoment)
         {
-            if (momo == SetMoments.SelecCombat)
-            {
-                Visib(true);
-            }
-            prevSetMoment= momo;
+            if (momo == SetMoments.SelecCombat) Visib(true);
+            prevSetMoment = momo;
         }
     }
 
     private void Visib(bool isVisible)
-    { 
+    {
         transform.GetChild(0).gameObject.SetActive(isVisible);
         transform.GetChild(1).gameObject.SetActive(isVisible);
         transform.GetChild(2).gameObject.SetActive(isVisible);
@@ -37,9 +34,6 @@ public class SelectType : MonoBehaviour
 
     public void PickElement(int element)
     {
-        if (Combatjudge.combatjudge.pickElement((Element)element))
-        {
-            Visib(false);
-        }
+        if (Combatjudge.combatjudge.pickElement((Element)element)) Visib(false);
     }
 }

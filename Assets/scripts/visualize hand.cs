@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-
 [DefaultExecutionOrder(2)]
 public class visualizehand : MonoBehaviour
 {
@@ -33,6 +32,5 @@ public class visualizehand : MonoBehaviour
             hand.GetChild(i).GetComponent<Button>().enabled = activelast;
             hand.GetChild(i).GetChild(0).gameObject.SetActive(activelast);
         }
-        
     }
 }

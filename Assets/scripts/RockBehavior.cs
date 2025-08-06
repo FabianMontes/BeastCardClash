@@ -1,17 +1,14 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public enum Inscription
 {
-    fire = 0,earth = 1,water = 2,air = 3, duel = 4, pick=6, empty = 5
+    fire = 0, earth = 1, water = 2, air = 3, duel = 4, pick = 6, empty = 5
 }
 
 [DefaultExecutionOrder(-2)]
 
 public class RockBehavior : MonoBehaviour
 {
-
     public PlayZone father;
     [SerializeField] private Sprite[] sprite;
     [SerializeField] public Inscription inscription = Inscription.empty;
@@ -23,47 +20,31 @@ public class RockBehavior : MonoBehaviour
     public float angle = 0;
     public int numbchild = 0;
     public bool shiny = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         simbol = transform.GetChild(0).GetComponent<SpriteRenderer>();
         itself = transform.GetComponent<SpriteRenderer>();
         simbol.sprite = sprite[(int)inscription];
-        if (father == null)
-        {
-            return;
-        }
+
+        if (father == null) return;
+
         transform.position = father.transform.position + direction * father.radius;
         transform.localScale = Vector3.one * father.RockScale;
-        transform.rotation = Quaternion.Euler(90, angle - 90, 0); // first set it to look up, second to look to the left, 
-
+        transform.rotation = Quaternion.Euler(90, angle - 90, 0); // first set it to look up, second to look to the left
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() != SetMoments.GlowRock)
-        {
-            shiny = false;
-        }
-        if (shiny)
-        {
-            itself.color = Color.yellow;
-            
-        }
-        else
-        {
-            itself.color = Color.black;
-        }
+        if (Combatjudge.combatjudge.GetSetMoments() != SetMoments.GlowRock) shiny = false;
+        itself.color = shiny ? Color.yellow : Color.black;
     }
 
     private void OnMouseDown()
     {
-        if (shiny)
-        {
-            FindFirstObjectByType<Combatjudge>().MoveToRock(this);
-        }
-        
+        if (shiny) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
     }
 
     public RockBehavior[] getNeighbor(int al)
@@ -71,13 +52,13 @@ public class RockBehavior : MonoBehaviour
         int many = father.many;
         RockBehavior[] neighbors = new RockBehavior[2];
         int oneside = ((numbchild + al) % many);
-        int otherside = ((numbchild - al+many) % many);
+        int otherside = ((numbchild - al + many) % many);
         neighbors[0] = father.transform.GetChild(oneside).GetComponent<RockBehavior>();
         neighbors[1] = father.transform.GetChild(otherside).GetComponent<RockBehavior>();
         return neighbors;
     }
 
-    public  void AddPlayer(PlayerToken token)
+    public void AddPlayer(PlayerToken token)
     {
         if (playersOn == null)
         {
@@ -98,10 +79,8 @@ public class RockBehavior : MonoBehaviour
 
     public void RemovePlayer(PlayerToken token)
     {
-        if (playersOn == null)
-        {
-            return;
-        }
+        if (playersOn == null) return;
+
         int a = 0;
         for (int i = 0; i < playersOn.Length; i++)
         {
@@ -111,6 +90,7 @@ public class RockBehavior : MonoBehaviour
                 playersOn[i] = null;
             }
         }
+
         PlayerToken[] newPlay = new PlayerToken[playersOn.Length - a];
         int j = 0;
         for (int i = 0; i < playersOn.Length; i++)
@@ -121,19 +101,13 @@ public class RockBehavior : MonoBehaviour
                 j++;
             }
         }
+
         playersOn = newPlay;
     }
 
     public bool manyOn()
     {
-        if(playersOn != null)
-        {
-            return playersOn.Length > 1;
-        }
-        else
-        {
-            return false;
-        }
+        return playersOn != null ? playersOn.Length > 1 : false;
     }
 
     public int GetPlayersOn()
@@ -141,7 +115,7 @@ public class RockBehavior : MonoBehaviour
         int many = 0;
         foreach (PlayerToken p in playersOn)
         {
-            many += (int)Mathf.Pow(2,p.player.indexPlayer);
+            many += (int)Mathf.Pow(2, p.player.indexPlayer);
         }
 
         return many;
