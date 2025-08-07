@@ -7,14 +7,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas CreditsMenu;
     [SerializeField] private Canvas TutorialMenu;
 
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Al iniciar, mostramos solo el menú principal.
         ShowStartMenu();
     }
 
-    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity.
+    // Update is called once per frame
+    void Update()
+    {
 
+    }
+
+    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity.
     public void ShowStartMenu()
     {
         StartMenu.gameObject.SetActive(true);
