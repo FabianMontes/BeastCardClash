@@ -1,59 +1,67 @@
+Aquí tienes la documentación técnica para el archivo `FolowerText.cs`, diseñada para un nuevo miembro del equipo.
+
+---
+
 # `FolowerText.cs`
 
 ## 1. Propósito General
-Este script se encarga de mostrar dinámicamente información textual de un componente `Player` en un elemento de UI `TextMeshProUGUI`. Su rol principal es vincular y actualizar el texto de la interfaz de usuario para reflejar atributos específicos del jugador, como su "especie" o su "vida" (probablemente puntos de salud o un contador similar).
+
+Este script de Unity es responsable de mostrar dinámicamente información textual de un personaje (`Figther`) en una interfaz de usuario. Principalmente, actualiza el texto de un componente `TextMeshProUGUI` para reflejar la especie o los puntos de vida de un `Figther` asociado, lo que lo hace útil para elementos de HUD o barras de estado.
 
 ## 2. Componentes Clave
 
-### `TypeFollow`
-- **Descripción:** `TypeFollow` es un `enum` que define las categorías de datos del `Player` que el script `FolowerText` puede monitorizar y mostrar. Ofrece dos opciones: `species` para referirse a la identidad de la "especie" del jugador, y `live` para representar su valor de "vida" o un atributo cuantitativo similar que puede cambiar durante el juego.
-- **Variables Públicas / Serializadas:** N/A (es una enumeración).
-- **Métodos Principales:** N/A (es una enumeración).
-- **Lógica Clave:** Este `enum` proporciona una manera clara y legible de seleccionar, a través del Inspector de Unity, qué tipo de información del jugador se visualizará mediante este componente de texto.
+### `enum TypeFollow`
+
+Este `enum` define los tipos de datos que el script `FolowerText` puede rastrear y mostrar. Permite al diseñador elegir qué información del `Figther` debe reflejar el componente de texto.
+
+```csharp
+enum TypeFollow
+{
+    species, // Para mostrar la especie del Figther.
+    live     // Para mostrar los puntos de vida actuales del Figther.
+}
+```
 
 ### `FolowerText`
-- **Descripción:** `FolowerText` es una clase que extiende `MonoBehaviour`, diseñada para actuar como un controlador de texto en la interfaz de usuario. Su propósito es obtener datos de un componente `Player` (ubicado en un GameObject padre) y usarlos para actualizar el texto de un `TextMeshProUGUI` en el mismo GameObject. Permite mostrar información estática como la "especie" o valores dinámicos como la "vida".
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] TypeFollow typeFollow`: Esta variable es crucial ya que permite a los diseñadores seleccionar en el Inspector de Unity qué atributo del `Player` debe seguir y mostrar este componente. Las opciones son `species` o `live`, determinando el comportamiento del script.
-- **Métodos Principales:**
-    - `void Start()`: Este método del ciclo de vida de Unity se invoca una única vez al inicio del componente.
-        *   Dentro de `Start`, el script adquiere referencias al componente `TextMeshProUGUI` presente en el mismo GameObject y al componente `Player` buscando en la jerarquía de GameObjects padres.
-        *   Si se encuentra un `Player`, el script establece el texto inicial del `TextMeshProUGUI`. Utiliza la variable `typeFollow` para decidir qué información mostrar: si es `species`, se establece la "especie" del jugador; si es `live`, se establece el valor de "vida" del jugador. Este valor inicial se lee una vez.
-        *   ```csharp
-            void Start()
-            {
-                textMeshPro = GetComponent<TextMeshProUGUI>();
-                player = GetComponentInParent<Player>();
-                if (player != null)
-                {
-                    switch (typeFollow)
-                    {
-                        case TypeFollow.species:
-                            textMeshPro.text = player.GetSpecie().ToString();
-                            break;
-                        case TypeFollow.live:
-                            textMeshPro.text = player.GetPlayerLive().ToString();
-                            break;
-                    }
-                }
-            }
-            ```
-    - `void Update()`: Este método del ciclo de vida de Unity se ejecuta en cada frame del juego.
-        *   `Update` es responsable de la actualización continua del texto. Sin embargo, esta actualización solo ocurre si la variable `typeFollow` está configurada como `TypeFollow.live`. Esto asegura que los cambios en el valor de "vida" del jugador se reflejen en tiempo real en la interfaz de usuario, mientras que la "especie" (que se asume estática) no se actualiza repetidamente.
-        *   ```csharp
-            void Update()
-            {
-                if (typeFollow == TypeFollow.live)
-                {
-                    textMeshPro.text = player.GetPlayerLive().ToString();
-                }
-            }
-            ```
-- **Lógica Clave:**
-    *   La funcionalidad principal reside en su capacidad para obtener datos de un componente `Player` que se espera que esté en un GameObject padre. Esto implica que el `FolowerText` está diseñado para ser un elemento de UI hijo de la entidad del jugador o de un contenedor que incluya al jugador.
-    *   La distinción entre actualizar la "especie" solo en `Start` y la "vida" continuamente en `Update` (`if (typeFollow == TypeFollow.live)`) es fundamental. Esto optimiza el rendimiento al evitar actualizaciones innecesarias para datos estáticos y asegura la reactividad para datos dinámicos.
+
+La clase `FolowerText` es un componente de Unity (`MonoBehaviour`) que gestiona la visualización del texto. Se espera que se adjunte a un objeto de juego que también contenga un componente `TextMeshProUGUI`, y que se encuentre como hijo de un objeto que contenga un componente `Figther`.
+
+#### Variables Públicas / Serializadas
+
+*   `[SerializeField] TypeFollow typeFollow;`
+    Esta variable serializada, configurable directamente desde el Inspector de Unity, determina qué tipo de información del `Figther` (especie o puntos de vida) debe mostrar el objeto `TextMeshProUGUI` al que está asociado este script. Su valor inicial es crucial para el comportamiento del script.
+
+#### Métodos Principales
+
+*   `void Start()`
+    Este método del ciclo de vida de Unity se ejecuta una vez antes de la primera actualización del frame, después de que el objeto se ha inicializado. En `Start`, el script realiza las siguientes operaciones cruciales:
+    1.  Obtiene una referencia al componente `TextMeshProUGUI` adjunto al mismo objeto de juego. Este es el componente que renderizará el texto.
+    2.  Busca y obtiene una referencia al componente `Figther` en el objeto padre o en cualquier ancestro del objeto actual. Esto es fundamental para acceder a los datos del personaje.
+    3.  Si se encuentra un `Figther`, utiliza el valor de `typeFollow` para determinar qué información inicial se debe mostrar:
+        *   Si `typeFollow` es `TypeFollow.species`, el texto se inicializa con el nombre de la especie del `Figther` (obtenido a través de `player.GetSpecie().ToString()`).
+        *   Si `typeFollow` es `TypeFollow.live`, el texto se inicializa con los puntos de vida actuales del `Figther` (obtenidos a través de `player.GetPlayerLive().ToString()`).
+    4.  Finalmente, actualiza el texto del componente `TextMeshProUGUI` con la información obtenida.
+
+*   `void Update()`
+    Este método del ciclo de vida de Unity se llama una vez por cada frame. Su propósito principal es mantener el texto de los puntos de vida actualizado en tiempo real.
+    1.  Comprueba si `typeFollow` está configurado en `TypeFollow.live`.
+    2.  Si es así, el script actualiza continuamente el texto del `TextMeshProUGUI` para reflejar los puntos de vida actuales del `Figther` (`player.GetPlayerLive().ToString()`).
+    Es importante notar que si `typeFollow` está configurado como `TypeFollow.species`, este método no realizará ninguna acción, lo que significa que el texto de la especie solo se establece una vez en `Start` y no se actualiza dinámicamente.
+
+#### Lógica Clave
+
+La lógica central de este script reside en su capacidad para actuar como un "observador" de los datos de un `Figther` y proyectarlos en un elemento de la interfaz de usuario. Utiliza la variable `typeFollow` para bifurcar su comportamiento: inicializa el texto según el tipo especificado en `Start`, y si el tipo es `live`, lo actualiza continuamente en `Update`. Esto permite tener etiquetas estáticas (como la especie) y etiquetas dinámicas (como la vida) usando el mismo componente. La dependencia de `GetComponentInParent<Figther>()` es crucial, ya que establece la relación jerárquica esperada entre el elemento de texto y el personaje `Figther` al que pertenece la información.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script depende funcionalmente de dos componentes clave. Requiere un componente `TextMeshProUGUI` en el mismo GameObject para poder manipular y mostrar texto. Adicionalmente, requiere la presencia de un componente `Player` en un GameObject padre para obtener los datos que debe mostrar. Aunque no se utiliza `[RequireComponent]` explícitamente, estos componentes son necesarios para su operación.
-- **Eventos (Entrada):** `FolowerText` no se suscribe a eventos personalizados (`UnityEvent` o `Action`) definidos por otros scripts. Su comportamiento está impulsado directamente por los métodos de ciclo de vida de Unity (`Start`, `Update`).
-- **Eventos (Salida):** Este script no emite ni invoca ningún tipo de evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas o componentes. Su función es puramente de lectura y visualización de datos.
+
+*   **Componentes Requeridos:**
+    Este script requiere la presencia de un componente `TextMeshProUGUI` en el mismo GameObject para poder mostrar el texto. No hay un atributo `[RequireComponent]` explícito en el código, pero es una dependencia implícita para su correcto funcionamiento.
+    Además, depende de la existencia de un componente `Figther` en uno de sus objetos padre para poder acceder a los datos relevantes (especie, puntos de vida).
+
+*   **Eventos (Entrada):**
+    Este script no se suscribe directamente a eventos de Unity (`UnityEvent`) ni a acciones personalizadas (`Action`). Su activación y actualización se gestionan a través de los métodos del ciclo de vida de `MonoBehaviour` (`Start`, `Update`).
+
+*   **Eventos (Salida):**
+    Este script no invoca ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas sobre cambios o acciones. Su rol es puramente de visualización de datos.
+
+---
