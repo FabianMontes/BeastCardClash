@@ -1,0 +1,38 @@
+using UnityEngine;
+
+public class UIManager : MonoBehaviour
+{
+    // Menús
+    [SerializeField] private Canvas StartMenu;
+    [SerializeField] private Canvas CreditsMenu;
+    [SerializeField] private Canvas TutorialMenu;
+
+    void Start()
+    {
+        // Al iniciar, mostramos solo el menú principal.
+        ShowStartMenu();
+    }
+
+    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity.
+
+    public void ShowStartMenu()
+    {
+        StartMenu.gameObject.SetActive(true);
+        CreditsMenu.gameObject.SetActive(false);
+        TutorialMenu.gameObject.SetActive(false);
+    }
+
+    public void ShowCreditsMenu()
+    {
+        StartMenu.gameObject.SetActive(false);
+        CreditsMenu.gameObject.SetActive(true);
+        TutorialMenu.gameObject.SetActive(false);
+    }
+
+    public void ShowTutorialMenu()
+    {
+        StartMenu.gameObject.SetActive(false);
+        CreditsMenu.gameObject.SetActive(false);
+        TutorialMenu.gameObject.SetActive(true);
+    }
+}
