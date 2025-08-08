@@ -54,7 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: dcbc4a0830fe8e643a96b8c82a789728, type: 2}
     - target: {fileID: 919132149155446097, guid: ed43f89f81165cf4f8c61f2ce8f120b4, type: 3}
       propertyPath: m_Name
+<<<<<<< Updated upstream
       value: frog
+=======
+      value: FrogModel
+>>>>>>> Stashed changes
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -63,6 +67,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ed43f89f81165cf4f8c61f2ce8f120b4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4951423816998369022}
+<<<<<<< Updated upstream
+=======
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ed43f89f81165cf4f8c61f2ce8f120b4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5343764392756594345}
+>>>>>>> Stashed changes
   m_SourcePrefab: {fileID: 100100000, guid: ed43f89f81165cf4f8c61f2ce8f120b4, type: 3}
 --- !u!1 &4248220608516561891 stripped
 GameObject:
@@ -91,3 +101,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+<<<<<<< Updated upstream
+=======
+--- !u!114 &5343764392756594345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4248220608516561891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 342c7e73ef9b5ff4b88076cbfec95768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Skins:
+  - {fileID: 21300000, guid: c47232272d7c0504f9ca1d333d27e35a, type: 3}
+  - {fileID: 21300000, guid: 91c51b08bb96d8842b59b73128739273, type: 3}
+>>>>>>> Stashed changes
