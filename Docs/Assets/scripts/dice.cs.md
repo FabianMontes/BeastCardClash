@@ -1,43 +1,54 @@
 # `dice.cs`
 
 ## 1. Propósito General
-Este script gestiona el comportamiento y la visualización de un dado individual dentro del juego. Se encarga de simular el "lanzamiento" visual del dado y de comunicar el valor final obtenido al sistema de lógica de combate (`Combatjudge`).
+Este script gestiona la funcionalidad de un dado interactivo dentro del juego. Se encarga de simular el "lanzamiento" de un dado, mostrando un valor aleatorio mientras se está "rodando" y reportando el valor final a un sistema central de combate cuando el dado deja de rodar. Su interacción principal es con el sistema `Combatjudge`, que dictamina cuándo el dado puede ser lanzado y recibe el resultado del lanzamiento.
 
 ## 2. Componentes Clave
 
 ### `dice`
-- **Descripción:** La clase `dice` es un componente de Unity (`MonoBehaviour`) que debe adjuntarse a un objeto de juego con un collider. Su función principal es representar un dado, permitiendo al jugador interactuar con él para iniciar una tirada simulada y capturar el resultado.
+- **Descripción:** La clase `dice` es un `MonoBehaviour` que controla el comportamiento y la visualización de un objeto dado en la escena. Permite a los jugadores interactuar con el dado (simulando un lanzamiento) para obtener un valor numérico que presumiblemente se utiliza en la lógica del combate.
+
 - **Variables Públicas / Serializadas:**
-    - `int value`: Almacena el valor numérico actual que el dado está mostrando o ha finalizado. Durante el "lanzamiento" visual, este valor cambia constantemente.
-    - `int maxValue`: Define el valor máximo posible que este dado puede obtener en una tirada. Se inicializa al inicio del juego a partir de `Combatjudge.combatjudge.maxDice`.
-    - `TextMeshPro texter`: Una referencia al componente `TextMeshPro` que se encuentra en un objeto hijo del dado. Este componente se utiliza para renderizar el `value` actual del dado en la interfaz gráfica.
-    - `bool roling`: Una bandera booleana que indica si el dado está actualmente en el proceso de "lanzamiento" visual. Cuando `true`, el valor del dado se actualiza aleatoriamente cada fotograma.
+    Este script no expone variables directamente serializables en el Inspector de Unity (`[SerializeField]`) ni variables públicas. Todas las variables son privadas y gestionadas internamente por el script:
+    - `int value`: Almacena el valor actual del dado. Este valor se actualiza constantemente mientras el dado está "rodando" y representa el resultado final cuando el lanzamiento termina.
+    - `int maxValue`: Define el valor máximo que el dado puede alcanzar. Se inicializa al inicio del juego a partir de una configuración del sistema de combate.
+    - `TextMeshPro texter`: Es una referencia al componente `TextMeshPro` que se encuentra en un objeto hijo del dado. Se utiliza para mostrar visualmente el `value` actual del dado en el juego.
+    - `bool roling`: Una bandera booleana que indica si el dado está actualmente en estado de "rodar". Cuando es `true`, el dado actualiza su `value` de forma aleatoria en cada frame.
+
 - **Métodos Principales:**
-    - `void Start()`: Este método se invoca una vez al inicio del ciclo de vida del script.
-        - Inicializa `maxValue` obteniéndolo de la propiedad `maxDice` del singleton `Combatjudge.combatjudge`, asegurando que el dado conoce su rango de valores posible.
-        - Establece `roling` a `false`, indicando que el dado no está "lanzándose" inicialmente.
-        - Obtiene una referencia al componente `TextMeshPro` en un objeto hijo para poder actualizar el texto del dado.
-    - `void Update()`: Se invoca una vez por fotograma.
-        - Si la bandera `roling` es `true`, el `value` del dado se actualiza constantemente a un número aleatorio entre 1 y `maxValue` (inclusive), simulando visualmente el giro del dado.
-        - En cada fotograma, el texto del componente `texter` se actualiza para mostrar el `value` actual.
-    - `private void OnMouseDown()`: Un callback de Unity que se invoca cuando el usuario presiona el botón del ratón sobre el collider del objeto al que está adjunto este script.
-        - Inicia el "lanzamiento" visual del dado (`roling = true`) solo si el estado actual del juego (obtenido de `Combatjudge.combatjudge.GetSetMoments()`) es `SetMoments.PickDice` y es el turno del jugador activo (`Combatjudge.combatjudge.FocusONTurn()`).
-    - `private void OnMouseExit()`: Un callback de Unity que se invoca cuando el puntero del ratón sale del área del collider del objeto mientras el botón del ratón no está presionado.
-        - Si el dado estaba "lanzándose" (`roling` es `true`), detiene el lanzamiento visual (`roling = false`) y notifica al sistema `Combatjudge` (`Combatjudge.combatjudge.Roled(value)`) el valor final en el que se detuvo el dado.
-    - `private void OnMouseUp()`: Un callback de Unity que se invoca cuando el usuario suelta el botón del ratón mientras el puntero aún está sobre el collider del objeto.
-        - Al igual que `OnMouseExit()`, si el dado estaba "lanzándose", detiene el lanzamiento visual y comunica el valor final al sistema `Combatjudge`.
+    - `void Start()`: Este método se ejecuta una única vez al inicio del ciclo de vida del script. Su propósito es inicializar las variables clave del dado:
+        - `maxValue` se obtiene de `Combatjudge.combatjudge.maxDice`, estableciendo el rango superior para los posibles resultados del dado.
+        - `roling` se establece inicialmente a `false`, asegurando que el dado no comience a rodar automáticamente.
+        - `texter` se inicializa obteniendo una referencia al componente `TextMeshPro` que es hijo del GameObject al que está adjunto este script.
+
+    - `void Update()`: Este método se ejecuta en cada frame del juego. Su lógica principal es:
+        - Si la bandera `roling` es `true`, el `value` del dado se actualiza con un número aleatorio entre 1 y `maxValue` (inclusive). Esto crea el efecto visual de un dado rodando rápidamente a través de diferentes valores.
+        - Independientemente del estado de `roling`, el texto del `TextMeshPro` (`texter.text`) se actualiza para mostrar el `value` actual del dado.
+
+    - `private void OnMouseDown()`: Este método de callback de Unity se invoca cuando el usuario presiona el botón del ratón sobre el collider del GameObject al que está adjunto este script.
+        - Contiene una condición crucial: el dado solo puede comenzar a "rodar" si el sistema `Combatjudge` indica que el momento actual del juego es `SetMoments.PickDice` y que la atención está en el turno actual (`Combatjudge.combatjudge.FocusONTurn()` es `true`).
+        - Si ambas condiciones se cumplen, la bandera `roling` se establece a `true`, iniciando el proceso de "rodado" del dado.
+
+    - `private void OnMouseExit()`: Este método de callback se invoca cuando el cursor del ratón abandona el área del collider del GameObject mientras el botón del ratón está presionado o después de haberlo presionado.
+        - Si el dado estaba "rodando" (`roling` es `true`), detiene el rodado (`roling = false`) y notifica el valor final del dado al sistema de combate a través de `Combatjudge.combatjudge.Roled(value)`.
+
+    - `private void OnMouseUp()`: Este método de callback se invoca cuando el usuario suelta el botón del ratón mientras el cursor está sobre el collider del GameObject.
+        - Similar a `OnMouseExit()`, si el dado estaba "rodando" (`roling` es `true`), detiene el rodado (`roling = false`) y envía el valor final del dado al sistema de combate mediante `Combatjudge.combatjudge.Roled(value)`.
+
 - **Lógica Clave:**
-    La lógica central del dado opera mediante un simple estado `roling`. Cuando `roling` es `true`, el dado actualiza su valor aleatoriamente cada fotograma, creando un efecto de "lanzamiento". Este estado se activa al hacer clic en el dado (`OnMouseDown`) bajo condiciones específicas del juego. El "lanzamiento" se detiene y el valor final se comunica a `Combatjudge` cuando el ratón se levanta del dado (`OnMouseUp`) o sale del collider del dado (`OnMouseExit`), asumiendo que el dado estaba activamente "lanzándose".
+    La lógica central del dado se basa en el estado booleano `roling`. Cuando `OnMouseDown` es activado bajo las condiciones de juego correctas (determinadas por `Combatjudge`), `roling` se vuelve `true`. Esto hace que el método `Update` comience a generar valores aleatorios rápidamente, simulando un lanzamiento. El "lanzamiento" se detiene y el valor final se fija cuando el ratón se suelta (`OnMouseUp`) o se sale del área del dado (`OnMouseExit`), momento en el cual el valor es comunicado al `Combatjudge` para su uso en la lógica del juego.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, pero funcionalmente requiere la presencia de:
-    - Un `Collider` en el GameObject para detectar interacciones del ratón (`OnMouseDown`, `OnMouseExit`, `OnMouseUp`).
-    - Un componente `TextMeshPro` en uno de sus objetos hijos para mostrar el valor del dado.
+- **Componentes Requeridos:**
+    Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que el GameObject o uno de sus hijos tenga un componente `TextMeshPro` (para la visualización del número) y un `Collider` (para detectar interacciones del ratón como `OnMouseDown`, `OnMouseExit`, `OnMouseUp`).
+
 - **Eventos (Entrada):**
-    - Este script se suscribe implícitamente a los eventos del sistema de entrada de Unity para interacciones con el ratón:
-        - `OnMouseDown`: Se activa cuando el botón del ratón es presionado sobre el dado.
-        - `OnMouseExit`: Se activa cuando el puntero del ratón sale del collider del dado.
-        - `OnMouseUp`: Se activa cuando el botón del ratón es liberado sobre el dado.
+    Este script se suscribe implícitamente a los eventos de interacción del ratón de Unity para su propio GameObject:
+    - `OnMouseDown()`: Se activa cuando el botón del ratón se presiona sobre el dado.
+    - `OnMouseExit()`: Se activa cuando el cursor del ratón sale del área del dado.
+    - `OnMouseUp()`: Se activa cuando el botón del ratón se suelta sobre el dado.
+
 - **Eventos (Salida):**
-    - Este script notifica al sistema de combate a través de una llamada estática/singleton:
-        - `Combatjudge.combatjudge.Roled(value)`: Invoca este método para comunicar el valor final obtenido del dado una vez que el lanzamiento ha terminado (ya sea por `OnMouseUp` o `OnMouseExit`).
+    Este script no invoca `UnityEvent`s o `Action`s propios. Sin embargo, interactúa directamente con el sistema `Combatjudge` (asumiendo que `Combatjudge.combatjudge` es una instancia accesible, posiblemente un Singleton o una referencia estática):
+    - Llama a `Combatjudge.combatjudge.Roled(value)` para notificar el valor final del dado al sistema de combate una vez que el "lanzamiento" ha terminado.
+    - Lee propiedades y llama a métodos del `Combatjudge` como `Combatjudge.combatjudge.maxDice`, `Combatjudge.combatjudge.GetSetMoments()`, y `Combatjudge.combatjudge.FocusONTurn()` para determinar cuándo y cómo debe comportarse el dado.

@@ -1,64 +1,27 @@
-Aquí está la documentación técnica para el script `HolderPlay.cs`, siguiendo las directrices proporcionadas.
-
----
-
 # `HolderPlay.cs`
 
 ## 1. Propósito General
-Este script gestiona la referencia a una única carta que ha sido "seleccionada" o "tomada" por el jugador en un momento dado. Su propósito principal es mantener el rastro de esta carta activa y proporcionar métodos para acceder a ella, liberarla o reemplazarla, lo que es fundamental para la interacción del jugador con las cartas en el juego.
+`HolderPlay` es un script de Unity que gestiona la referencia a una única "carta seleccionada" por el jugador en un momento dado. Su rol principal es mantener el estado de qué carta está actualmente "en mano" o siendo manipulada, proporcionando métodos para obtener, deseleccionar o establecer una nueva carta, y asegurando que solo una carta esté activa como "seleccionada" a la vez. Interactúa con el sistema de cartas del juego (`Card` script o clase) y posiblemente con la interfaz de usuario que permite al jugador seleccionar cartas.
 
 ## 2. Componentes Clave
 
 ### `HolderPlay`
-*   **Descripción:** `HolderPlay` es un script de Unity que hereda de `MonoBehaviour`, lo que le permite ser adjuntado a un GameObject en la escena. Se encarga de contener y gestionar la referencia a la carta actualmente "recogida" o seleccionada por un jugador o una entidad del juego. Permite a otros sistemas saber qué carta está activa, y ofrece funciones para 'deseleccionar' la carta actual o 'seleccionar' una nueva, manejando la visibilidad de la carta previamente seleccionada.
-
-*   **Variables Públicas / Serializadas:**
-    *   `Card cardPicked`: Esta es una variable privada de tipo `Card` marcada con el atributo `[SerializeField]`. Esto significa que, aunque es privada y no directamente accesible desde otros scripts, su valor puede ser asignado y modificado directamente desde el Inspector de Unity. `cardPicked` almacena la referencia a la instancia de `Card` que representa la carta que ha sido seleccionada o está actualmente activa.
-
-*   **Métodos Principales:**
-
-    *   `public Card GetPicked()`:
-        Este método proporciona acceso de solo lectura a la carta que está actualmente almacenada en la variable `cardPicked`. Es un método sencillo que devuelve la instancia de `Card` que representa la carta que ha sido "seleccionada".
-        ```csharp
-        public Card GetPicked()
-        {
-            return cardPicked;
-        }
-        ```
-
-    *   `public void LosePick()`:
-        Este método se encarga de "deseleccionar" o liberar la carta que está actualmente en `cardPicked`. Su lógica es la siguiente:
-        1.  Verifica si `cardPicked` no es `null` (es decir, si hay una carta actualmente seleccionada).
-        2.  Si hay una carta, activa su GameObject (`cardPicked.gameObject.SetActive(true)`). Esto es crucial, ya que sugiere que la carta podría haber sido desactivada o "escondida" visualmente al ser seleccionada, y este método la "devuelve" a un estado visible antes de ser liberada.
-        3.  Finalmente, establece `cardPicked` a `null`, indicando que ya no hay ninguna carta seleccionada.
-        ```csharp
-        public void LosePick()
-        {
-            if (cardPicked != null) cardPicked.gameObject.SetActive(true);
-            cardPicked = null;
-        }
-        ```
-
-    *   `public void PlayCard(Card card)`:
-        Este método permite asignar una nueva carta como la carta "seleccionada" o activa. Recibe una instancia de `Card` como parámetro (`card`). La lógica interna es la siguiente:
-        1.  Comprueba si ya hay una carta asignada a `cardPicked`.
-        2.  Si `cardPicked` no es `null`, invoca el método `LosePick()` primero. Esto asegura que cualquier carta previamente seleccionada sea manejada correctamente (reactivada y su referencia liberada) antes de seleccionar la nueva.
-        3.  Finalmente, asigna la `card` pasada como parámetro a `cardPicked`, convirtiéndola en la nueva carta activa para este `HolderPlay`.
-        ```csharp
-        public void PlayCard(Card card)
-        {
-            if (cardPicked != null) LosePick();
-            cardPicked = card;
-        }
-        ```
-
-*   **Lógica Clave:** La lógica central de este script gira en torno a gestionar una referencia única a una carta activa. La función `PlayCard` implementa un comportamiento de "una sola carta activa a la vez", asegurando que si una nueva carta es "seleccionada," cualquier carta previamente seleccionada sea primero "deseleccionada" correctamente (incluyendo la reactivación de su GameObject) antes de asignar la nueva.
+- **Descripción:** `HolderPlay` es una clase que hereda de `MonoBehaviour`, lo que significa que puede ser adjuntada como un componente a un GameObject en la escena de Unity. Su función es actuar como un contenedor de estado para la carta que ha sido "recogida" por el jugador. Esto es útil en mecánicas donde un jugador selecciona una carta de su mano o del campo para realizar una acción, y esa selección necesita ser gestionada centralmente.
+- **Variables Públicas / Serializadas:**
+    - `[SerializeField] Card cardPicked`: Esta variable privada, pero visible y editable desde el Inspector de Unity gracias al atributo `[SerializeField]`, almacena una referencia al objeto `Card` (se asume que `Card` es una clase o script que representa una carta del juego) que ha sido "seleccionada" o "recogida" por el jugador. Si no hay ninguna carta seleccionada, su valor será `null`.
+- **Métodos Principales:**
+    - `public Card GetPicked()`:
+        - **Descripción:** Permite a otros scripts obtener una referencia a la `Card` que está actualmente asignada a `cardPicked`.
+        - **Retorna:** El objeto `Card` actualmente seleccionado, o `null` si no hay ninguna carta seleccionada.
+    - `public void LosePick()`:
+        - **Descripción:** Gestiona la deselección de la carta actualmente "recogida". Si `cardPicked` no es `null`, este método reactiva el `GameObject` asociado a la carta (`cardPicked.gameObject.SetActive(true)`) antes de liberar la referencia estableciendo `cardPicked` a `null`. Esto sugiere que la carta podría haber sido desactivada o su visibilidad modificada al ser "recogida".
+    - `public void PlayCard(Card card)`:
+        - **Descripción:** Establece la carta pasada como parámetro (`card`) como la nueva carta "recogida". Antes de hacer esto, verifica si ya hay una carta previamente seleccionada (`cardPicked`). Si la hay, invoca a `LosePick()` para deseleccionar y manejar la carta anterior, asegurando que solo una carta pueda estar "recogida" a la vez.
+        - **Parámetros:**
+            - `Card card`: La nueva carta que se desea establecer como la carta "recogida" o seleccionada.
+- **Lógica Clave:** La lógica central de `HolderPlay` es mantener un estado de "una única carta seleccionada". Cuando se intenta "seleccionar" una nueva carta a través de `PlayCard`, el script asegura que cualquier carta previamente seleccionada sea "deseleccionada" (lo que incluye potencialmente reactivar su GameObject) antes de asignar la nueva. Esto simplifica la gestión de la interacción del jugador con las cartas, evitando la necesidad de que los scripts que "juegan" o "recogen" cartas se preocupen por el estado de selecciones anteriores.
 
 ## 3. Dependencias y Eventos
-*   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, lo que significa que no impone la existencia de otros componentes específicos en el mismo GameObject para funcionar correctamente. Puede ser adjuntado a cualquier GameObject.
-
-*   **Eventos (Entrada):** Según el código proporcionado, `HolderPlay` no se suscribe explícitamente a ningún evento de Unity o de otros sistemas (como eventos de UI de botones o eventos de entrada de usuario directos). Sus métodos públicos (`GetPicked`, `LosePick`, `PlayCard`) están diseñados para ser invocados externamente por otros scripts del juego que necesiten interactuar con la carta seleccionada.
-
-*   **Eventos (Salida):** Este script no invoca ni publica eventos de salida (como `UnityEvent` o `Action` personalizados) para notificar a otros sistemas sobre cambios en `cardPicked`. Otros sistemas que necesiten reaccionar a la selección o deselección de una carta deberán consultar el estado de `cardPicked` a través de `GetPicked()` o ser informados por el script que invoca `PlayCard()`.
-
----
+- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, por lo que no requiere que otros componentes específicos estén presentes en el mismo GameObject para funcionar.
+- **Eventos (Entrada):** `HolderPlay` no se suscribe explícitamente a ningún evento de Unity o de otros sistemas (por ejemplo, `button.onClick.AddListener`). Sus métodos públicos están diseñados para ser invocados directamente por otros scripts que necesiten interactuar con el estado de la carta seleccionada.
+- **Eventos (Salida):** El script `HolderPlay` no emite ni invoca ningún tipo de evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas sobre cambios en su estado interno (como cuando se selecciona o deselecciona una carta). Las interacciones con este script se realizan a través de llamadas directas a sus métodos públicos.

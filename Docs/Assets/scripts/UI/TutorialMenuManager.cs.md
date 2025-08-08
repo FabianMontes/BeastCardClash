@@ -1,43 +1,42 @@
 # `TutorialMenuManager.cs`
 
 ## 1. Propósito General
-Este script gestiona la interfaz de usuario para el menú de tutorial del juego. Su función principal es controlar la visibilidad de diferentes paneles de tutorial y permitir la navegación secuencial entre ellos, o saltar directamente a la escena principal del juego.
+Este script gestiona la visualización y navegación de los paneles del tutorial dentro del juego. Se encarga de controlar qué página del tutorial se muestra al jugador y de manejar las transiciones entre ellas, así como la opción de finalizar el tutorial y cargar la escena principal del juego.
 
 ## 2. Componentes Clave
 
-### `CurrentPanel`
-- **Descripción:** Es un `enum` que define los posibles estados o páginas del tutorial. Se utiliza para rastrear qué panel de tutorial está actualmente visible, permitiendo al sistema reaccionar adecuadamente a la interacción del usuario.
-- **Valores:** `Panel1`, `Panel2`, `Panel3`.
+### `enum CurrentPanel`
+- **Descripción:** Una enumeración que define los diferentes estados o páginas del menú de tutorial. Sirve para llevar un registro del panel de tutorial que se está mostrando actualmente al jugador. Los valores posibles son `Panel1`, `Panel2` y `Panel3`.
 
 ### `TutorialMenuManager`
-- **Descripción:** Esta clase hereda de `MonoBehaviour` y es responsable de la lógica del menú de tutorial. Controla qué panel se muestra, cómo se avanza entre ellos y la transición final a la escena del juego.
+- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, es la principal responsable de controlar la lógica y la interfaz de usuario del menú de tutorial. Gestiona la visibilidad de los paneles, la navegación entre ellos mediante un botón de "Siguiente", y la transición a la escena principal del juego.
+
 - **Variables Públicas / Serializadas:**
-    - `[SerializeField] private RawImage panel1`: Referencia al objeto `RawImage` que representa el primer panel del tutorial en la interfaz de usuario.
-    - `[SerializeField] private RawImage panel2`: Referencia al objeto `RawImage` que representa el segundo panel del tutorial.
-    - `[SerializeField] private RawImage panel3`: Referencia al objeto `RawImage` que representa el tercer panel del tutorial.
-    - `private CurrentPanel CurrentPanel`: Una variable privada que almacena el panel de tutorial que está actualmente activo, utilizando los valores del `enum CurrentPanel`.
-    - `[SerializeField] private Button NextButton`: Referencia al objeto `Button` que permite avanzar al siguiente panel. Se serializa para poder ocultarlo al llegar al último panel.
+    - `[SerializeField] private RawImage panel1`, `panel2`, `panel3`: Tres referencias a componentes `RawImage` en la interfaz de usuario. Cada uno representa una página diferente del tutorial y su estado `gameObject.SetActive` controla su visibilidad.
+    - `[SerializeField] private Button NextButton`: Una referencia al botón utilizado para avanzar a la siguiente página del tutorial. Se utiliza específicamente para ocultarlo una vez que el jugador llega a la última página del tutorial, indicando que no hay más páginas para avanzar.
+
 - **Métodos Principales:**
-    - `void Start()`: Método de ciclo de vida de Unity que se llama una vez antes de la primera actualización del frame. Al inicio, activa solo el `panel1` para que sea la primera página visible del tutorial.
+    - `void Start()`: Este método se invoca una vez al inicio del ciclo de vida del script, antes de la primera actualización de frame. Su función principal es inicializar el tutorial mostrando el primer panel (`panel1`) al jugador.
         ```csharp
         void Start()
         {
             ShowPanel1();
         }
         ```
-    - `void Update()`: Método de ciclo de vida de Unity que se llama una vez por frame. En este script, se encuentra vacío, lo que indica que no hay lógica que deba ejecutarse continuamente en cada frame.
-    - `public void ShowPanel1()`: Activa el `panel1` y desactiva los demás (`panel2`, `panel3`). Actualiza la variable `CurrentPanel` a `CurrentPanel.Panel1`.
-    - `public void ShowPanel2()`: Activa el `panel2` y desactiva los demás (`panel1`, `panel3`). Actualiza la variable `CurrentPanel` a `CurrentPanel.Panel2`.
-    - `public void ShowPanel3()`: Activa el `panel3` y desactiva los demás (`panel1`, `panel2`). Actualiza la variable `CurrentPanel` a `CurrentPanel.Panel3`. Además, desactiva el `NextButton` para evitar que el usuario intente avanzar más allá del último panel.
+    - `void ShowPanel1()`: Activa el `panel1` y desactiva los `panel2` y `panel3`. Establece `CurrentPanel` a `CurrentPanel.Panel1`. Este método se usa para mostrar la primera página del tutorial.
+    - `void ShowPanel2()`: Activa el `panel2` y desactiva los `panel1` y `panel3`. Establece `CurrentPanel` a `CurrentPanel.Panel2`. Utilizado para mostrar la segunda página.
+    - `void ShowPanel3()`: Activa el `panel3` y desactiva los `panel1` y `panel2`. Establece `CurrentPanel` a `CurrentPanel.Panel3`. Además, este método oculta el `NextButton`, ya que no hay más páginas de tutorial a las que avanzar.
         ```csharp
         public void ShowPanel3()
         {
             // ... (activación/desactivación de paneles)
-            CurrentPanel = CurrentPanel.Panel3;
             NextButton.gameObject.SetActive(false); // Ocultamos el botón de siguiente
         }
         ```
-    - `public void OnClick()`: Este método se encarga de la lógica de "avanzar" en el tutorial. Utiliza una sentencia `switch` para determinar el `CurrentPanel` actual y, en función de este, invoca el método `ShowPanelX()` correspondiente para pasar al siguiente panel de forma secuencial (`Panel1` -> `Panel2`, `Panel2` -> `Panel3`). Si se intenta avanzar desde el `Panel3`, llama a `SkipButton()`, aunque el comentario en el código sugiere que esta rama nunca se ejecuta debido a que el botón es ocultado.
+    - `void OnClick()`: Este método está diseñado para ser invocado por el evento `OnClick` de un botón de UI (probablemente el `NextButton`). Determina la acción a tomar basándose en el valor actual de `CurrentPanel`:
+        - Si el `CurrentPanel` es `Panel1`, llama a `ShowPanel2()`.
+        - Si es `Panel2`, llama a `ShowPanel3()`.
+        - Si es `Panel3`, teóricamente llamaría a `SkipButton()`, pero esta rama es inalcanzable en la práctica porque el `NextButton` se desactiva cuando se muestra `Panel3`.
         ```csharp
         public void OnClick()
         {
@@ -49,24 +48,34 @@ Este script gestiona la interfaz de usuario para el menú de tutorial del juego.
                 case CurrentPanel.Panel2:
                     ShowPanel3();
                     break;
-                // ...
+                case CurrentPanel.Panel3:
+                    // Cuando llegamos al tercer y último panel
+                    // El botón desaparece, asi que esta parte nunca se ejecuta, pero puedes mantener este código si lo deseas
+                    SkipButton();
+                    break;
+                default:
+                    break;
             }
         }
         ```
-    - `public void SkipButton()`: Este método carga la escena de Unity llamada "World". Se utiliza para salir del menú de tutorial y comenzar el juego principal.
+    - `void SkipButton()`: Carga la escena de Unity con el nombre "World". Este método permite al jugador saltar el tutorial y comenzar el juego principal. Se asume que también estaría asignado a un botón "Saltar Tutorial" en la interfaz.
         ```csharp
         public void SkipButton()
         {
             SceneManager.LoadScene("World");
         }
         ```
+
 - **Lógica Clave:**
-    La lógica central radica en la navegación secuencial de los paneles. Al inicio, solo el `panel1` es visible. El método `OnClick` (que probablemente está vinculado a un botón "Siguiente") determina el panel actual y llama al método `ShowPanelX()` apropiado para mostrar el siguiente en la secuencia. Cuando el `panel3` (el último) se activa, el botón "Siguiente" se desactiva para evitar clics adicionales. Existe también un método `SkipButton` para salir del tutorial en cualquier momento y cargar la escena "World".
+    La lógica principal de este script gira en torno a una máquina de estados simple definida por la enumeración `CurrentPanel`. El método `OnClick()` actúa como el transicionador de estados, moviendo al jugador secuencialmente a través de las páginas del tutorial (`Panel1` -> `Panel2` -> `Panel3`). Una vez que el `Panel3` es mostrado, el botón para avanzar (`NextButton`) se desactiva, impidiendo más transiciones a través de `OnClick()` y señalando el final del tutorial de paginación. La navegación a la escena principal (`World`) se gestiona por el método `SkipButton()`.
 
 ## 3. Dependencias y Eventos
 - **Componentes Requeridos:**
-    Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, para funcionar correctamente, requiere que se le asignen referencias a objetos `RawImage` para los paneles y un `Button` para el botón "Siguiente" en el Inspector de Unity.
+    Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, para su correcto funcionamiento en la escena, requiere que se le asignen referencias a tres componentes `RawImage` (para los paneles visuales) y un componente `Button` (para el botón de "Siguiente" o "Avanzar") en el Inspector de Unity.
+
 - **Eventos (Entrada):**
-    Los métodos públicos `ShowPanel1`, `ShowPanel2`, `ShowPanel3`, `OnClick` y `SkipButton` están diseñados para ser asignados a los eventos `OnClick()` de varios botones en la interfaz de usuario, típicamente a través del Editor de Unity.
+    - El método `OnClick()` está diseñado para ser suscrito al evento `OnClick()` de un componente `Button` en la UI de Unity. Esto permite que el script reaccione a la interacción del usuario con el botón de navegación del tutorial.
+    - El método `SkipButton()` también está destinado a ser suscrito al evento `OnClick()` de un botón de UI, típicamente un botón de "Saltar Tutorial", para permitir al jugador salir del tutorial en cualquier momento.
+
 - **Eventos (Salida):**
-    Este script no invoca ningún evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas del juego. Su única "salida" funcional es la carga de una nueva escena (`SceneManager.LoadScene`).
+    Este script no invoca explícitamente eventos (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas. Sus acciones se manifiestan directamente a través de la modificación de la interfaz de usuario (activar/desactivar paneles, ocultar botones) y la carga de escenas.
