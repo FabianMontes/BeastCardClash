@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class CameraMovement : MonoBehaviour
+public class CameraTarget : MonoBehaviour
 {
     // Variables
-    [SerializeField] Transform player;
+    [SerializeField] Transform Player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,8 +16,6 @@ public class CameraMovement : MonoBehaviour
     {
         // El objeto alternativo es una esfera, seleccionada desde el inspector de Unity. Sigue al jugador
         // El objeto alternativo no rota, lo cual es necesario para neutralizar la rotación del jugador en la cámara
-        transform.position = player.position;
+        transform.position = Player.position;
     }
 }
-
-// Recomendación para el futuro: renombrar este script y su objeto asociado de una forma más descriptiva

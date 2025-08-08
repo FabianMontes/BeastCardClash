@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6143413f4a4e44c8175339bd222608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1283958268}
+  Player: {fileID: 1283958268}
 --- !u!1 &396119953
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 620801217}
   - component: {fileID: 620801221}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,7 +717,7 @@ GameObject:
   - component: {fileID: 874966754}
   - component: {fileID: 874966757}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
