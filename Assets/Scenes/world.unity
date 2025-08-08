@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6143413f4a4e44c8175339bd222608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1283958268}
+  Player: {fileID: 1283958268}
 --- !u!1 &396119953
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 620801217}
   - component: {fileID: 620801221}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -595,8 +595,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 620801216}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.14, y: 1.6, z: 5.06}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -614,10 +614,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5836c93ef5c856048a3809627044335a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 219053712}
-  player: {fileID: 1283958268}
-  speed: 500
-  mode: 1
+  playerCamera: {fileID: 874966756}
+  speed: 7
+  useArrows: 1
 --- !u!1 &732179868
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,7 +628,7 @@ GameObject:
   - component: {fileID: 732179869}
   - component: {fileID: 732179870}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: FloorSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,7 +644,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 0.1258, y: 0.1886, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 606562109}
@@ -694,12 +693,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 29f2d157f6dc85142b8c33cf8fe8d563, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6bd41c2c83989674095997cbad612038, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 79.521164, y: 53.039997}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -718,7 +717,7 @@ GameObject:
   - component: {fileID: 874966754}
   - component: {fileID: 874966757}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1114,7 +1113,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 7
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
