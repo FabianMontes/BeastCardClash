@@ -20,7 +20,8 @@ public class UIManager : MonoBehaviour
 
     }
 
-    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity.
+    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity
+    // Cada uno muestra un menú diferente 
     public void ShowStartMenu()
     {
         StartMenu.gameObject.SetActive(true);

@@ -23,7 +23,7 @@ public class TutorialMenuManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Al iniciar, mostramos solo el primer panel.
+        // Al iniciar, mostramos solo el primer panel
         ShowPanel1();
     }
 
@@ -33,9 +33,9 @@ public class TutorialMenuManager : MonoBehaviour
 
     }
 
-    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity.
-    // Cambian de panel en cada caso.
-    // Cada panel es una pagina diferente de tutorial.
+    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity
+    // Cambian de panel en cada caso
+    // Cada panel es una pagina diferente de tutorial
     public void ShowPanel1()
     {
         panel1.gameObject.SetActive(true);
@@ -72,7 +72,7 @@ public class TutorialMenuManager : MonoBehaviour
                 break;
             case CurrentPanel.Panel3:
                 // Cuando llegamos al tercer y último panel
-                // El botón desaparece, asi que esta parte nunca se ejecuta, pero puedes mantener este código si lo deseas.
+                // El botón desaparece, asi que esta parte nunca se ejecuta, pero puedes mantener este código si lo deseas
                 SkipButton();
                 break;
             default:
