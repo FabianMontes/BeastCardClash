@@ -56,7 +56,7 @@ public class TutorialMenuManager : MonoBehaviour
         panel2.gameObject.SetActive(false);
         panel3.gameObject.SetActive(true);
         CurrentPanel = CurrentPanel.Panel3;
-        NextButton.gameObject.SetActive(false); // Ocultamos el botón de siguiente
+        // NextButton.gameObject.SetActive(false); // Ocultamos el botón de siguiente (comentado)
     }
 
     // Cambia la función del botón en función del panel actual
@@ -72,7 +72,6 @@ public class TutorialMenuManager : MonoBehaviour
                 break;
             case CurrentPanel.Panel3:
                 // Cuando llegamos al tercer y último panel
-                // El botón desaparece, asi que esta parte nunca se ejecuta, pero puedes mantener este código si lo deseas
                 SkipButton();
                 break;
             default:
