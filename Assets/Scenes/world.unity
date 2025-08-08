@@ -616,7 +616,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 874966756}
   speed: 7
-  mode: 0
+  mode: 1
 --- !u!1 &732179868
 GameObject:
   m_ObjectHideFlags: 0

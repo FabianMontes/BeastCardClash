@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WorldPlayer : MonoBehaviour
+public class Player : MonoBehaviour
 {
     // Variables
     [SerializeField] Transform target;
@@ -21,5 +21,3 @@ public class WorldPlayer : MonoBehaviour
         agent.SetDestination(target.position); 
     }
 }
-
-// Recomendación para el futuro: renombrar este script como Player y la carpeta Player (Andrés exp.) también

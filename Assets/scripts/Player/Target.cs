@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class Cube : MonoBehaviour
+public class Target : MonoBehaviour
 {
     // Variables
-    [SerializeField] Transform playerCamera;
+    [SerializeField] Transform playerCamera; // No puede llamarse Camera por solapamiento
     [SerializeField] float speed = 7f;
-    [SerializeField] bool mode = true; // true = flechas o WASD, false = mouse
+    [SerializeField] bool useArrows = true; // true = flechas o WASD, false = mouse
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,7 +17,7 @@ public class Cube : MonoBehaviour
     void Update()
     {
         // Cambiar el modo de movimiento segun el modo elegido
-        if (mode)
+        if (useArrows)
         {
             // Mover el cubo en la dirección de entrada de las flechas o las teclas WASD
             transform.position += GetInputDirection() * speed * Time.deltaTime;
