@@ -1,0 +1,158 @@
+{
+  "Dialogs": [
+    {
+      "character": "MrBear",
+      "text": "Hola, ¿Cómo vas?"
+    },
+    {
+      "character": "MrBear",
+      "text": "Veo que tienes interés en participar en Beast Card Clash"
+    },
+    {
+      "character": "Player",
+      "text": "¡Sí! De qué trata"
+    },
+    {
+      "character": "MrBear",
+      "text": "Es un juego de cartas en el que 4 jugadores se enfrentan con un maso de 6 cartas para ver quién gana!"
+    },
+    {
+      "character": "MrBear",
+      "text": "Es como jugar piedra papel o tijera, pero con 4 elementos"
+    },
+    {
+      "character": "MrBear",
+      "text": "Los 4 elementos son: Agua, fuego, tierra y aire"
+    },
+    {
+      "character": "MrBear",
+      "text": "Estas cartas vienen con números de 1 a 10, para un total de 40 cartas"
+    },
+    {
+      "character": "MrBear",
+      "text": "¿Hasta aquí está claro?, ¿tienes alguna pregunta adicional?"
+    },
+    {
+      "character": "Player",
+      "text": "Si es como un piedra papel o tijeras, ¿Qué elementos le ganan a qué elementos?"
+    },
+    {
+      "character": "MrBear",
+      "text": "Qué buena pregunta, ten en cuenta lo siguiente:",
+      "_note": "Luego de esto, va lo de la tabla, pero no sé como explicarlo"
+    },
+    {
+      "character": "MrBear",
+      "text": ""
+    },
+    {
+      "character": "Player",
+      "text": "Ah ya veo, o sea que si empatan con respecto al elemento, le gana la carta que tenga el número mayor"
+    },
+    {
+      "character": "Player",
+      "text": "¿Y si todos sacan el mismo número?"
+    },
+    {
+      "character": "MrBear",
+      "text": "¡De plano empatan y vuelves a comenzar!"
+    },
+    {
+      "character": "Player",
+      "text": "¿Y cómo sé cuando gano?"
+    },
+    {
+      "character": "MrBear",
+      "text": "Sabía que ibas a preguntar eso"
+    },
+    {
+      "character": "MrBear",
+      "text": "Gana el que tenga más energía entre los 4 jugadores y elimine a los otros 3"
+    },
+    {
+      "character": "MrBear",
+      "text": "Todos empiezan con 10 puntos de energía"
+    },
+    {
+      "character": "MrBear",
+      "text": "Y vas quitándole puntos a tus rivales en la medida en la que les vayas ganando!"
+    },
+    {
+      "character": "Player",
+      "text": "Oh vale, ya entiendo"
+    },
+    {
+      "character": "MrBear",
+      "text": "¿Entonces vamos a jugar?"
+    },
+    {
+      "character": "Chandler",
+      "text": "¡Sí, juguemos!"
+    },
+    {
+      "character": "Karl",
+      "text": "Sí, estoy emocionado, ¡no puedo esperar!"
+    }
+  ],
+  "PreGameDialogs": [
+    {
+      "character": "MrBear",
+      "text": "Hemos recreado el juego Beast Card Clash en este espacio que ven aquí",
+      "_note": "MrBear apunta al espacio del cesped atrás del stand"
+    },
+    {
+      "character": "MrBear",
+      "text": "¡Y el jugador que dure con la mayor energía al final del juego ganará 10.000 dólares!"
+    },
+    {
+      "character": "Player",
+      "text": "¿10.000 dólares? Wow! No puedo creerlo!"
+    },
+    {
+      "character": "Bot1",
+      "text": "¡Te voy a ganar! ¡Ya lo verás!"
+    },
+    {
+      "character": "MrBear",
+      "text": "¿Listos? ¡A jugar!"
+    }
+  ],
+  "WinDialogs": [
+    {
+      "character": "MrBear",
+      "text": "¡Felicitaciones, has ganado 10.000 dólares! ¿Cómo te pareció la experiencia?"
+    },
+    {
+      "character": "Player",
+      "text": "¡Estuvo muy divertido el juego!"
+    },
+    {
+      "character": "Player",
+      "text": "Le mando un saludo a mis primos, Kenny, Wolfy y a mi madre que vea que estoy triunfando"
+    },
+    {
+      "character": "MrBear",
+      "text": "Qué bueno, ¿en qué vas a invertir el dinero que acabas de ganar?"
+    },
+    {
+      "character": "Player",
+      "text": "En pagar mi educación, la verdad es que este lugar vale mucho la pena"
+    },
+    {
+      "character": "MrBear",
+      "text": "Bueno, me parece fenomenal, ¡te deseo lo mejor!",
+      "_note": "Aquí acabaría la demo del juego"
+    }
+  ],
+  "LoseDialogs": [
+    {
+      "character": "MrBear",
+      "text": "¡Oh, has perdido! Pero no te preocupes, aquí tienes 1.000 dólares de compensación"
+    },
+    {
+      "character": "Player",
+      "text": "¡Muchas gracias! Te agradezco bastante.",
+      "_note": "Aquí acabaría la demo del juego"
+    }
+  ]
+}
