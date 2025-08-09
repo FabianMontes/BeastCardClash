@@ -4,7 +4,7 @@ public class Target : MonoBehaviour
 {
     // Variables
     [SerializeField] Transform playerCamera; // No puede llamarse Camera por solapamiento
-    [SerializeField] float speed = 7f;
+    [SerializeField] float speed = 10f;
     [SerializeField] bool useArrows = true; // true = flechas o WASD, false = mouse
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
