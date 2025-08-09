@@ -29,7 +29,7 @@ public class PlayerToken : MonoBehaviour
             case Specie.bear:
                 rnd.color = new Color(0.5f, 0.35f, 0.25f);
                 break;
-            case Specie.snake:
+            case Specie.condor:
                 rnd.color = new Color(1f, 0f, 1f);
                 break;
             case Specie.frog:

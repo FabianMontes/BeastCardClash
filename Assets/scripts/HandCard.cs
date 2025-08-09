@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.AI;
 
 [DefaultExecutionOrder(-4)]
 
@@ -9,7 +10,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int handPos;
     [SerializeField] Card card;
-    TextMeshProUGUI textMeshPro;
     Figther player;
     Button button;
 
@@ -18,7 +18,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
         player = GetComponentInParent<Figther>();
         prevSetMoment = SetMoments.PickDice;
         button = transform.GetComponent<Button>();
@@ -81,31 +80,13 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         this.card = card;
         if (card == null)
         {
-            textMeshPro.text = "";
             transform.GetComponent<Image>().enabled = false;
         }
         else
         {
-            textMeshPro.text = card.GetID();
 
             Image image = transform.GetComponent<Image>();
 
-            image.enabled = true;
-            switch (card.GetElement())
-            {
-                case Element.fire:
-                    image.color = Color.red;
-                    break;
-                case Element.earth:
-                    image.color = Color.green;
-                    break;
-                case Element.water:
-                    image.color = Color.blue;
-                    break;
-                case Element.air:
-                    image.color = Color.white;
-                    break;
-            }
         }
     }
 

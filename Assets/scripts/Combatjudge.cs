@@ -29,19 +29,23 @@ public enum CombatType
 public class Combatjudge : MonoBehaviour
 {
     [Header("Players")]
-    [SerializeField] int manyPlayers;
+    [SerializeField] int manyFigthers;
+    public int round { get; private set; }
     [SerializeField] GameObject player;
-    Figther[] players;
+    [SerializeField] GameObject Bots;
+    Figther[] figthers;
 
     [Header("GameRules")]
-    [SerializeField] int playerTurn;
-    [SerializeField] SetMoments setMoments;
+    [SerializeField] int figtherTurn;
+    [SerializeField] SetMoments actualAction;
     [SerializeField] public int maxDice;
     [SerializeField] int initialLives;
+    [SerializeField] int damageDealt;
+    [SerializeField] int damageHeal;
 
-    public CombatType combatType;
+    public CombatType combatType { get; private set; }
     private int playersFigthing;
-    private int manyplayersFigthing;
+    private int manyFigthersFigthing;
     public static Combatjudge combatjudge;
     private bool all;
 
@@ -58,52 +62,48 @@ public class Combatjudge : MonoBehaviour
             Destroy(gameObject);
         }
 
-        setMoments = SetMoments.Loop;
+        actualAction = SetMoments.Loop;
         Figther[] playeres = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
 
-        if (playeres.Length > manyPlayers)
+        if (playeres.Length > manyFigthers)
         {
-            manyPlayers = playeres.Length;
+            manyFigthers = playeres.Length;
         }
 
         PlayZone zone = FindFirstObjectByType<PlayZone>();
         Canvas canvas = FindFirstObjectByType<Canvas>();
 
-        int div = zone.many / manyPlayers;
+        int div = zone.many / manyFigthers;
 
-        players = new Figther[manyPlayers];
+        figthers = new Figther[manyFigthers];
 
-        for (int i = 0; i < manyPlayers; i++)
+        for (int i = 0; i < manyFigthers; i++)
         {
             if (playeres.Length <= i)
             {
-                players[i] = Instantiate(player).GetComponent<Figther>();
-                players[i].transform.SetParent(canvas.transform, false);
-                players[i].randomSpecie();
+                figthers[i] = Instantiate(player).GetComponent<Figther>();
+                figthers[i].transform.SetParent(canvas.transform, false);
+                figthers[i].randomSpecie();
             }
             else
             {
-                players[i] = playeres[i];
+                figthers[i] = playeres[i];
             }
-            players[i].setPlayerLive(initialLives);
-            players[i].visualFigther = i+1;
-            players[i].indexFigther = i;
+            figthers[i].setPlayerLive(initialLives);
+            figthers[i].visualFigther = i+1;
+            figthers[i].indexFigther = i;
 
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
-            players[i].initialStone = rocky;
+            figthers[i].initialStone = rocky;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i <= 9; i++)
-        {
-            if (Input.GetKeyDown(i.ToString())) AsignarNumeros(i);
-        }
 
 
-        switch (setMoments)
+        switch (actualAction)
         {
             case SetMoments.PickDice:
                 break;
@@ -119,7 +119,7 @@ public class Combatjudge : MonoBehaviour
                 break;
             case SetMoments.PickCard:
                 all = true;
-                foreach( Figther  player in players)
+                foreach( Figther  player in figthers)
 
                 {
                     if (player.getPicked() == null && player.IsFigthing())
@@ -130,26 +130,26 @@ public class Combatjudge : MonoBehaviour
                 }
                 if (all)
                 {
-                    setMoments = SetMoments.Reveal;
+                    actualAction = SetMoments.Reveal;
                 }
 
                 break;
             case SetMoments.Reveal:
-                setMoments = SetMoments.Result;
+                actualAction = SetMoments.Result;
                 break;
             case SetMoments.Result:
-                Card[] card = new Card[manyPlayers];
+                Card[] card = new Card[manyFigthers];
                 int a = 0;
-                foreach (Figther player in players)
+                foreach (Figther player in figthers)
                 {
                     card[a] = player.getPicked();
                     a++;
                 }
 
-                Results[,] results = new Results[manyPlayers, manyPlayers];
-                for (int i = 0; i < manyPlayers; i++)
+                Results[,] results = new Results[manyFigthers, manyFigthers];
+                for (int i = 0; i < manyFigthers; i++)
                 {
-                    for (int j = 0; j < manyPlayers; j++)
+                    for (int j = 0; j < manyFigthers; j++)
                     {
                         results[i, j] = IndvCombat(card[i], card[j]);
                         print(results[i, j]);
@@ -157,11 +157,11 @@ public class Combatjudge : MonoBehaviour
                     print("dd");
                 }
 
-                int[] destiny = new int[manyPlayers];
-                for (int i = 0; i < manyPlayers; i++)
+                int[] destiny = new int[manyFigthers];
+                for (int i = 0; i < manyFigthers; i++)
                 {
                     destiny[i] = 0;
-                    for (int j = 0; j < manyPlayers; j++)
+                    for (int j = 0; j < manyFigthers; j++)
                     {
                         int resulta = (int)results[i, j] - 1;
                         if (destiny[i] == 0)
@@ -175,19 +175,19 @@ public class Combatjudge : MonoBehaviour
                         }
                     }
                     print(destiny[i]);
-                    players[i].addPlayerLive(destiny[i]);
+                    figthers[i].addPlayerLive(destiny[i]);
                 }
 
-                setMoments = SetMoments.Loop;
+                actualAction = SetMoments.Loop;
                 break;
             case SetMoments.Loop:
-                playerTurn = (playerTurn + 1) % manyPlayers;
-                for (int i = 0; i < manyPlayers; i++)
+                figtherTurn = (figtherTurn + 1) % manyFigthers;
+                for (int i = 0; i < manyFigthers; i++)
                 {
-                    players[i].RefillHand();
-                    players[i].ThrowCard();
+                    figthers[i].RefillHand();
+                    figthers[i].ThrowCard();
                 }
-                setMoments = SetMoments.PickDice;
+                actualAction = SetMoments.PickDice;
                 playersFigthing = 0;
 
                 break;
@@ -263,75 +263,56 @@ public class Combatjudge : MonoBehaviour
 
     public void Roled(int value)
     {
-        RockBehavior lander = players[playerTurn].playerToken.rocky;
+        RockBehavior lander = figthers[figtherTurn].playerToken.rocky;
         RockBehavior[] rocker = lander.getNeighbor(value);
         rocker[0].shiny = true;
         rocker[1].shiny = true;
-        setMoments = SetMoments.GlowRock;
+        actualAction = SetMoments.GlowRock;
     }
 
     public SetMoments GetSetMoments()
     {
-        return setMoments;
+        return actualAction;
     }
     public void ArriveAtRock()
     {
-        RockBehavior rocky = players[playerTurn].playerToken.rocky;
+        RockBehavior rocky = figthers[figtherTurn].playerToken.rocky;
         if (rocky.manyOn())
         {
             playersFigthing = rocky.GetPlayersOn();
-            manyplayersFigthing = rocky.ManyPlayerOn();
+            manyFigthersFigthing = rocky.ManyPlayerOn();
         }
         else
         {
-            playersFigthing = (int)Mathf.Pow(2, manyPlayers) - 1;
+            playersFigthing = (int)Mathf.Pow(2, manyFigthers) - 1;
 
-            manyplayersFigthing = manyPlayers;
+            manyFigthersFigthing = manyFigthers;
         }
         if (rocky.inscription == Inscription.pick)
         {
-            setMoments = SetMoments.SelecCombat;
+            actualAction = SetMoments.SelecCombat;
         }
         else
         {
-            setMoments = SetMoments.PickCard;
+            actualAction = SetMoments.PickCard;
             combatType = (CombatType)(int)rocky.inscription;
         }
     }
 
     public void MoveToRock(RockBehavior rocker)
     {
-        players[playerTurn].playerToken.rocky = rocker;
-        setMoments = SetMoments.MoveToRock;
-    }
-
-    void AsignarNumeros(int baseIndex)
-    {
-        baseIndex = baseIndex % manyPlayers;
-        for (int i = 0; i < manyPlayers; i++)
-        {
-            if (i == baseIndex)
-            {
-                players[i].visualFigther = 1;
-            }
-            else
-            {
-                // Calcular distancia circular desde baseIndex
-                int offset = (i - baseIndex + manyPlayers) % manyPlayers + 1;
-                players[i].visualFigther = offset;
-            }
-        }
-
+        figthers[figtherTurn].playerToken.rocky = rocker;
+        actualAction = SetMoments.MoveToRock;
     }
 
     public bool pickElement(Element element)
     {
-        if (SetMoments.SelecCombat == setMoments)
+        if (SetMoments.SelecCombat == actualAction)
         {
             try
             {
                 combatType = (CombatType)(int)element;
-                setMoments = SetMoments.PickCard;
+                actualAction = SetMoments.PickCard;
             }
             catch (Exception e)
             {
@@ -349,6 +330,6 @@ public class Combatjudge : MonoBehaviour
     }
     public bool FocusONTurn()
     {
-        return players[playerTurn].visualFigther == 1;
+        return figthers[figtherTurn].visualFigther == 1;
     }
 }

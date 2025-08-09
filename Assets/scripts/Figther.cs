@@ -1,16 +1,23 @@
 using System;
 using UnityEngine;
 
+public enum Team
+{
+    one, two, tree, four, five, six, seven, eight
+}
+
 public enum Specie
 {
-    chameleon, bear, snake, frog
+    bear, frog, chameleon, condor
 }
+
 
 [DefaultExecutionOrder(0)]
 public class Figther : MonoBehaviour
 {
     [Header("FigtherData")]
     [SerializeField] int figtherLive;
+    [SerializeField] Team team;
     [SerializeField] Specie specie;
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
@@ -95,7 +102,7 @@ public class Figther : MonoBehaviour
 
     public void randomSpecie()
     {
-        specie = (Specie)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Specie)).Length);
+        specie = Specie.bear;
     }
 
     public void movePlayer(RockBehavior rocker)
