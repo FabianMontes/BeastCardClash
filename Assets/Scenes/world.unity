@@ -1237,7 +1237,7 @@ MonoBehaviour:
   Prefabs:
   - {fileID: 2201745171556616174, guid: 5167cc569bf63894385f211d91789c6c, type: 3}
   - {fileID: 4248220608516561891, guid: f593ee7e5d062cb43aa2fd344f47335a, type: 3}
-  SpieceEnum: 1
+  SpieceEnum: 0
   Agent: {fileID: 1283958270}
 --- !u!1 &1370876357
 GameObject:
