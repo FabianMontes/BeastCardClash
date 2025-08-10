@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el script `CameraTarget.cs`:
-
----
-
 # `CameraTarget.cs`
 
 ## 1. Propósito General
@@ -26,5 +22,3 @@ Esta clase hereda de `MonoBehaviour`, lo que significa que es un componente que 
 *   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, como todos los `MonoBehaviour` en Unity, inherentemente requiere un componente `Transform` en el `GameObject` al que está adjunto para poder manipular su posición.
 *   **Eventos (Entrada):** Este script no se suscribe a eventos externos como eventos de UI o eventos personalizados. Su comportamiento está directamente impulsado por el ciclo de actualización de Unity (`Update`).
 *   **Eventos (Salida):** El script `CameraTarget` no invoca ni expone ningún evento (como `UnityEvent` o `Action`) para que otros sistemas puedan suscribirse. Su efecto es puramente interno, manipulando la posición de su propio `Transform`.
-
----

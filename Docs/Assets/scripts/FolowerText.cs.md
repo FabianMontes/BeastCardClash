@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el script `FolowerText.cs`.
-
----
-
 # `FolowerText.cs`
 
 ## 1. Propósito General
@@ -31,5 +27,3 @@ Este script gestiona la visualización dinámica de texto en un componente `Text
 -   **Componentes Requeridos:** Aunque no se utiliza el atributo `[RequireComponent]`, este script asume la existencia de un `TextMeshProUGUI` en el mismo GameObject y un componente `Figther` en uno de sus GameObjects padres para funcionar correctamente. Sin estos componentes, el script no podrá inicializar sus referencias y la funcionalidad de visualización de texto no operará.
 -   **Eventos (Entrada):** Este script no se suscribe explícitamente a eventos personalizados (como `UnityEvent` o `Action`). Su funcionamiento se basa enteramente en los métodos de ciclo de vida de Unity (`Start`, `Update`).
 -   **Eventos (Salida):** El script `FolowerText` no invoca ningún evento ni notifica a otros sistemas. Su función es puramente de visualización; no emite señales ni dispara acciones en otras partes del juego.
-
----

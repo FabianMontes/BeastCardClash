@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para `Roundanimation.cs`:
-
----
-
 # `Roundanimation.cs`
 
 ## 1. Propósito General
@@ -35,5 +31,3 @@ Este script `Roundanimation` gestiona la animación visual de un indicador de "r
 -   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que su `GameObject` padre tenga un componente `UnityEngine.UI.Image`, ya que el script intenta habilitar/deshabilitar este componente durante la animación (`transform.parent.GetComponent<Image>().enabled = true/false;`).
 -   **Eventos (Entrada):** Este script no se suscribe a ningún evento de Unity o de componentes externos. Es controlado externamente a través de llamadas directas a su método público `startRound()`.
 -   **Eventos (Salida):** Este script no invoca ningún `UnityEvent` o `Action` personalizado para notificar a otros sistemas sobre el progreso o la finalización de la animación. Su principal "salida" de información es la propiedad estática `Roundanimation.round`.
-
----

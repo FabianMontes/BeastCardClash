@@ -1,5 +1,3 @@
-Aquí está la documentación técnica para el archivo `RockBehavior.cs`:
-
 # `RockBehavior.cs`
 
 ## 1. Propósito General

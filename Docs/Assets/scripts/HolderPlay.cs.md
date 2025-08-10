@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el archivo `HolderPlay.cs`:
-
----
-
 # `HolderPlay.cs`
 
 ## 1. Propósito General

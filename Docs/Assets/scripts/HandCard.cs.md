@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el archivo `HandCard.cs`, siguiendo la estructura y las instrucciones proporcionadas:
-
----
-
 # `HandCard.cs`
 
 ## 1. Propósito General
@@ -43,5 +39,3 @@ El script `HandCard` gestiona la representación visual y la interactividad de u
 
 -   **Eventos (Salida):**
     Este script no invoca sus propios `UnityEvent` o `Action` para notificar a otros sistemas. En su lugar, se comunica directamente con el sistema `Figther` (al cual pertenece) llamando a `player.PlayCard(card)` cuando la carta es seleccionada. También consulta el estado del sistema de combate a través de `Combatjudge.combatjudge.GetSetMoments()` y `Combatjudge.combatjudge.combatType`.
-
----

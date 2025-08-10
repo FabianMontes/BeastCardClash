@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el script `dice.cs`, diseñada para un nuevo miembro del equipo:
-
----
-
 # `dice.cs`
 
 ## 1. Propósito General
@@ -64,5 +60,3 @@ El script `dice.cs` gestiona el comportamiento y la representación visual de un
 
 - **Eventos (Salida):**
     Este script no invoca explícitamente eventos (`UnityEvent`, `Action`) definidos dentro de sí mismo. Sin embargo, actúa como un emisor de información al interactuar directamente con el singleton `Combatjudge.combatjudge`, llamando al método `Roled(value)` para notificar el resultado de un lanzamiento de dado. Esta interacción es crucial para que el sistema de combate procese los resultados del lanzamiento.
-
----

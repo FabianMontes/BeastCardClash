@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el archivo `PlayZone.cs`, siguiendo la estructura y pautas solicitadas:
-
----
-
 # `PlayZone.cs`
 
 ## 1. Propósito General
@@ -73,5 +69,3 @@ Este script `PlayZone` es un `MonoBehaviour` que gestiona la creación y configu
     - Depende de la existencia de la enumeración `Inscription` y la clase `RockBehavior`, las cuales no están definidas en este archivo y se espera que existan en otro lugar del proyecto.
 - **Eventos (Entrada):** Este script no se suscribe explícitamente a ningún evento de Unity (`UnityEvent`, `Action`) o de UI en el código proporcionado.
 - **Eventos (Salida):** Este script no invoca ni emite ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas. Se comunica con los `RockBehavior` instanciados estableciendo sus propiedades directamente.
-
----

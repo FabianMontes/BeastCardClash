@@ -1,5 +1,3 @@
-Aquí tienes la documentación técnica para el script `PlayerToken.cs`:
-
 # `PlayerToken.cs`
 
 ## 1. Propósito General

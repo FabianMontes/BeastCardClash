@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el script `Combatjudge.cs`, diseñada para un nuevo miembro del equipo:
-
----
-
 # `Combatjudge.cs`
 
 ## 1. Propósito General
@@ -80,5 +76,3 @@ La lógica central de `Combatjudge` se basa en su **máquina de estados** impuls
 
 *   **Eventos (Salida):**
     `Combatjudge` no emite eventos explícitos de `UnityEvent` o `Action` para notificar a otros sistemas. En su lugar, gestiona el flujo de juego internamente a través de cambios en su variable de estado `setMoments`, y realiza **llamadas directas a métodos** de otros objetos, principalmente `Figther` (ej. `player.setPlayerLive()`, `player.RefillHand()`, `player.ThrowCard()`) y `RockBehavior` (ej. `rocker.shiny = true`), actuando como un controlador central que dicta las acciones de otros componentes. Otros sistemas necesitarían consultar el estado actual a través de `GetSetMoments()` o reaccionar a las manipulaciones directas de `Combatjudge` sobre ellos.
-
----

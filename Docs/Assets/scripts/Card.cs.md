@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el archivo `Card.cs` en formato Markdown (GFM):
-
----
-
 # `Card.cs`
 
 ## 1. Propósito General
@@ -40,5 +36,3 @@ Este script define la estructura y el comportamiento fundamental de una carta in
 - **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, lo que significa que no exige la presencia de ningún otro componente específico en el `GameObject` al que se adjunta.
 - **Eventos (Entrada):** El script `Card` no se suscribe ni escucha ningún evento externo (como eventos de interfaz de usuario, eventos del sistema, o eventos de otros scripts) para realizar sus operaciones. Su comportamiento se inicia y gestiona internamente, principalmente a través del ciclo de vida de Unity (`Start`).
 - **Eventos (Salida):** Este script no invoca ni emite ningún evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas o scripts sobre cambios en su estado o acciones. Sus métodos públicos son puramente "getters" para consultar sus propiedades.
-
----

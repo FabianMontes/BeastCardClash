@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el archivo `MeshAnimation.cs`:
-
----
-
 # `MeshAnimation.cs`
 
 ## 1. Propósito General
@@ -78,5 +74,3 @@ Este script gestiona las animaciones y la apariencia visual (skins) de un person
 
 - **Eventos (Salida):**
     - Este script no invoca ningún evento (`UnityEvent` o `Action`) para notificar a otros sistemas sobre cambios o estados. Toda su interacción es a través de sus métodos públicos.
-
----

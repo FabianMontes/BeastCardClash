@@ -1,7 +1,3 @@
-Aquí tienes la documentación técnica para el script `DialogManager.cs`:
-
----
-
 # `DialogManager.cs`
 
 ## 1. Propósito General
@@ -89,5 +85,3 @@ Este script es responsable de gestionar y mostrar los diálogos interactivos en 
 - **Eventos (Salida):**
     - Este script no invoca eventos de `UnityEvent` o `Action` para notificar a otros sistemas. Su interacción con el script `Target` es directa al habilitar/deshabilitar su componente.
     - El método `public void SetGameState(GameStates newState)` actúa como un punto de entrada público para que otros sistemas modifiquen el comportamiento de los diálogos.
-
----
