@@ -385,9 +385,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
   namePanel: {fileID: 1707174596}
+  textPanel: {fileID: 338252664}
   characterName: Bot
-  maxDistance: 3
   target: {fileID: 620801220}
+  maxDistance: 3
+  gameState: 0
+  dialogFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
 --- !u!1 &171694192
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,9 +824,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
   namePanel: {fileID: 1707174596}
+  textPanel: {fileID: 338252664}
   characterName: Mr. Bear
-  maxDistance: 3
   target: {fileID: 620801220}
+  maxDistance: 3
+  gameState: 1
+  dialogFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
 --- !u!1 &338252662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1599,9 +1605,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
   namePanel: {fileID: 1707174596}
+  textPanel: {fileID: 338252664}
   characterName: Chandler
-  maxDistance: 3
   target: {fileID: 620801220}
+  maxDistance: 3
+  gameState: 0
+  dialogFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
 --- !u!1 &874966753
 GameObject:
   m_ObjectHideFlags: 0
@@ -3046,9 +3055,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
   namePanel: {fileID: 1707174596}
+  textPanel: {fileID: 338252664}
   characterName: Karl
-  maxDistance: 3
   target: {fileID: 620801220}
+  maxDistance: 3
+  gameState: 0
+  dialogFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
