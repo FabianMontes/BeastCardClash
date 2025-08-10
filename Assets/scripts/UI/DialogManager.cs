@@ -65,41 +65,37 @@ public class DialogManager : MonoBehaviour
         float distance = Vector3.Distance(transform.position, target.position);
         bool targetInRange = distance <= maxDistance;
 
-        // Si el jugador está en rango y presiona 'Z', llama a la función de diálogo
-        // Si no, verifica que esté en diálogo y si se presiona 'Z', avanza al siguiente diálogo
-        // Si tampoco, evalúa que esté en diálogo y presione C: significa que se salta el diálogo
-        if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z))
-        {
-            ShowDialogPanel();
-        }
-        else if (inDialog && Input.GetKeyDown(KeyCode.Z))
-        {
-            currentDialogIndex++;
-            DisplayDialog();
-        }
-        else if (inDialog && Input.GetKeyDown(KeyCode.C))
-        {
-            EndDialog();
-        }
-    }
+        // Si el jugador está en rango y presiona 'Z' sin estar en el diálogo, llama a la función de diálogo
+        if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z)) ShowDialogPanel();
 
-    // Cambia el estado del juego, desde afuera
-    public void SetGameState(GameStates newState)
-    {
-        gameState = newState;
+        // Verifica que esté en diálogo
+        if (inDialog)
+        {
+            // Verifica si se presiona 'Z', avanza al siguiente diálogo
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                currentDialogIndex++;
+                DisplayDialog();
+            }
+
+            // Verifica si se presiona C, significa que se salta el diálogo
+            if (Input.GetKeyDown(KeyCode.C)) EndDialog();
+        }
     }
 
     // Muestra el panel de diálogo
     void ShowDialogPanel()
     {
-        if (inDialog) return; // Evita reiniciar si ya estás en diálogo
+        // Evita reiniciar si ya estás en diálogo
+        if (inDialog) return;
 
         // Activa los diálogos y desactiva el movimiento
         inDialog = true;
         targetScript.enabled = false;
         dialogPanel.SetActive(true);
 
-        currentDialogIndex = 0; // Pone el diálogo inicial (posición 0)
+        // Pone el diálogo inicial (posición 0)
+        currentDialogIndex = 0;
         DisplayDialog();
     }
 
@@ -117,26 +113,28 @@ public class DialogManager : MonoBehaviour
             case GameStates.lose:
                 return dialogFileContent.LoseDialogs;
             default:
-                return new Dialogs[0]; // Si el estado actual no es reconocido, devuelve un array vacío
+                // Si el estado actual no es reconocido, devuelve un array vacío
+                return new Dialogs[0];
         }
     }
 
     // Muestra el siguiente diálogo
     void DisplayDialog()
     {
-        var dialogs = GetDialogsForState(); // Obtiene los diálogos según el estado actual
+        // Obtiene los diálogos según el estado actual
+        var dialogs = GetDialogsForState();
 
         // Verifica que estemos en medio del diálogo y que haya más diálogos
-        // Si es así, muestra el diálogo
-        // Si no, cierra el diálogo y activa el movimiento
         if (currentDialogIndex < dialogs.Length)
         {
+            // Pone el nombre y texto del diálogo
             namePanel.text = dialogs[currentDialogIndex].character;
             textPanel.text = dialogs[currentDialogIndex].text;
             currentDialog = dialogs[currentDialogIndex];
         }
         else
         {
+            // Si no hay más diálogos, termina el diálogo
             EndDialog();
         }
     }
@@ -144,9 +142,18 @@ public class DialogManager : MonoBehaviour
     // Le da fin al diálogo
     void EndDialog()
     {
+        // Desactiva los diálogos y activa el movimiento
         inDialog = false;
         dialogPanel.SetActive(false);
         targetScript.enabled = true;
-        currentDialogIndex = 0; // Reinicia el índice del diálogo
+
+        // Reinicia el índice del diálogo
+        currentDialogIndex = 0;
+    }
+
+    // Cambia el estado del juego, desde afuera
+    public void SetGameState(GameStates newState)
+    {
+        gameState = newState;
     }
 }
