@@ -18,7 +18,7 @@ public class SelectType : MonoBehaviour
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if (momo != prevSetMoment)
         {
-            if (momo == SetMoments.SelecCombat) Visib(true);
+            if (momo == SetMoments.SelecCombat && GetComponentInParent<Figther>().IsFigthing()) Visib(true);
             prevSetMoment = momo;
         }
     }
@@ -26,10 +26,6 @@ public class SelectType : MonoBehaviour
     private void Visib(bool isVisible)
     {
         transform.GetChild(0).gameObject.SetActive(isVisible);
-        transform.GetChild(1).gameObject.SetActive(isVisible);
-        transform.GetChild(2).gameObject.SetActive(isVisible);
-        transform.GetChild(3).gameObject.SetActive(isVisible);
-        transform.GetComponent<Image>().enabled = isVisible;
     }
 
     public void PickElement(int element)

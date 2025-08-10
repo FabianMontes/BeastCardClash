@@ -224,7 +224,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46.6
+  m_fontSize: 74.83
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -436,7 +436,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.75
+  m_fontSize: 73.17
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -586,7 +586,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.65
+  m_fontSize: 83.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -738,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2608954883597049136
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1107,7 +1107,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.65
+  m_fontSize: 83.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.75
+  m_fontSize: 73.17
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2039,7 +2039,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52.95
+  m_fontSize: 74.83
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3160,7 +3160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983d350373576994986ccbba6025aa10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerLive: 10
+  figtherLive: 0
+  team: 0
   specie: 0
   deckSize: 12
   handSize: 6
@@ -3168,8 +3169,8 @@ MonoBehaviour:
   tokenPrefab: {fileID: 6461416782824158601, guid: bcef3dd17339fd449aeda4b8048de20e, type: 3}
   cardPrefab: {fileID: 6136769937937318594, guid: 1ed70332260916f46a6cb59fab466b68, type: 3}
   playerToken: {fileID: 0}
-  visualPlayer: 0
-  indexPlayer: -1
+  visualFigther: 0
+  indexFigther: -1
   initialStone: {fileID: 0}
 --- !u!1 &8720122373670442445
 GameObject:
@@ -3465,6 +3466,14 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 14.35
       objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (2)
@@ -3574,6 +3583,14 @@ PrefabInstance:
     - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_fontSize
       value: 14.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
@@ -3685,6 +3702,14 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 14.35
       objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card (3)
@@ -3794,6 +3819,14 @@ PrefabInstance:
     - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_fontSize
       value: 14.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
@@ -3905,6 +3938,14 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 14.35
       objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card
@@ -4010,6 +4051,14 @@ PrefabInstance:
     - target: {fileID: 1071575978784171910, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_fontSize
       value: 14.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1575306457096195953, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_fontSize
+      value: 18.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731948438021433034, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name

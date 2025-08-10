@@ -39,7 +39,7 @@ public class Combatjudge : MonoBehaviour
     [SerializeField] int figtherTurn;
     [SerializeField] SetMoments actualAction;
     [SerializeField] public int maxDice;
-    [SerializeField] int initialLives;
+    [SerializeField] public int initialLives;
     [SerializeField] int damageDealt;
     [SerializeField] int damageHeal;
 
@@ -79,9 +79,10 @@ public class Combatjudge : MonoBehaviour
 
         for (int i = 0; i < manyFigthers; i++)
         {
+            GameObject figther = i == 0 ? player : Bots;
             if (playeres.Length <= i)
             {
-                figthers[i] = Instantiate(player).GetComponent<Figther>();
+                figthers[i] = Instantiate(figther).GetComponent<Figther>();
                 figthers[i].transform.SetParent(canvas.transform, false);
                 figthers[i].randomSpecie();
             }
@@ -268,6 +269,10 @@ public class Combatjudge : MonoBehaviour
         rocker[0].shiny = true;
         rocker[1].shiny = true;
         actualAction = SetMoments.GlowRock;
+        if(figtherTurn != 0)
+        {
+            figthers[figtherTurn].transform.GetComponent<BotPlayer>().pickRock(rocker);
+        }
     }
 
     public SetMoments GetSetMoments()

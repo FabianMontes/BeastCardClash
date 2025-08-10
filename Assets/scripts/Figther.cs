@@ -1,4 +1,4 @@
-using System;
+
 using UnityEngine;
 
 public enum Team
@@ -17,8 +17,10 @@ public class Figther : MonoBehaviour
 {
     [Header("FigtherData")]
     [SerializeField] int figtherLive;
-    [SerializeField] Team team;
+    [SerializeField] public string figtherName;    
+    [SerializeField] public Team team;
     [SerializeField] Specie specie;
+    [SerializeField] int skin;
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
     public int avalaibleCard = 0;
@@ -103,6 +105,7 @@ public class Figther : MonoBehaviour
     public void randomSpecie()
     {
         specie = Specie.bear;
+        skin = Random.Range(0,2);
     }
 
     public void movePlayer(RockBehavior rocker)

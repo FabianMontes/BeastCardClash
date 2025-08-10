@@ -3,7 +3,7 @@ using UnityEngine;
 
 enum TypeFollow
 {
-    species, live
+    species, live, name
 }
 
 public class FolowerText : MonoBehaviour
@@ -28,6 +28,9 @@ public class FolowerText : MonoBehaviour
                     break;
                 case TypeFollow.live:
                     text = player.GetPlayerLive().ToString();
+                    break;
+                case TypeFollow.name:
+                    text = player.figtherName;
                     break;
             }
             textMeshPro.text = text;

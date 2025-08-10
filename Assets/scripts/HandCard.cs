@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
+using UnityEngine.Playables;
 
 [DefaultExecutionOrder(-4)]
 
@@ -10,6 +11,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int handPos;
     [SerializeField] Card card;
+    [SerializeField] bool playable = true; 
     Figther player;
     Button button;
 
@@ -28,6 +30,11 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Update is called once per frame
     void Update()
     {
+        if (!playable)
+        {
+            return;
+        }
+
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if (momo != prevSetMoment)
         {
@@ -99,5 +106,10 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public Card GetCard()
     {
         return card;
+    }
+
+    public bool Selectable()
+    {
+        return button.interactable;
     }
 }
