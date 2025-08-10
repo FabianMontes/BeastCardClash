@@ -64,7 +64,11 @@ public class Combatjudge : MonoBehaviour
 
         actualAction = SetMoments.Loop;
         Figther[] playeres = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
-
+        print(playeres.Length);
+        foreach (Figther f in playeres)
+        {
+            print(f.GetInstanceID());
+        }
         if (playeres.Length > manyFigthers)
         {
             manyFigthers = playeres.Length;

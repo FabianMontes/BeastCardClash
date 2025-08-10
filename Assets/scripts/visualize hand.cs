@@ -30,7 +30,7 @@ public class visualizehand : MonoBehaviour
         {
             hand.GetChild(i).GetComponent<Image>().enabled = activelast;
             hand.GetChild(i).GetComponent<Button>().enabled = activelast;
-            hand.GetChild(i).GetChild(0).gameObject.SetActive(activelast);
+            //hand.GetChild(i).GetChild(0).gameObject.SetActive(activelast);
         }
     }
 }
