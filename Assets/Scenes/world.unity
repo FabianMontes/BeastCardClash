@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 169462511}
   - component: {fileID: 169462515}
   m_Layer: 0
-  m_Name: Bot1
+  m_Name: Bot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,7 +364,7 @@ Transform:
   m_GameObject: {fileID: 169462510}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.35599324, z: -0, w: 0.93448853}
-  m_LocalPosition: {x: -25.66, y: 2, z: 15.66}
+  m_LocalPosition: {x: -13, y: 2, z: 25.02}
   m_LocalScale: {x: 1.5, y: 4, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -384,8 +384,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
-  maxDistance: 4
-  player: {fileID: 1283958268}
+  namePanel: {fileID: 1707174596}
+  characterName: Bot
+  maxDistance: 3
+  target: {fileID: 620801220}
 --- !u!1 &171694192
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,7 +405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &171694193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -438,7 +440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.6226415, g: 0.18679239, b: 0.18679239, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -798,7 +800,7 @@ Transform:
   m_GameObject: {fileID: 321968506}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.35599324, z: -0, w: 0.93448853}
-  m_LocalPosition: {x: -25.45, y: 2, z: 19.42}
+  m_LocalPosition: {x: -26.4, y: 2, z: 10}
   m_LocalScale: {x: 1.5, y: 4, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -818,8 +820,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
-  maxDistance: 4
-  player: {fileID: 1283958268}
+  namePanel: {fileID: 1707174596}
+  characterName: Mr. Bear
+  maxDistance: 3
+  target: {fileID: 620801220}
 --- !u!1 &338252662
 GameObject:
   m_ObjectHideFlags: 0
@@ -854,8 +858,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 325.83, y: -1.9703}
-  m_SizeDelta: {x: 606.129, y: -64.587}
+  m_AnchoredPosition: {x: 275.45, y: 0}
+  m_SizeDelta: {x: 503.0439, y: -64.587}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &338252664
 MonoBehaviour:
@@ -877,10 +881,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: gay el que lo lea
+  m_text: "Este texto se sobreescribe autom\xE1ticamente cuando se coloquen los di\xE1logos.\nNo
+    puedes moverte cuando aparece un di\xE1logo."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ed1351af2ba721948bf449ff28f2572a, type: 2}
+  m_sharedMaterial: {fileID: 6796600414562057370, guid: ed1351af2ba721948bf449ff28f2572a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -904,8 +909,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1573,7 +1578,7 @@ Transform:
   m_GameObject: {fileID: 873907685}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.35599324, z: -0, w: 0.93448853}
-  m_LocalPosition: {x: -19.82, y: 2, z: 25.87}
+  m_LocalPosition: {x: -19.29, y: 2, z: 19.74}
   m_LocalScale: {x: 1.5, y: 4, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1593,8 +1598,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
-  maxDistance: 4
-  player: {fileID: 1283958268}
+  namePanel: {fileID: 1707174596}
+  characterName: Chandler
+  maxDistance: 3
+  target: {fileID: 620801220}
 --- !u!1 &874966753
 GameObject:
   m_ObjectHideFlags: 0
@@ -2405,7 +2412,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Bot 1
+  m_text: Bot
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed1351af2ba721948bf449ff28f2572a, type: 2}
   m_sharedMaterial: {fileID: 6796600414562057370, guid: ed1351af2ba721948bf449ff28f2572a, type: 2}
@@ -2791,7 +2798,7 @@ GameObject:
   - component: {fileID: 1707174597}
   - component: {fileID: 1707174596}
   m_Layer: 5
-  m_Name: CharacterName
+  m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2836,10 +2843,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: prueba
+  m_text: Nombre
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 437187f9e5c7c4e4abc2acfaeb3928a5, type: 2}
+  m_sharedMaterial: {fileID: 4178872359169343339, guid: 437187f9e5c7c4e4abc2acfaeb3928a5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2863,8 +2870,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3018,7 +3025,7 @@ Transform:
   m_GameObject: {fileID: 1985728312}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.35599324, z: -0, w: 0.93448853}
-  m_LocalPosition: {x: -23.34, y: 2, z: 22.4}
+  m_LocalPosition: {x: -23.82, y: 2, z: 14.75}
   m_LocalScale: {x: 1.5, y: 4, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3038,8 +3045,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogPanel: {fileID: 171694192}
-  maxDistance: 4
-  player: {fileID: 1283958268}
+  namePanel: {fileID: 1707174596}
+  characterName: Karl
+  maxDistance: 3
+  target: {fileID: 620801220}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3048,9 +3057,9 @@ SceneRoots:
   - {fileID: 1370876359}
   - {fileID: 1224181960}
   - {fileID: 606562109}
+  - {fileID: 219053712}
   - {fileID: 1283958268}
   - {fileID: 620801220}
-  - {fileID: 219053712}
   - {fileID: 321968510}
   - {fileID: 1985728316}
   - {fileID: 873907689}
