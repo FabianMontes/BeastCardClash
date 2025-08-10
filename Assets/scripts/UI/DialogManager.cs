@@ -66,7 +66,8 @@ public class DialogManager : MonoBehaviour
         bool targetInRange = distance <= maxDistance;
 
         // Si el jugador está en rango y presiona 'Z', llama a la función de diálogo
-        // De lo contrario, verifica que esté en diálogo y si se presiona 'Z', avanza al siguiente diálogo
+        // Si no, verifica que esté en diálogo y si se presiona 'Z', avanza al siguiente diálogo
+        // Si tampoco, evalúa que esté en diálogo y presione C: significa que se salta el diálogo
         if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z))
         {
             ShowDialogPanel();
@@ -75,6 +76,10 @@ public class DialogManager : MonoBehaviour
         {
             currentDialogIndex++;
             DisplayDialog();
+        }
+        else if (inDialog && Input.GetKeyDown(KeyCode.C))
+        {
+            EndDialog();
         }
     }
 
@@ -132,10 +137,16 @@ public class DialogManager : MonoBehaviour
         }
         else
         {
-            inDialog = false;
-            dialogPanel.SetActive(false);
-            targetScript.enabled = true;
-            currentDialogIndex = 0; // Reinicia el índice del diálogo
+            EndDialog();
         }
+    }
+
+    // Le da fin al diálogo
+    void EndDialog()
+    {
+        inDialog = false;
+        dialogPanel.SetActive(false);
+        targetScript.enabled = true;
+        currentDialogIndex = 0; // Reinicia el índice del diálogo
     }
 }
