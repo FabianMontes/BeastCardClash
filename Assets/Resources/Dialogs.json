@@ -1,11 +1,11 @@
 {
   "Dialogs": [
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Hola, ¿Cómo vas?"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Veo que tienes interés en participar en Beast Card Clash"
     },
     {
@@ -13,23 +13,23 @@
       "text": "¡Sí! De qué trata"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Es un juego de cartas en el que 4 jugadores se enfrentan con un maso de 6 cartas para ver quién gana!"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Es como jugar piedra papel o tijera, pero con 4 elementos"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Los 4 elementos son: Agua, fuego, tierra y aire"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Estas cartas vienen con números de 1 a 10, para un total de 40 cartas"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¿Hasta aquí está claro?, ¿tienes alguna pregunta adicional?"
     },
     {
@@ -37,12 +37,12 @@
       "text": "Si es como un piedra papel o tijeras, ¿Qué elementos le ganan a qué elementos?"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Qué buena pregunta, ten en cuenta lo siguiente:",
       "_note": "Luego de esto, va lo de la tabla, pero no sé como explicarlo"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "[Insertar explicación de la tabla]"
     },
     {
@@ -54,7 +54,7 @@
       "text": "¿Y si todos sacan el mismo número?"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¡De plano empatan y vuelves a comenzar!"
     },
     {
@@ -62,19 +62,19 @@
       "text": "¿Y cómo sé cuando gano?"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Sabía que ibas a preguntar eso"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Gana el que tenga más energía entre los 4 jugadores y elimine a los otros 3"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Todos empiezan con 10 puntos de energía"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Y vas quitándole puntos a tus rivales en la medida en la que les vayas ganando!"
     },
     {
@@ -82,7 +82,7 @@
       "text": "Oh vale, ya entiendo"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¿Entonces vamos a jugar?"
     },
     {
@@ -96,12 +96,12 @@
   ],
   "PreGameDialogs": [
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Hemos recreado el juego Beast Card Clash en este espacio que ven aquí",
-      "_note": "MrBear apunta al espacio del cesped atrás del stand"
+      "_note": "Mr. Bear apunta al espacio del cesped atrás del stand"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¡Y el jugador que dure con la mayor energía al final del juego ganará 10.000 dólares!"
     },
     {
@@ -113,13 +113,13 @@
       "text": "¡Te voy a ganar! ¡Ya lo verás!"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¿Listos? ¡A jugar!"
     }
   ],
   "WinDialogs": [
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¡Felicitaciones, has ganado 10.000 dólares! ¿Cómo te pareció la experiencia?"
     },
     {
@@ -131,7 +131,7 @@
       "text": "Le mando un saludo a mis primos, Kenny, Wolfy y a mi madre que vea que estoy triunfando"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Qué bueno, ¿en qué vas a invertir el dinero que acabas de ganar?"
     },
     {
@@ -139,14 +139,14 @@
       "text": "En pagar mi educación, la verdad es que este lugar vale mucho la pena"
     },
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "Bueno, me parece fenomenal, ¡te deseo lo mejor!",
       "_note": "Aquí acabaría la demo del juego"
     }
   ],
   "LoseDialogs": [
     {
-      "character": "MrBear",
+      "character": "Mr. Bear",
       "text": "¡Oh, has perdido! Pero no te preocupes, aquí tienes 1.000 dólares de compensación"
     },
     {

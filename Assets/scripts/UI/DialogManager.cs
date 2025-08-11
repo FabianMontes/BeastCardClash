@@ -32,8 +32,6 @@ public class DialogManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI namePanel; // Panel de nombre del personaje en la UI
     [SerializeField] private TextMeshProUGUI textPanel; // Panel de texto del diálogo en la UI
 
-    [SerializeField] private string characterName; // Nombre del personaje
-
     // Componentes de jugador y juego
     [SerializeField] private Transform target; // Target (jugador)
     [SerializeField] private float maxDistance = 3f; // Distancia máxima para mostrar el diálogo
@@ -127,7 +125,7 @@ public class DialogManager : MonoBehaviour
         // Verifica que estemos en medio del diálogo y que haya más diálogos
         if (currentDialogIndex < dialogs.Length)
         {
-            // Pone el nombre y texto del diálogo
+            // Pone el texto del diálogo (el nombre lo gestiona el JSON)
             namePanel.text = dialogs[currentDialogIndex].character;
             textPanel.text = dialogs[currentDialogIndex].text;
             currentDialog = dialogs[currentDialogIndex];
