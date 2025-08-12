@@ -35,10 +35,12 @@ public class DialogManager : MonoBehaviour
         bool targetInRange = distance <= maxDistance;
 
         // Si no está en un diálogo, está en el rango y presiona Z, muestra el diálogo
-        if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z)) ShowDialogPanel();
-
-        // Si está en diálogo
-        if (inDialog)
+        // Si está en diálogo, evalúa si presiona Z para continuar
+        if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z))
+        {
+            ShowDialogPanel();
+        }
+        else if (inDialog)
         {
             // Si presiona Z, avanza al siguiente diálogo
             if (Input.GetKeyDown(KeyCode.Z))

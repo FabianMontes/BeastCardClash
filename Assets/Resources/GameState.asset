@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameState: 0
   battleScene: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
-  languages: 0
+  language: 0
   spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
   englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
