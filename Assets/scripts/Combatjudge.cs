@@ -11,7 +11,7 @@ public enum SetMoments
     PickDice, RollDice, RevealDice,
     GlowRock, MoveToRock, SelecCombat,
     PickCard, Reveal, Result,
-    End, Loop, RoundStart, waitingRound
+    End, Loop
 }
 
 public enum Results
@@ -63,37 +63,16 @@ public class Combatjudge : MonoBehaviour
         }
 
         actualAction = SetMoments.Loop;
-        round = 0;
-        figtherTurn = -1;
         Figther[] playeres = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
-
-        int a = 0;
-
-        
-        while (a < playeres.Length)
+        print(playeres.Length);
+        foreach (Figther f in playeres)
         {
-            Figther fake = playeres[a];
-            int e = (int)char.GetNumericValue(fake.name[0]);
-            if(e == a)
-            {
-                a++;
-
-            }
-            else
-            {
-                playeres[a] = playeres[e];
-                playeres[e] = fake;
-            }
-            
-
+            print(f.GetInstanceID());
         }
-        int aa = playeres.Length - manyFigthers;
-        for (; aa > 0; aa--)
+        if (playeres.Length > manyFigthers)
         {
-            Destroy(playeres[playeres.Length - aa].gameObject);
+            manyFigthers = playeres.Length;
         }
-        
-        
 
         PlayZone zone = FindFirstObjectByType<PlayZone>();
         Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -118,12 +97,9 @@ public class Combatjudge : MonoBehaviour
             figthers[i].setPlayerLive(initialLives);
             figthers[i].visualFigther = i+1;
             figthers[i].indexFigther = i;
-            
 
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
             figthers[i].initialStone = rocky;
-            
-            
         }
     }
 
@@ -210,32 +186,17 @@ public class Combatjudge : MonoBehaviour
                 actualAction = SetMoments.Loop;
                 break;
             case SetMoments.Loop:
-
                 figtherTurn = (figtherTurn + 1) % manyFigthers;
                 for (int i = 0; i < manyFigthers; i++)
                 {
                     figthers[i].RefillHand();
                     figthers[i].ThrowCard();
                 }
-                if(figtherTurn == 0)
-                {
-                    actualAction = SetMoments.RoundStart;
-                }
-                else
-                {
-                    actualAction = SetMoments.PickDice;
-                }
-                
+                actualAction = SetMoments.PickDice;
                 playersFigthing = 0;
-                break;
-            case SetMoments.RoundStart:
-                round++;
-                FindFirstObjectByType<Roundanimation>().startRound();
-                actualAction = SetMoments.waitingRound;
+
                 break;
             case SetMoments.End:
-                break;
-            default:
                 break;
         }
     }
@@ -378,14 +339,6 @@ public class Combatjudge : MonoBehaviour
     }
     public bool FocusONTurn()
     {
-        return figtherTurn == 0;
-    }
-
-    public void endRoundScreen()
-    {
-        if(SetMoments.waitingRound == actualAction)
-        {
-            actualAction = SetMoments.PickDice;
-        }
+        return figthers[figtherTurn].visualFigther == 1;
     }
 }
