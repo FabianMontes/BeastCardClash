@@ -4,11 +4,12 @@ using UnityEngine;
 public class BotPlayer : MonoBehaviour
 {
     Figther figther;
-    GameObject hand;
+    Transform hand;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         figther = GetComponent<Figther>();
+        hand = transform.GetChild(0).GetChild(1);
 
     }
 
@@ -27,6 +28,8 @@ public class BotPlayer : MonoBehaviour
             {
                 a = Random.Range(0, 6);
                 card = hand.transform.GetChild(a).GetComponent<HandCard>();
+                Debug.Break();
+
             }
 
             card.SelectedCard();
