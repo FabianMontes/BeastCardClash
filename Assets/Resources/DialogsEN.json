@@ -1,0 +1,173 @@
+{
+    "Dialogs": [
+        {
+            "character": "Mr. Bear",
+            "text": "Hi, how are you doing?"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "I see you're interested in joining Beast Card Clash."
+        },
+        {
+            "character": "Player",
+            "text": "Yes! What's it about?"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "It's a card game where 4 players face off with a deck of 6 cards to see who wins!"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "It's like playing rock-paper-scissors, but with 4 elements."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "The 4 elements are: Water, Fire, Earth, and Air."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "These cards come numbered from 1 to 10, for a total of 40 cards."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Is everything clear so far? Do you have any other questions?"
+        },
+        {
+            "character": "Player",
+            "text": "If it’s like rock-paper-scissors, which elements beat which?"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Great question, keep the following in mind:"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Fire beats Water and Wind."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Earth beats Fire and Wind."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Water beats Earth and Fire."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Wind beats Water and Earth."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Two cards of the same element compete by number, the highest one wins."
+        },
+        {
+            "character": "Player",
+            "text": "Ah, I see. So if they tie on element, the card with the higher number wins."
+        },
+        {
+            "character": "Player",
+            "text": "And what if everyone plays the same number?"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Then it’s a complete tie and you start over!"
+        },
+        {
+            "character": "Player",
+            "text": "And how do I know when I win?"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "I knew you were going to ask that."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "The winner is the one with the most energy among the 4 players who eliminates the other 3."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Everyone starts with 10 energy points."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "And you take points away from your rivals as you win against them!"
+        },
+        {
+            "character": "Player",
+            "text": "Oh, got it now."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "So, shall we play?"
+        },
+        {
+            "character": "Chandler",
+            "text": "Yes, let’s play!"
+        },
+        {
+            "character": "Karl",
+            "text": "Yes, I’m excited, I can’t wait!"
+        }
+    ],
+    "PreGameDialogs": [
+        {
+            "character": "Mr. Bear",
+            "text": "We’ve recreated the game Beast Card Clash in this area you see here",
+            "_note": "Mr. Bear points to the grass area behind the stand"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "And the player who lasts with the most energy at the end will win 10,000 dollars!"
+        },
+        {
+            "character": "Player",
+            "text": "10,000 dollars? Wow! I can’t believe it!"
+        },
+        {
+            "character": "Bot1",
+            "text": "I’m going to beat you! You’ll see!"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Ready? Let’s play!"
+        }
+    ],
+    "WinDialogs": [
+        {
+            "character": "Mr. Bear",
+            "text": "Congratulations, you’ve won 10,000 dollars! How did you like the experience?"
+        },
+        {
+            "character": "Player",
+            "text": "The game was really fun!"
+        },
+        {
+            "character": "Player",
+            "text": "I want to send greetings to my cousins Kenny, Wolfy, and my mom so she sees I’m in the peak."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "That’s great. How are you going to invest the money you just won?"
+        },
+        {
+            "character": "Player",
+            "text": "I’ll pay for my education; honestly, this place is really worth it."
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Well, that’s wonderful, I wish you the best!",
+            "_note": "This would be the end of the game demo"
+        }
+    ],
+    "LoseDialogs": [
+        {
+            "character": "Mr. Bear",
+            "text": "Oh, you lost! But don’t worry, here’s 1,000 dollars as compensation."
+        },
+        {
+            "character": "Player",
+            "text": "Thank you very much! I really appreciate it.",
+            "_note": "This would be the end of the game demo"
+        }
+    ]
+}
