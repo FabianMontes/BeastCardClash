@@ -15,7 +15,6 @@ public class DialogManager : MonoBehaviour
     private Target targetScript; // Script del target (necesario para desactivarlo)
 
     // Componentes de diálogo
-    private Dialogs currentDialog; // (eliminar)
     private int currentDialogIndex; // Índice del diálogo actual
     private bool inDialog; // Indica si está en un diálogo
 
@@ -36,6 +35,7 @@ public class DialogManager : MonoBehaviour
 
         // Si no está en un diálogo, está en el rango y presiona Z, muestra el diálogo
         // Si está en diálogo, evalúa si presiona Z para continuar
+        // Usamos if-else if para evitar el bug del segundo panel
         if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z))
         {
             ShowDialogPanel();
@@ -53,6 +53,7 @@ public class DialogManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C)) EndDialog();
         }
 
+        // Hacemos debug del estado actual
         print($"Estado actual: {gameStateManager.CurrentGameState}");
     }
 
@@ -106,7 +107,6 @@ public class DialogManager : MonoBehaviour
         {
             namePanel.text = dialogs[currentDialogIndex].character;
             textPanel.text = dialogs[currentDialogIndex].text;
-            currentDialog = dialogs[currentDialogIndex];
         }
         else
         {
