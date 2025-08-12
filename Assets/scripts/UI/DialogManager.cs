@@ -81,7 +81,7 @@ public class DialogManager : MonoBehaviour
         switch (gameStateManager.CurrentGameState)
         {
             case GameStates.begin:
-                return dialogFileContent.Dialogs;
+                return dialogFileContent.BeginDialogs;
             case GameStates.preGame:
                 return dialogFileContent.PreGameDialogs;
             case GameStates.win:

@@ -1,5 +1,5 @@
 {
-    "Dialogs": [
+    "BeginDialogs": [
         {
             "character": "Mr. Bear",
             "text": "Hi, how are you doing?"

@@ -21,7 +21,7 @@ public enum GameStates
 [Serializable]
 public class DialogFile
 {
-    public Dialogs[] Dialogs;
+    public Dialogs[] BeginDialogs;
     public Dialogs[] PreGameDialogs;
     public Dialogs[] WinDialogs;
     public Dialogs[] LoseDialogs;
@@ -45,7 +45,7 @@ public class GameState : ScriptableObject
     // Variables
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
     [SerializeField] private SceneAsset battleScene; // Escena de batalla
-    [SerializeField] private Languages languages; // Idioma actual
+    [SerializeField] private Languages language; // Idioma actual
     [SerializeField] private TextAsset spanishFile; // Archivo de diálogos en español
     [SerializeField] private TextAsset englishFile; // Archivo de diálogos en inglés
     private TextAsset selectedFile; // Archivo de diálogos seleccionado
@@ -62,7 +62,7 @@ public class GameState : ScriptableObject
     private void LoadDialogFile()
     {
         // Carga el idioma elegido
-        switch (languages)
+        switch (language)
         {
             case Languages.spanish:
                 selectedFile = spanishFile;
