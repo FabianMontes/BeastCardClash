@@ -23,15 +23,16 @@ public class BotPlayer : MonoBehaviour
         if (figther.IsFigthing() && Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard)
         {
             int a = Random.Range(0, 6);
+            int b = 0;
             HandCard card = hand.transform.GetChild(a).GetComponent<HandCard>();
-            while (card == null || !card.Selectable())
+            while ((card == null || !card.Selectable())&& b<100)
             {
                 a = Random.Range(0, 6);
                 card = hand.transform.GetChild(a).GetComponent<HandCard>();
                 Debug.Break();
-
+                b++;
             }
-
+            Debug.Break();
             card.SelectedCard();
 
         }

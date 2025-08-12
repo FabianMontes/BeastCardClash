@@ -11,7 +11,7 @@ public enum SetMoments
     PickDice, RollDice, RevealDice,
     GlowRock, MoveToRock, SelecCombat,
     PickCard, Reveal, Result,
-    End, Loop
+    End, Loop, round, rounded
 }
 
 public enum Results
@@ -63,15 +63,26 @@ public class Combatjudge : MonoBehaviour
         }
 
         actualAction = SetMoments.Loop;
+        figtherTurn = -1;
+        round = 0;
         Figther[] playeres = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
-        print(playeres.Length);
-        foreach (Figther f in playeres)
+        int a = 0;
+        while(a < playeres.Length)
         {
-            print(f.GetInstanceID());
+            int numero = int.Parse(playeres[a].name[0].ToString());
+            Figther f = playeres[numero];
+            playeres[numero] = playeres[a];
+            playeres[a] = f;
+            if (a == numero)
+            {
+                a++;
+            }
         }
-        if (playeres.Length > manyFigthers)
+
+        int dif = playeres.Length - manyFigthers;
+        for (; dif > 0; dif--)
         {
-            manyFigthers = playeres.Length;
+            Destroy(playeres[playeres.Length - dif].gameObject);
         }
 
         PlayZone zone = FindFirstObjectByType<PlayZone>();
@@ -192,11 +203,29 @@ public class Combatjudge : MonoBehaviour
                     figthers[i].RefillHand();
                     figthers[i].ThrowCard();
                 }
-                actualAction = SetMoments.PickDice;
+               
                 playersFigthing = 0;
+                if(figtherTurn == 0)
+                {
+                    actualAction = SetMoments.round;
+                }
+                else
+                {
+                    actualAction = SetMoments.PickDice;
+                }
 
                 break;
+            case SetMoments.round:
+                round++;
+                FindFirstObjectByType<Roundanimation>().startRound();
+                actualAction = SetMoments.rounded;
+                break;
+
+
             case SetMoments.End:
+                break;
+
+            default:
                 break;
         }
     }
@@ -340,5 +369,13 @@ public class Combatjudge : MonoBehaviour
     public bool FocusONTurn()
     {
         return figthers[figtherTurn].visualFigther == 1;
+    }
+
+    public void endRoundeded()
+    {
+        if(actualAction == SetMoments.rounded)
+        {
+            actualAction = SetMoments.PickDice;
+        }
     }
 }
