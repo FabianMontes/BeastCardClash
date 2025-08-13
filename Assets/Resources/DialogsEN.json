@@ -155,7 +155,15 @@
         },
         {
             "character": "Mr. Bear",
-            "text": "Well, that’s wonderful, I wish you the best!",
+            "text": "Well, that’s great, I wish you the best!"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "Remember that the new season of Beast Card Clash will be starting soon, with more teams and new characters to meet"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "You have the potential to keep competing in this game!",
             "_note": "This would be the end of the game demo"
         }
     ],
@@ -166,7 +174,11 @@
         },
         {
             "character": "Player",
-            "text": "Thank you very much! I really appreciate it",
+            "text": "Thank you very much! I really appreciate it"
+        },
+        {
+            "character": "Mr. Bear",
+            "text": "I hope to see you here next season with new teams and new characters to meet!",
             "_note": "This would be the end of the game demo"
         }
     ]

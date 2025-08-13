@@ -39,8 +39,9 @@ public class Dialogs
 public class GameState : ScriptableObject
 {
     // Propiedad pública para el estado actual del juego y para acceder a los diálogos ya cargados
-    public DialogFile DialogFileContent { get; private set; }
-    public GameStates CurrentGameState { get; private set; }
+    public DialogFile DialogFileContent { get; private set; } // Contenido del archivo de diálogos
+    public GameStates CurrentGameState { get; private set; } // Estado actual del juego
+    public static GameState instance; // Instancia singleton del GameState
 
     // Variables
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
