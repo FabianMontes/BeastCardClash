@@ -148,6 +148,6 @@ public class TutorialMenuManager : MonoBehaviour
     // Separado para poderse usar en el OnClick por sí solo
     public void SkipButton()
     {
-        SceneManager.LoadScene("World");
+        SceneManager.LoadScene("SkinSelector");
     }
 }

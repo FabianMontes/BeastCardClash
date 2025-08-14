@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SkinSelector.unity
     guid: 04bb53888b292c94da64572db5456e24
   - enabled: 1
+    path: Assets/Scenes/SkinSelector.unity
+    guid: 04bb53888b292c94da64572db5456e24
+  - enabled: 1
     path: Assets/Scenes/world.unity
     guid: a829a0593cbca2946be98ef22673b800
   - enabled: 1

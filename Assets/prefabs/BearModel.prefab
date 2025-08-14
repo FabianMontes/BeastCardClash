@@ -107,7 +107,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Skins:
-  - {fileID: 21300000, guid: 0a98401006881ec49967b9eb96ca6181, type: 3}
   - {fileID: 21300000, guid: 20a6730351e39d944863d0d023a22a09, type: 3}
   - {fileID: 21300000, guid: 64af413840005b74bb33826a163f4faf, type: 3}
   - {fileID: 21300000, guid: 0cb5e39e543001f4fad02cd9d21dd686, type: 3}
