@@ -22,7 +22,7 @@ public class dice : MonoBehaviour
         if (roling)
         {
             Combatjudge.combatjudge.StartRoling();
-            value = Random.Range(1, maxValue + 1);
+            value = 5;//Random.Range(1, maxValue + 1);
             Vector3 vector3 = new Vector3(0,45,0);
             switch (value)
             {

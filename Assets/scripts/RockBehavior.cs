@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum Inscription
 {
-    fire, earth, water, air, duel, pick, empty
+    fire, earth, water, air, pick, duel, empty
 }
 
 [DefaultExecutionOrder(-2)]
