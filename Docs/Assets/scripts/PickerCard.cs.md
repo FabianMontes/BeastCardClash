@@ -1,37 +1,36 @@
 # `PickerCard.cs`
 
 ## 1. Propósito General
-Este script (`PickerCard`) es un componente de UI responsable de gestionar la visibilidad y el contenido visual del espacio donde se muestra la carta que un jugador (`Figther`) tiene actualmente seleccionada o "recogida". Su rol principal es sincronizar la UI con el estado del juego y la carta activa del jugador.
+Este script gestiona la visualización de la carta que un jugador ha "seleccionado" (o "picado") durante las diferentes fases del combate. Su rol principal es mostrar u ocultar la representación visual de esta carta en la interfaz de usuario, actualizando su texto con la identificación de la carta actual. Interactúa directamente con el estado del `Figther` (jugador) al que pertenece y con el sistema global de fases de combate (`Combatjudge`).
 
 ## 2. Componentes Clave
 
-### `PickerCard`
-- **Descripción:** La clase `PickerCard` es un `MonoBehaviour` que controla la representación visual de la carta activa de un jugador en la interfaz de usuario. Se encarga de mostrar u ocultar este elemento de UI y de actualizar el texto con la identificación de la carta actualmente en foco.
+### PickerCard
+- **Descripción:** La clase `PickerCard` es un componente de `MonoBehaviour` que controla la visibilidad y el contenido de una carta en la interfaz de usuario, representando la carta actualmente seleccionada por un jugador (`Figther`). Se espera que este script esté adjunto a un objeto UI que visualiza la carta seleccionada.
 - **Variables Públicas / Serializadas:**
-    - `[SerializeField] HolderPlay holderPlay`: Esta variable es una referencia a otro componente `HolderPlay`. Aunque está serializada y es visible en el Inspector de Unity para permitir su asignación, no se utiliza en ninguna lógica dentro del código actual de `PickerCard.cs`. Podría ser una dependencia para funcionalidades futuras o utilizada por otros scripts que interactúen con `PickerCard`.
+    - `TextMeshProUGUI textMeshPro`: Una referencia al componente TextMeshProUGUI que se utiliza para mostrar el ID de la carta seleccionada. Se obtiene automáticamente de los hijos del GameObject al inicio.
+    - `Figther player`: Una referencia al componente `Figther` del jugador propietario. Se obtiene automáticamente del componente padre del GameObject al inicio. Este `Figther` es quien "posee" la carta seleccionada que se muestra.
+    - `[SerializeField] HolderPlay holderPlay`: Una referencia a un componente `HolderPlay`. Aunque está serializado para ser asignado desde el Inspector de Unity, actualmente no se utiliza en la lógica proporcionada en este script.
 - **Métodos Principales:**
-    - `void Start()`: Este es un método del ciclo de vida de Unity que se ejecuta una vez al inicio, después de que el objeto es instanciado.
-        - Se inicializa `textMeshPro` obteniendo el componente `TextMeshProUGUI` de uno de los objetos hijos del GameObject actual. Este componente es el encargado de mostrar el ID de la carta.
-        - Se obtiene una referencia al componente `Figther` que se encuentra en un objeto padre en la jerarquía. Este `Figther` representa al jugador cuyas cartas se están gestionando.
-        - La variable `prevSetMoment` se inicializa con `SetMoments.PickDice`; sin embargo, la lógica que la utilizaba para detectar cambios de estado está actualmente comentada.
-        - Se invoca `Visib(false)` para asegurar que el elemento de la UI esté oculto por defecto al inicio del juego o escena.
-    - `void Update()`: Este es un método del ciclo de vida de Unity que se ejecuta una vez por cada frame.
-        - El script consulta el estado actual del juego (`SetMoments momo`) a través del sistema de combate global `Combatjudge.combatjudge.GetSetMoments()`. Esto indica una fuerte dependencia de un sistema centralizado de gestión del estado de la partida.
-        - Basándose en el estado del juego:
-            - Si el momento actual es `SetMoments.PickCard` y el jugador (`player`) está activamente en combate (`player.IsFigthing()`), el elemento de la UI se hace visible llamando a `Visib(true)`.
-            - Si el momento actual es `SetMoments.Loop` o `SetMoments.End`, el elemento de la UI se oculta llamando a `Visib(false)`.
-        - Se obtiene la referencia a la carta que el jugador tiene actualmente "recogida" o activa, utilizando `player.getPicked()`.
-        - Finalmente, el texto mostrado en la UI (`textMeshPro.text`) se actualiza con el ID de la carta obtenida (`card.GetID()`). Si no hay ninguna carta seleccionada (es decir, `card` es `null`), el texto se establece como vacío.
-    - `private void Visib(bool isVisible)`: Este es un método auxiliar privado utilizado para controlar la visibilidad del elemento de la UI que representa la carta.
-        - Activa o desactiva el primer objeto hijo (`transform.GetChild(0).gameObject`) del GameObject al que está adjunto este script. Este hijo probablemente contiene el `TextMeshProUGUI` y otros elementos visuales internos de la carta.
-        - Habilita o deshabilita el componente `Image` del propio GameObject `PickerCard`. Esto sugiere que el `PickerCard` en sí mismo tiene un componente `Image` que podría servir como fondo o contenedor visual para la carta.
+    - `void Start()`: Este método se ejecuta una vez al inicio, antes del primer `Update`.
+        - Inicializa `textMeshPro` buscando un componente `TextMeshProUGUI` entre los hijos del GameObject.
+        - Inicializa `player` buscando un componente `Figther` en los padres del GameObject.
+        - Llama a `Visib(false)` para asegurar que la carta esté oculta al inicio del juego.
+    - `void Update()`: Este método se ejecuta en cada frame.
+        - Obtiene el momento (fase) actual del combate del sistema `Combatjudge`.
+        - Basándose en la fase actual del combate (`SetMoments`), decide si la carta debe ser visible:
+            - Se hace visible si la fase es `SetMoments.PickCard` y el jugador (`player`) está activamente en combate (`player.IsFigthing()`).
+            - Se oculta si la fase es `SetMoments.Loop` o `SetMoments.End`.
+        - Actualiza el texto de `textMeshPro` con el ID de la carta que el jugador tiene "picada" (`player.getPicked()`). Si no hay carta picada, el texto se establece en vacío.
+    - `private void Visib(bool isVisible)`: Un método auxiliar privado que controla la visibilidad de los elementos visuales de la carta.
+        - Desactiva/activa el primer hijo del GameObject (`transform.GetChild(0).gameObject`) y el componente `Image` adjunto al GameObject principal. El primer hijo probablemente contiene los detalles visuales de la carta, mientras que el `Image` podría ser el fondo o el contenedor de la carta.
 - **Lógica Clave:**
-    La lógica central de `PickerCard` reside en su método `Update`. En cada frame, el script monitorea el estado global de la partida a través del `Combatjudge` y el estado de la carta activa del jugador (`Figther`). Utilizando esta información, determina dinámicamente si el elemento de la UI debe ser visible y cuál es el texto (el ID de la carta) que debe mostrar. De este modo, `PickerCard` funciona como un visor adaptable para la carta actualmente en foco del jugador, ajustándose a las diferentes fases y eventos del combate.
+    La lógica central de `PickerCard` reside en su método `Update`, donde de manera continua:
+    1.  Consulta la fase actual del combate (`Combatjudge.GetSetMoments()`).
+    2.  Ajusta la visibilidad de la carta en la UI (`Visib()`) dependiendo de si es la fase de selección de carta (`PickCard`) y si el jugador está activo, o si el combate ha terminado (`Loop`, `End`).
+    3.  Obtiene la carta actualmente "picada" por el jugador (`player.getPicked()`) y actualiza el texto de la UI para reflejar su ID.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]` para forzar la presencia de otros componentes en el mismo GameObject. Sin embargo, para su correcto funcionamiento visual y lógico, asume la existencia de:
-    - Un componente `TextMeshProUGUI` en uno de sus objetos hijos (para `textMeshPro`).
-    - Un componente `Image` en el propio GameObject `PickerCard` (para `transform.GetComponent<Image>()`).
-    - Un componente `Figther` en uno de sus objetos padres en la jerarquía (para la variable `player`).
-- **Eventos (Entrada):** `PickerCard` no se suscribe explícitamente a `UnityEvent`s ni `Action`s. Sin embargo, depende fundamentalmente de la información de estado que obtiene de forma síncrona mediante la llamada a `Combatjudge.combatjudge.GetSetMoments()`, lo que puede considerarse una forma de "entrada" de información sobre el flujo del juego.
-- **Eventos (Salida):** Este script no invoca ningún evento (`UnityEvent`, `Action`, etc.) ni notifica a otros sistemas. Su función es puramente de presentación y actualización visual de la interfaz de usuario.
+- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que el GameObject al que está adjunto tenga un componente `Image` y que uno de sus hijos tenga un componente `TextMeshProUGUI` para la correcta visualización. También depende de un componente `Figther` en su jerarquía padre.
+- **Eventos (Entrada):** Este script no se suscribe explícitamente a eventos de UI (como `onClick`) ni a `UnityEvent` o `Action`s. Su comportamiento se basa en la lectura del estado actual del sistema `Combatjudge` (`Combatjudge.combatjudge.GetSetMoments()`) y del `Figther` padre (`player.IsFigthing()`, `player.getPicked()`).
+- **Eventos (Salida):** Este script no invoca ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas sobre cambios o acciones. Su rol es puramente de visualización y reacción al estado del juego.

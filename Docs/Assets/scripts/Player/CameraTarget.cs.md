@@ -1,28 +1,24 @@
 # `CameraTarget.cs`
 
 ## 1. Propósito General
-Este script gestiona la posición de un GameObject en la escena, haciéndolo seguir de cerca a un objeto de jugador (`Player`). Su función principal es actuar como un punto de referencia posicional dinámico para la cámara del juego, permitiendo que esta siga al jugador sin heredar su rotación.
+Este script gestiona la posición de un objeto en la escena, asegurando que siga de cerca el movimiento de un jugador específico. Su función principal es proporcionar un punto de referencia dinámico para la cámara del juego, permitiéndole seguir al personaje principal de forma fluida y a menudo, de manera que la rotación del jugador no afecte directamente la orientación de la cámara.
 
 ## 2. Componentes Clave
 
 ### `CameraTarget`
-- **Descripción:** Esta clase hereda de `MonoBehaviour`, lo que le permite ser adjuntada a un GameObject en la escena de Unity. Su propósito es mantener la posición de su propio GameObject sincronizada con la posición de un `Transform` del jugador especificado. Los comentarios en el código sugieren que el GameObject al que se adjunta este script está diseñado para no rotar, lo cual es crucial para neutralizar la rotación del jugador en la cámara y proporcionar un punto de seguimiento estable.
+Esta clase hereda de `MonoBehaviour`, lo que significa que es un componente que puede adjuntarse a cualquier `GameObject` en Unity. Su propósito fundamental es actualizar continuamente la posición del `GameObject` al que está asociado, haciendo que siga el `Transform` de otro objeto, que en este contexto se denomina "Player".
 
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] Transform Player`: Esta variable privada es serializada, lo que la hace visible y configurable directamente desde el Inspector de Unity. Se utiliza para asignar el componente `Transform` del objeto del jugador que este `CameraTarget` debe seguir.
+*   **Variables Públicas / Serializadas:**
+    *   `[SerializeField] Transform Player;`: Esta variable representa el objeto que el `CameraTarget` debe seguir. Es una referencia al componente `Transform` del jugador (o cualquier otro objeto de interés). El atributo `[SerializeField]` permite que la referencia se asigne y configure directamente desde el Inspector de Unity, incluso siendo una variable privada, lo que facilita la configuración sin exponerla a modificaciones externas por código.
 
-- **Métodos Principales:**
-    - `void Start()`: Un método del ciclo de vida de Unity que se invoca una vez al inicio, antes de la primera actualización del frame. En esta implementación, el método está vacío, lo que significa que no se ejecuta ninguna lógica inicial al comienzo del juego o cuando el script se habilita.
-    - `void Update()`: Este método del ciclo de vida de Unity se ejecuta una vez por cada frame del juego. Su función principal es actualizar continuamente la posición del GameObject al que está adjunto este script. La posición del `CameraTarget` se establece para que sea idéntica a la posición del `Player` asignado en el Inspector.
+*   **Métodos Principales:**
+    *   `void Start()`: Este es un método del ciclo de vida de Unity que se invoca una única vez al inicio, antes de que se ejecute el primer `Update`. En la implementación actual, este método está vacío, lo que indica que no se requiere ninguna inicialización específica para el `CameraTarget` al comienzo del juego.
+    *   `void Update()`: Este método es el corazón de la funcionalidad del script. Se ejecuta una vez por cada fotograma del juego. Dentro de `Update`, la posición del `GameObject` al que está adjunto este script (`transform.position`) se actualiza para ser idéntica a la posición del `Player` (`Player.position`).
 
-- **Lógica Clave:**
-    La lógica central del script reside en el método `Update`. En cada frame, se realiza una asignación directa de la posición del `Player` a la posición del `GameObject` de este script:
-    ```csharp
-    transform.position = Player.position;
-    ```
-    Esto asegura que el GameObject al que `CameraTarget` está adjunto se mueva exactamente con el jugador. El comentario en el código aclara que este "objeto alternativo" (el `CameraTarget`) no rota, lo que implica que solo se preocupa por la posición, no por la orientación del jugador, lo cual es útil para una cámara que necesita seguir una posición pero mantener su propia orientación.
+*   **Lógica Clave:**
+    La lógica central del script se encuentra en el método `Update`. En cada fotograma, la posición del `GameObject` que contiene este script es forzada a coincidir con la posición del `Transform` asignado a la variable `Player`. Esta línea clave, `transform.position = Player.position;`, es lo que permite que el objeto con `CameraTarget` se mueva sincrónicamente con el jugador. El comentario en el código sugiere que este objeto se utiliza como un "objeto alternativo" para la cámara, lo que le permite seguir la posición del jugador sin heredar su rotación, proporcionando así una vista más estable para el jugador.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, al heredar de `MonoBehaviour`, requiere estar adjunto a un `GameObject` en la escena de Unity para funcionar.
-- **Eventos (Entrada):** El script `CameraTarget` no se suscribe ni escucha eventos externos de otros sistemas o componentes. Su comportamiento es impulsado únicamente por el ciclo de vida interno de Unity (`Update`).
-- **Eventos (Salida):** Este script no invoca ni publica eventos personalizados (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas. Su efecto se limita a la manipulación directa de su propia posición.
+*   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, como todos los `MonoBehaviour` en Unity, inherentemente requiere un componente `Transform` en el `GameObject` al que está adjunto para poder manipular su posición.
+*   **Eventos (Entrada):** Este script no se suscribe a eventos externos como eventos de UI o eventos personalizados. Su comportamiento está directamente impulsado por el ciclo de actualización de Unity (`Update`).
+*   **Eventos (Salida):** El script `CameraTarget` no invoca ni expone ningún evento (como `UnityEvent` o `Action`) para que otros sistemas puedan suscribirse. Su efecto es puramente interno, manipulando la posición de su propio `Transform`.

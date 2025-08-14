@@ -1,59 +1,84 @@
 # `RockBehavior.cs`
 
 ## 1. Propósito General
-El script `RockBehavior` gestiona el comportamiento y la representación de una "roca" individual en el entorno de juego. Cada roca es un punto estratégico en el mapa donde los jugadores (`PlayerToken`) pueden posicionarse, y puede tener una "inscripción" elemental. Este script interactúa principalmente con el sistema `PlayZone` para su posicionamiento y con el `Combatjudge` para la lógica de combate y movimiento de los jugadores.
+Este script gestiona el comportamiento individual de una "roca" en el tablero de juego. Se encarga de su inicialización visual y posicional, de reaccionar a la interacción del jugador (clics), y de mantener un registro de los `PlayerToken` (fichas de jugador) que se encuentran sobre ella, permitiendo también la consulta de rocas vecinas.
 
 ## 2. Componentes Clave
 
 ### `Inscription` (Enum)
-- **Descripción:** Este `enum` define los diferentes tipos de "inscripciones" o elementos que una roca puede tener. Estas inscripciones probablemente influyen en la estrategia de juego o en las habilidades de los personajes.
+- **Descripción:** Define los diferentes tipos de "inscripciones" o elementos que una roca puede poseer. Estos valores numéricos se utilizan para indexar los `Sprite` asociados a cada tipo.
 - **Valores:**
-    - `fire`: Fuego (0)
-    - `earth`: Tierra (1)
-    - `water`: Agua (2)
-    - `air`: Aire (3)
-    - `duel`: Duelo (4)
-    - `empty`: Vacío (5)
-    - `pick`: Selección (6)
+    - `fire = 0`: Elemento Fuego.
+    - `earth = 1`: Elemento Tierra.
+    - `water = 2`: Elemento Agua.
+    - `air = 3`: Elemento Aire.
+    - `duel = 4`: Elemento Duelo.
+    - `pick = 6`: Elemento Selección.
+    - `empty = 5`: Sin elemento.
 
-### `RockBehavior` (Clase)
-- **Descripción:** Esta clase es un `MonoBehaviour` que se adjunta a un objeto de juego para representar una roca. Se encarga de su inicialización visual, la detección de clics, la gestión de los jugadores que están sobre ella, y la lógica para encontrar rocas vecinas. Su orden de ejecución predeterminado es `-2`, lo que significa que se inicializa antes que la mayoría de los otros scripts de Unity.
-
+### `RockBehavior` (Class)
+- **Descripción:** Componente `MonoBehaviour` que controla la lógica y la representación de una roca individual en el escenario del juego. Cada instancia de `RockBehavior` representa un punto estratégico en el tablero. Se ejecuta con una `DefaultExecutionOrder` de `-2`, lo que significa que se inicializa muy temprano en el ciclo de vida de los scripts de Unity.
 - **Variables Públicas / Serializadas:**
-    - `public PlayZone father;`: Una referencia al objeto `PlayZone` que actúa como contenedor o "padre" de esta roca. Es crucial para el posicionamiento inicial y para acceder a las rocas vecinas.
-    - `[SerializeField] private Sprite[] sprite;`: Un arreglo de `Sprite`s que se utiliza para mostrar la imagen correspondiente a cada tipo de `Inscription`. Se asigna en el Inspector de Unity.
-    - `[SerializeField] public Inscription inscription = Inscription.empty;`: El tipo de inscripción elemental asignado a esta roca específica. También se configura en el Inspector.
-    - `public Vector3 direction = Vector3.forward;`: Un vector que se usa para calcular la posición de la roca respecto a su `father`.
-    - `public float angle = 0;`: Un ángulo que se utiliza para calcular la rotación de la roca.
-    - `public int numbchild = 0;`: Un índice que representa la posición de esta roca dentro de la colección de rocas de su `father`, utilizado para la lógica de vecinos.
-    - `public bool shiny = false;`: Un flag booleano que controla si la roca debe mostrarse "brillante" (resaltada visualmente). Esto suele indicar que la roca es un destino válido para el movimiento de un jugador.
+    - `public PlayZone father;`: Referencia al objeto `PlayZone` padre al que pertenece esta roca. Se utiliza para la posición relativa y la escala.
+    - `[SerializeField] private Sprite[] sprite;`: Un arreglo de `Sprite` que almacena las imágenes para cada tipo de `Inscription`. Se asigna en el Inspector de Unity.
+    - `[SerializeField] public Inscription inscription = Inscription.empty;`: El tipo de inscripción elemental de esta roca. Determina el `Sprite` del símbolo mostrado. Se puede configurar en el Inspector.
+    - `public Vector3 direction = Vector3.forward;`: Vector de dirección utilizado para calcular la posición de la roca respecto a su `father`.
+    - `public float angle = 0;`: Ángulo de rotación de la roca, también usado en el posicionamiento relativo.
+    - `public int numbchild = 0;`: Un índice que identifica la posición de esta roca dentro de su `PlayZone` padre, útil para cálculos de vecinos.
+    - `public bool shiny = false;`: Booleano que controla si la roca debe "brillar" (cambiar a color amarillo) para indicar que es interactuable.
 
 - **Métodos Principales:**
-    - `void Start()`: Este método del ciclo de vida de Unity se llama una vez al inicio. Inicializa las referencias a los componentes `SpriteRenderer` (`simbol` para la inscripción y `itself` para la roca en sí). Establece el sprite del símbolo basándose en la `inscription` de la roca. Si tiene una referencia a `father`, calcula y aplica la posición, escala y rotación de la roca en relación con el `PlayZone` padre.
+    - `void Start()`:
+        - **Descripción:** Método del ciclo de vida de Unity que se ejecuta una vez al inicio. Inicializa referencias a los `SpriteRenderer` (`simbol` para la inscripción y `itself` para la roca misma). Asigna el sprite correcto al símbolo basado en la `inscription` de la roca. Si tiene un `father` (PlayZone), calcula y aplica la posición, escala y rotación de la roca en relación con este, colocándola en un círculo.
+        - **Fragmento de Código Clave:**
+            ```csharp
+            simbol = transform.GetChild(0).GetComponent<SpriteRenderer>();
+            itself = transform.GetComponent<SpriteRenderer>();
+            simbol.sprite = sprite[(int)inscription];
+            // ... posicionamiento relativo a 'father' ...
+            ```
 
-    - `void Update()`: Este método del ciclo de vida de Unity se llama una vez por fotograma. Verifica el estado del juego a través de `Combatjudge.combatjudge.GetSetMoments()`. Si el estado actual no es `SetMoments.GlowRock`, el flag `shiny` se establece en `false`. Luego, actualiza el color de la propia roca (`itself.color`) a amarillo si `shiny` es `true`, o a negro si es `false`, proporcionando un feedback visual de si la roca está activa o no.
+    - `void Update()`:
+        - **Descripción:** Método del ciclo de vida de Unity que se ejecuta en cada frame. Comprueba el estado del juego a través de `Combatjudge.combatjudge.GetSetMoments()`. Si el momento actual no es `SetMoments.GlowRock`, la propiedad `shiny` se establece en `false`. Actualiza el color de la propia roca (`itself.color`) a amarillo si `shiny` es `true`, o a negro si es `false`, indicando si es interactuable.
 
-    - `private void OnMouseDown()`: Un método de callback de Unity que se invoca cuando se hace clic con el botón del mouse sobre el collider de este objeto. Si la roca está marcada como `shiny`, significa que es un destino válido para una acción. En ese caso, busca el `Combatjudge` en la escena y le notifica que se intente un movimiento hacia esta roca (`MoveToRock(this)`).
+    - `private void OnMouseDown()`:
+        - **Descripción:** Callback de Unity que se invoca cuando el usuario hace clic con el ratón sobre el collider de esta roca. Si la roca está marcada como `shiny` (brillante), invoca el método `MoveToRock` del `Combatjudge` central, pasándose a sí misma como el destino del movimiento.
+        - **Fragmento de Código Clave:**
+            ```csharp
+            if (shiny) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
+            ```
 
-    - `public RockBehavior[] getNeighbor(int al)`: Este método calcula y devuelve un arreglo de dos objetos `RockBehavior` que son "vecinos" de la roca actual. `al` representa un desplazamiento. La lógica utiliza el `numbchild` (índice de la roca) y `father.many` (total de rocas en el `PlayZone`) para calcular los índices de los vecinos en un arreglo circular, envolviendo los índices si superan los límites.
+    - `public RockBehavior[] getNeighbor(int al)`:
+        - **Descripción:** Devuelve un arreglo de dos objetos `RockBehavior` que representan los vecinos de esta roca, a una distancia `al` (offset) en ambas direcciones (en sentido horario y antihorario) alrededor de la `PlayZone` padre. Utiliza la propiedad `numbchild` y el número total de rocas en la zona (`father.many`) para calcular los índices de los vecinos.
+        - **Parámetros:**
+            - `al`: Un entero que representa la distancia (número de posiciones) al vecino.
+        - **Retorna:** Un arreglo `RockBehavior[]` con dos elementos: el vecino en una dirección y el vecino en la otra.
 
-    - `public void AddPlayer(PlayerToken token)`: Añade un `PlayerToken` al arreglo interno `playersOn`, que rastrea qué jugadores están actualmente en esta roca. Si el arreglo es nulo, lo inicializa; de lo contrario, crea un nuevo arreglo de mayor tamaño, copia los jugadores existentes y añade el nuevo token.
+    - `public void AddPlayer(PlayerToken token)`:
+        - **Descripción:** Agrega un `PlayerToken` al arreglo `playersOn`, que rastrea qué fichas están actualmente sobre esta roca. Si el arreglo es nulo, lo inicializa; de lo contrario, lo redimensiona para incluir el nuevo token.
 
-    - `public void RemovePlayer(PlayerToken token)`: Elimina un `PlayerToken` específico del arreglo `playersOn`. Recorre el arreglo para encontrar y "nular" las instancias del token a remover, luego construye un nuevo arreglo más pequeño excluyendo los elementos nulos.
+    - `public void RemovePlayer(PlayerToken token)`:
+        - **Descripción:** Elimina un `PlayerToken` específico del arreglo `playersOn`. Busca el token, lo marca como nulo y luego crea un nuevo arreglo sin el token eliminado, redimensionando el arreglo dinámicamente.
 
-    - `public bool manyOn()`: Devuelve `true` si hay más de un `PlayerToken` actualmente en esta roca (es decir, `playersOn.Length > 1`). Devuelve `false` en caso contrario o si no hay jugadores.
+    - `public bool manyOn()`:
+        - **Descripción:** Comprueba si hay más de un `PlayerToken` presente sobre esta roca.
+        - **Retorna:** `true` si `playersOn` no es nulo y su longitud es mayor que 1; de lo contrario, `false`.
 
-    - `public int GetPlayersOn()`: Calcula y devuelve un entero que actúa como un bitmask, representando la presencia de diferentes jugadores en la roca. Para cada `PlayerToken` en la roca, se suma `2` elevado a la potencia de `player.indexFigther` del token. Esto permite codificar la presencia de múltiples jugadores en un solo entero.
+    - `public int GetPlayersOn()`:
+        - **Descripción:** Calcula y devuelve un valor entero basado en la suma de potencias de 2 (`2^indexFigther`) para cada `PlayerToken` en la roca. Esto podría ser un identificador único o una máscara de bits que representa la combinación de jugadores presentes.
 
-    - `public int ManyPlayerOn()`: Devuelve la cantidad exacta de `PlayerToken`s que se encuentran actualmente en esta roca, es decir, el tamaño del arreglo `playersOn`.
+    - `public int ManyPlayerOn()`:
+        - **Descripción:** Devuelve el número total de `PlayerToken` que se encuentran actualmente sobre esta roca. Es decir, la longitud del arreglo `playersOn`.
+
+- **Lógica Clave:**
+    - **Posicionamiento Circular:** En `Start`, la roca se posiciona dinámicamente en un patrón circular alrededor de su `PlayZone` padre, utilizando `direction`, `angle`, `father.radius` y `father.RockScale`.
+    - **Gestión de Jugadores:** Los métodos `AddPlayer` y `RemovePlayer` permiten mantener una lista dinámica de `PlayerToken` sobre la roca, aunque la implementación de redimensionamiento de arreglos es manual y podría ser más eficiente usando `List<PlayerToken>`.
+    - **Interacción de Brillo y Click:** La roca solo es interactuable mediante clic si su propiedad `shiny` es `true`, lo que a su vez es controlado por el estado del juego definido en `Combatjudge`.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    Este script no utiliza el atributo `[RequireComponent]`, pero su funcionalidad depende de la presencia de un componente `SpriteRenderer` en el mismo GameObject y en su primer hijo. También asume que el GameObject padre tiene un componente `PlayZone` si la variable `father` no es nula.
 
-- **Eventos (Entrada):**
-    - Se suscribe implícitamente al evento de entrada del mouse `OnMouseDown()` a través del sistema de eventos de Unity, respondiendo a los clics del usuario sobre la roca.
-
-- **Eventos (Salida):**
-    - Este script invoca el método `MoveToRock()` del `Combatjudge` cuando se hace clic en una roca "brillante". Esto actúa como un evento que notifica al sistema de combate sobre la intención de movimiento del jugador.
-    - No invoca `UnityEvent`s o `Action`s explícitamente definidos en este script.
+-   **Componentes Requeridos:** Ningún componente está explícitamente requerido mediante `[RequireComponent]`. Sin embargo, el script asume la existencia de un `SpriteRenderer` en sí mismo y en su primer hijo.
+-   **Eventos (Entrada):**
+    -   `OnMouseDown()`: Este script se suscribe implícitamente al evento de clic del ratón de Unity, ejecutando su lógica cuando el usuario hace clic en el objeto de juego al que está adjunto este script.
+-   **Eventos (Salida):**
+    -   Este script no emite eventos de forma explícita (como `UnityEvent` o `Action`). En su lugar, interactúa directamente con el `Combatjudge` central llamando a su método `MoveToRock` cuando la roca es clicada y está "brillante". Esto crea un acoplamiento directo con la clase `Combatjudge`.

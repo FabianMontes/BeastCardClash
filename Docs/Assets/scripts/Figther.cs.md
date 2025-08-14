@@ -1,74 +1,69 @@
-Aquí está la documentación técnica para el script `Figther.cs`, diseñada para un nuevo miembro del equipo:
-
 # `Figther.cs`
 
 ## 1. Propósito General
-Este script `Figther.cs` actúa como la representación central de un "luchador" o "jugador" en Beast Card Clash. Gestiona atributos clave del jugador como la vida, la especie y el manejo de su mano y mazo de cartas. Interactúa principalmente con el sistema de combate (`Combatjudge`), el movimiento del jugador (`PlayerToken`, `RockBehavior`) y los sistemas de gestión de cartas (`Card`, `HandCard`, `HolderPlay`).
+Este script gestiona la entidad principal de un jugador, el "Figther", en el juego "Beast Card Clash". Se encarga de mantener los atributos del personaje (salud, especie, tamaño del mazo y la mano), su representación visual en el juego, y coordina las interacciones clave relacionadas con el manejo de cartas (robo y juego) y el movimiento del token del jugador en el tablero.
 
 ## 2. Componentes Clave
 
-### `Specie`
-- **Descripción:** Un `enum` simple que define los tipos de especies de animales que un luchador puede representar. Estas especies probablemente influyen en la jugabilidad o en las habilidades asociadas al luchador.
-- **Valores:** `chameleon`, `bear`, `snake`, `frog`.
+### `enum Specie`
+- **Descripción:** Un tipo enumerado que define las posibles especies de animales que puede representar un `Figther`. Estas especies probablemente influyen en la jugabilidad o las habilidades del personaje.
+
+```csharp
+public enum Specie
+{
+    chameleon, bear, snake, frog
+}
+```
 
 ### `Figther`
-- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, es el controlador principal para cada entidad de luchador en el juego. Se encarga de la inicialización, la representación visual, la gestión de vida, el control de la mano y el mazo de cartas, y la interacción con el sistema de combate. El atributo `[DefaultExecutionOrder(0)]` asegura que este script se ejecute muy temprano en el ciclo de vida de Unity, antes que la mayoría de otros scripts.
+- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, representa a un personaje "Figther" en el juego. Controla sus características fundamentales, su apariencia dinámica y su interacción con los sistemas de juego de cartas y movimiento.
+
 - **Variables Públicas / Serializadas:**
-    - `[SerializeField] int figtherLive`: La cantidad de puntos de vida actuales del luchador.
-    - `[SerializeField] Specie specie`: La especie de animal asignada a este luchador.
-    - `[SerializeField] int deckSize`: El tamaño inicial del mazo de cartas del luchador.
-    - `[SerializeField] int handSize`: El número máximo de cartas que el luchador puede tener en su mano.
-    - `public int avalaibleCard`: Utilizado como un contador o flag, posiblemente para indicar si hay cartas disponibles para una acción específica (observado en `Update` para revelar cartas).
-    - `[SerializeField] GameObject tokenPrefab`: Prefab del token visual que representa al luchador en el tablero.
-    - `[SerializeField] GameObject cardPrefab`: Prefab de una carta individual, usado para instanciar el mazo.
-    - `public PlayerToken playerToken`: La instancia del token del jugador asociada a este luchador, gestiona su posición en el tablero.
-    - `public int visualFigther`: Un índice que selecciona qué modelo visual (hijo del GameObject del Figther) está activo.
-    - `public int indexFigther`: Un índice único para identificar a este luchador en el sistema de combate (utilizado en `IsFigthing`).
-    - `public RockBehavior initialStone`: La posición inicial del token del jugador en el tablero.
+    - `figtherLive` (int): Los puntos de vida actuales del `Figther`.
+    - `specie` (Specie): La especie de animal asignada a este `Figther`.
+    - `deckSize` (int): El número total de cartas que componen el mazo inicial de este `Figther`.
+    - `handSize` (int): El número máximo de cartas que el `Figther` puede tener en su mano. Por defecto es `6`.
+    - `avalaibleCard` (int): Un contador o indicador. Su uso en `Update` sugiere que controla si las cartas en la mano deben revelarse durante una fase específica.
+    - `tokenPrefab` (GameObject): El prefab del token visual del jugador que se mueve en el tablero.
+    - `cardPrefab` (GameObject): El prefab de las cartas individuales usadas para construir el mazo.
+    - `playerToken` (PlayerToken): La instancia del token del jugador creada a partir de `tokenPrefab`. Este objeto se mueve por el tablero.
+    - `visualFigther` (int): Un índice que determina qué modelo visual (hijo del GameObject) se activa para representar a este `Figther`.
+    - `indexFigther` (int): Un identificador numérico único para este `Figther`, utilizado para determinar su participación en el combate.
+    - `initialStone` (RockBehavior): La posición inicial en el tablero (un objeto `RockBehavior`) donde se colocará el `playerToken` del `Figther`.
+
 - **Métodos Principales:**
     - `void Start()`:
-        - **Descripción:** Se llama una vez cuando el script se habilita por primera vez.
-        - **Lógica clave:** Inicializa el estado visual del luchador (activando el modelo `visualFigther` y desactivando los demás). Si `playerToken` no está asignado, lo instancia y lo asocia a este luchador. Finalmente, crea el mazo provisional (`deckSize` cartas) instanciando `cardPrefab` como hijos del contenedor del mazo.
-        ```csharp
-        transform.GetChild(visualFigther).gameObject.SetActive(true);
-        if (playerToken == null) playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
-        playerToken.player = this;
-        // ...
-        for (int i = 0; i < deckSize; i++)
-        {
-            Card card = Instantiate(cardPrefab, transform.GetChild(0).GetChild(0)).GetComponent<Card>();
-            card.indexer = i;
-        }
-        ```
+        - Se ejecuta una vez al inicio. Inicializa la visibilidad del modelo 3D del `Figther` según `visualFigther`.
+        - Instancia el `playerToken` si no ha sido asignado, lo vincula a este `Figther` y establece su posición inicial (`rocky`) en `initialStone`.
+        - Crea un "mazo provisional" instanciando `deckSize` `cardPrefab` como hijos.
     - `void Update()`:
-        - **Descripción:** Se llama una vez por fotograma.
-        - **Lógica clave:** Detecta cambios en `visualFigther` para actualizar dinámicamente el modelo 3D activo del luchador. También comprueba el estado del juego a través de `Combatjudge`: si el momento actual es `PickCard` y el luchador está "luchando" (`IsFigthing()` devuelve true), y `avalaibleCard` es 0, fuerza la revelación de todas las cartas en la mano.
-    - `Specie GetSpecie()`: Devuelve la especie asignada al luchador.
-    - `int GetPlayerLive()`: Devuelve los puntos de vida actuales del luchador.
-    - `void setPlayerLive(int pL)`: Establece los puntos de vida del luchador a un valor específico.
-    - `void addPlayerLive(int pL)`: Añade una cantidad a los puntos de vida actuales del luchador.
-    - `void randomSpecie()`: Asigna una `Specie` aleatoria al luchador.
-    - `void movePlayer(RockBehavior rocker)`: Actualiza la posición del `playerToken` del luchador en el tablero.
-    - `Card getPicked()`: Recupera la carta actualmente "elegida" o "recogida" a través del componente `HolderPlay` hijo.
-    - `void DrawCard(int index, int HandDex)`: Roba una carta específica del mazo (por `index`) y la coloca en una posición específica de la mano (`HandDex`). La carta robada se desactiva en el mazo.
-    - `void PlayCard(Card card)`: Delega la acción de jugar una carta al componente `HolderPlay` hijo.
-    - `private void DrawCard(int index)`:
-        - **Descripción:** Una sobrecarga privada de `DrawCard` que roba una carta *aleatoria activa* del mazo y la coloca en la mano en el `index` especificado.
-        - **Lógica clave:** Busca una carta activa en el mazo, lo que implica que las cartas desactivadas ya han sido robadas o están fuera de juego. Una vez encontrada, la asigna a la `HandCard` correspondiente y la desactiva en el mazo.
-    - `void RefillHand()`: Recorre la mano y roba nuevas cartas (`DrawCard` aleatorio) para cualquier espacio vacío (`GetCard() == null`).
-    - `bool IsFigthing()`:
-        - **Descripción:** Determina si este luchador está activo en el combate actual.
-        - **Lógica clave:** Utiliza una lógica de bitmask (`figthers % 2`, `figthers / 2`) con el valor devuelto por `Combatjudge.combatjudge.GetPlayersFigthing()`. Cada bit en el número entero representa el estado de un luchador (activo o inactivo) basado en su `indexFigther`. Si el bit correspondiente al `indexFigther` de este luchador es 1, el luchador está en combate.
-    - `void ThrowCard()`: Llama a `PlayCard(null)` en el `HolderPlay`, lo que probablemente indica una acción de descarte o "pasar turno" sin jugar una carta.
+        - Se ejecuta cada fotograma.
+        - Gestiona el cambio dinámico del modelo visual del `Figther` si el valor de `visualFigther` cambia en tiempo de ejecución.
+        - Durante la fase de juego `SetMoments.PickCard` (determinada por `Combatjudge`) y si el `Figther` está participando en el combate (`IsFigthing()`) y `avalaibleCard` es `0`, fuerza a que todas las cartas en la mano sean reveladas.
+    - `Specie GetSpecie()`: Devuelve la `Specie` actual del `Figther`.
+    - `int GetPlayerLive()`: Devuelve los puntos de vida (`figtherLive`) actuales del `Figther`.
+    - `void setPlayerLive(int pL)`: Establece los puntos de vida del `Figther` a un valor específico `pL`.
+    - `void addPlayerLive(int pL)`: Añade un valor `pL` a los puntos de vida actuales del `Figther`.
+    - `void randomSpecie()`: Asigna una `Specie` aleatoria al `Figther` de entre las definidas en el `enum Specie`.
+    - `void movePlayer(RockBehavior rocker)`: Actualiza la posición del `playerToken` del `Figther` en el tablero a la `RockBehavior` proporcionada.
+    - `Card getPicked()`: Recupera la carta actualmente "seleccionada" (o en el área de juego) a través de un componente hijo `HolderPlay`.
+    - `void DrawCard(int index, int HandDex)`: Roba una carta específica del mazo usando su `index` y la coloca en la mano del jugador en la posición `HandDex`. La carta robada se desactiva en el mazo.
+    - `void PlayCard(Card card)`: Delega la acción de jugar una `card` al componente hijo `HolderPlay`.
+    - `private void DrawCard(int index)`: Roba una carta *aleatoria* que esté activa en el mazo y la coloca en la mano del jugador en la posición `index`. Esta es una versión interna que asegura que solo se roben cartas disponibles.
+    - `void RefillHand()`: Recorre los espacios de la mano del `Figther` y, si algún espacio está vacío, llama a la versión `private DrawCard(int index)` para robar una nueva carta aleatoria y rellenar ese espacio.
+    - `bool IsFigthing()`: Consulta al `Combatjudge` para determinar si este `Figther` (identificado por `indexFigther`) está actualmente participando en el combate. La lógica interna utiliza operaciones bit a bit para verificar el estado de los jugadores.
+    - `void ThrowCard()`: Llama al método `PlayCard` del `HolderPlay` pasando `null`, lo que podría significar descartar una carta o pasar el turno sin jugar.
+
+- **Lógica Clave:**
+    - **Gestión de Modelos Visuales:** El método `Update` optimiza la activación/desactivación de los modelos 3D del `Figther`. Solo actualiza el modelo activo si el índice `visualFigther` ha cambiado desde el último fotograma, mejorando el rendimiento.
+    - **Manejo de Mazo y Mano:** El script proporciona dos mecanismos de robo de cartas: uno para robar una carta específica por índice (`DrawCard(int index, int HandDex)`) y otro para robar una carta aleatoria disponible del mazo (`private void DrawCard(int index)`), usado para rellenar la mano.
+    - **Determinación de Participación en Combate:** La función `IsFigthing()` utiliza un patrón de bits para verificar la información de `Combatjudge.GetPlayersFigthing()` y determinar eficientemente si el `Figther` actual está activo en un combate.
 
 ## 3. Dependencias y Eventos
+
 - **Componentes Requeridos:**
-    - Este script no usa explícitamente el atributo `[RequireComponent]`.
-    - Sin embargo, depende fuertemente de una jerarquía de GameObjects específica. Espera encontrar GameObjects hijos en índices específicos para la representación visual (modelos de luchadores) y para los contenedores de mazo y mano (ej: `transform.GetChild(0).GetChild(0)` para el mazo).
-    - Requiere la presencia de un componente `HolderPlay` como hijo (o en un hijo) para gestionar las cartas jugadas.
+    - Aunque no se usa explícitamente el atributo `[RequireComponent]`, este script depende fundamentalmente de la existencia de ciertos componentes en sus GameObjects hijos para la gestión de cartas y juego: `Card` (en el mazo), `HandCard` (en la mano) y `HolderPlay` (para jugar cartas). También asume la existencia de una instancia global o singleton de `Combatjudge`.
 - **Eventos (Entrada):**
-    - Este script no se suscribe directamente a eventos de Unity (`UnityEvent`) o delegates (`Action`).
-    - Obtiene información de estado directamente de la instancia singleton de `Combatjudge` (`Combatjudge.combatjudge.GetSetMoments()` y `Combatjudge.combatjudge.GetPlayersFigthing()`).
+    - Este script se suscribe indirectamente al estado del juego a través de consultas a `Combatjudge.combatjudge.GetSetMoments()`, lo que le permite reaccionar a fases específicas del combate (como `SetMoments.PickCard`).
 - **Eventos (Salida):**
-    - Este script no invoca ningún `UnityEvent` o `Action` público para notificar a otros sistemas.
-    - Las interacciones de salida se realizan a través de la modificación directa de estados o la llamada a métodos en otros objetos (`playerToken`, `HolderPlay`, `Card`, `HandCard`).
+    - `Figther.cs` no invoca `UnityEvent` ni `Action` personalizados para notificar a otros sistemas. En su lugar, interactúa directamente con otros componentes y scripts (ej., `playerToken`, `HolderPlay`, `Combatjudge`) llamando a sus métodos públicos.
