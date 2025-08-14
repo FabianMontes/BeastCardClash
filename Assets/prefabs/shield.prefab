@@ -89,11 +89,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shields:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: ff7c96ffce0bdc04d873b870fde37e32, type: 3}
+  - {fileID: 21300000, guid: 62e4cb0fe18d7b047b4defec1ee56706, type: 3}
+  - {fileID: 21300000, guid: b82d8c20165ba5148baae4d8a1ea7e46, type: 3}
+  - {fileID: 21300000, guid: e18d960a8fb20d54fb1c6719c3fb5778, type: 3}
+  - {fileID: 21300000, guid: d9fc2b00eb4eb3447bc78e0eed4c994b, type: 3}
+  - {fileID: 21300000, guid: 082053be4a216ce43a7c174d4b9c2e44, type: 3}
+  - {fileID: 21300000, guid: 74d4e213773513842a35f5d70559fe0c, type: 3}
+  - {fileID: 21300000, guid: 015317e8350e0314087afb85fd16c87e, type: 3}

@@ -11,9 +11,11 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int handPos;
     [SerializeField] Card card;
-    [SerializeField] bool playable = true; 
+    [SerializeField] bool playable = true;
+    [SerializeField] public bool picker = false;
     Figther player;
     Button button;
+    bool front;
 
     SetMoments prevSetMoment;
 
@@ -23,53 +25,70 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         player = GetComponentInParent<Figther>();
         prevSetMoment = SetMoments.PickDice;
         button = transform.GetComponent<Button>();
-        Visib(false);
+        if (playable)
+        {
+            clickable(false);
+        }
+        else
+        {
+            Visib(false);
+            button.interactable = false;
+        }
+        front = true;
         SetCard(card);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!playable)
-        {
-            return;
-        }
-
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
-        if (momo != prevSetMoment)
+        if (!picker)
         {
-            if (momo == SetMoments.PickCard && player.IsFigthing())
+            if (momo != prevSetMoment)
             {
-                if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                if (momo == SetMoments.PickCard && player.IsFigthing())
                 {
-                    Visib(true);
-                    player.avalaibleCard++;
+                    if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                    {
+                        clickable(true);
+                        player.avalaibleCard++;
+                    }
+                    else
+                    {
+
+                    }
                 }
-                else
+                if (momo != SetMoments.PickCard)
                 {
-
+                    clickable(false);
                 }
-            }
-            if (momo != SetMoments.PickCard)
-            {
-                Visib(false);
-            }
 
-            prevSetMoment = momo;
+                prevSetMoment = momo;
+            }
+            if (player.getPicked() != null) clickable(false);
+        }
+        
+        if (picker && player.getPicked() != null)
+        {
+
+            halfVisible(momo == SetMoments.Reveal);
+
         }
 
-        if (player.getPicked() != null) Visib(false);
+       
     }
 
     private void Visib(bool isVisible)
     {
-        //transform.GetChild(0).gameObject.SetActive(isVisible);
-        button.interactable = isVisible;
+        transform.GetChild(0).gameObject.SetActive(isVisible);
+        transform.GetChild(1).gameObject.SetActive(isVisible);
+        
+
     }
 
     public void ForceReveal()
     {
-        Visib(true);
+        clickable(true);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -84,15 +103,17 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetCard(Card card)
     {
+
         this.card = card;
-        if (card == null)
+
+        if (card == null || (!playable && !picker))
         {
-            transform.GetComponent<Image>().enabled = false;
+            Visib(false);
         }
         else
         {
 
-            Image image = transform.GetComponent<Image>();
+            Visib(true);
 
         }
     }
@@ -108,8 +129,32 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return card;
     }
 
-    public bool Selectable()
+    public void clickable(bool isClick)
+    {
+        button.interactable = isClick;
+        if (isClick)
+        {
+            transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.white;
+            transform.GetChild(1).GetChild(1).GetComponent<Image>().color = Color.white;
+            transform.GetChild(1).GetChild(2).GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.gray;
+            transform.GetChild(1).GetChild(1).GetComponent<Image>().color = Color.gray;
+            transform.GetChild(1).GetChild(2).GetComponent<Image>().color = Color.gray;
+
+        }
+    }
+
+    public bool isClickable()
     {
         return button.interactable;
+    }
+
+    private void halfVisible(bool front)
+    {
+        transform.GetChild(0).gameObject.SetActive(!front);
+        transform.GetChild(1).gameObject.SetActive(front);
     }
 }

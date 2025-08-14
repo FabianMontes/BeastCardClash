@@ -21,7 +21,7 @@ public class liveSeter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        slider.value = figther.GetPlayerLive() / Combatjudge.combatjudge.initialLives;
+        slider.value = (float)figther.GetPlayerLive() / Combatjudge.combatjudge.initialLives;
         texter.text = figther.GetPlayerLive().ToString();
     }
 }

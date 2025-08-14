@@ -3337,38 +3337,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: shield
       objectReference: {fileID: 0}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[0]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 88b96ab2ce9345d4fabe9d4b4767ac40, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[1]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 11af1327d01da414a842fa2770157358, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[2]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 8e4d3fb4197acd046a95fdbbad8ce895, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[3]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 1306bd0beea5cbf4aaf3f4afe288bb05, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[4]'
-      value: 
-      objectReference: {fileID: 21300000, guid: cb59c7b410eb27145b9687355df96c63, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[5]'
-      value: 
-      objectReference: {fileID: 21300000, guid: d0f5537024abdd349af699bb56047424, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[6]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 20ba203311430d343b31eb353a39d4a3, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[7]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 3e89244b0ad44924692ac413d46f980c, type: 3}
     - target: {fileID: 7203559944039932644, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3471,38 +3439,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: shield
       objectReference: {fileID: 0}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[0]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 88b96ab2ce9345d4fabe9d4b4767ac40, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[1]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 11af1327d01da414a842fa2770157358, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[2]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 8e4d3fb4197acd046a95fdbbad8ce895, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[3]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 1306bd0beea5cbf4aaf3f4afe288bb05, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[4]'
-      value: 
-      objectReference: {fileID: 21300000, guid: cb59c7b410eb27145b9687355df96c63, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[5]'
-      value: 
-      objectReference: {fileID: 21300000, guid: d0f5537024abdd349af699bb56047424, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[6]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 20ba203311430d343b31eb353a39d4a3, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[7]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 3e89244b0ad44924692ac413d46f980c, type: 3}
     - target: {fileID: 7203559944039932644, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3610,8 +3546,16 @@ PrefabInstance:
       value: Card (3)
       objectReference: {fileID: 0}
     - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: handPos
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -3718,6 +3662,14 @@ PrefabInstance:
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -3940,8 +3892,16 @@ PrefabInstance:
       value: Card (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: handPos
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -4050,8 +4010,16 @@ PrefabInstance:
       value: Card (5)
       objectReference: {fileID: 0}
     - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: handPos
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -4269,38 +4237,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: shield
       objectReference: {fileID: 0}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[0]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 88b96ab2ce9345d4fabe9d4b4767ac40, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[1]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 11af1327d01da414a842fa2770157358, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[2]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 8e4d3fb4197acd046a95fdbbad8ce895, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[3]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 1306bd0beea5cbf4aaf3f4afe288bb05, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[4]'
-      value: 
-      objectReference: {fileID: 21300000, guid: cb59c7b410eb27145b9687355df96c63, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[5]'
-      value: 
-      objectReference: {fileID: 21300000, guid: d0f5537024abdd349af699bb56047424, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[6]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 20ba203311430d343b31eb353a39d4a3, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[7]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 3e89244b0ad44924692ac413d46f980c, type: 3}
     - target: {fileID: 7203559944039932644, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4406,6 +4342,14 @@ PrefabInstance:
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -4623,38 +4567,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: shield
       objectReference: {fileID: 0}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[0]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 88b96ab2ce9345d4fabe9d4b4767ac40, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[1]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 11af1327d01da414a842fa2770157358, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[2]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 8e4d3fb4197acd046a95fdbbad8ce895, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[3]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 1306bd0beea5cbf4aaf3f4afe288bb05, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[4]'
-      value: 
-      objectReference: {fileID: 21300000, guid: cb59c7b410eb27145b9687355df96c63, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[5]'
-      value: 
-      objectReference: {fileID: 21300000, guid: d0f5537024abdd349af699bb56047424, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[6]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 20ba203311430d343b31eb353a39d4a3, type: 3}
-    - target: {fileID: 5709141829011841642, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
-      propertyPath: 'shields.Array.data[7]'
-      value: 
-      objectReference: {fileID: 21300000, guid: 3e89244b0ad44924692ac413d46f980c, type: 3}
     - target: {fileID: 7203559944039932644, guid: 9373dbdf50943a74eaa4449344825f2d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4875,6 +4787,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card
       objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4982,8 +4902,16 @@ PrefabInstance:
       value: Card (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: handPos
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -5091,6 +5019,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card
       objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5196,6 +5132,14 @@ PrefabInstance:
     - target: {fileID: 3299329540462220408, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Name
       value: Card
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x
@@ -5304,8 +5248,16 @@ PrefabInstance:
       value: Card (4)
       objectReference: {fileID: 0}
     - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: picker
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: handPos
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803748649412903369, guid: a49792b010544324dba2ffe22872be6b, type: 3}
+      propertyPath: playable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5542974676126680195, guid: a49792b010544324dba2ffe22872be6b, type: 3}
       propertyPath: m_Pivot.x

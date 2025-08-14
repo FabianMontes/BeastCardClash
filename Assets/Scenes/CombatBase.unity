@@ -1155,7 +1155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc88d21afac0bf4495322c8a91de401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manyFigthers: 2
+  manyFigthers: 3
   player: {fileID: 8697360924836537486, guid: 3fd4b4f799390584b96e80ef92308c0f, type: 3}
   Bots: {fileID: 8697360924836537486, guid: bfa15f1edbee12141b8d58af61a487af, type: 3}
   figtherTurn: 0

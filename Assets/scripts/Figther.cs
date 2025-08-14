@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum Team
 {
-    one, two, tree, four, five, six, seven, eight
+    acetiles, ingeniosos, adn, zootecnicos, RCPTeam, pluma_dorada,real_pincel, photo_agros,va_games
 }
 
 public enum Specie
@@ -18,7 +18,7 @@ public class Figther : MonoBehaviour
     [Header("FigtherData")]
     [SerializeField] int figtherLive;
     [SerializeField] public string figtherName;    
-    [SerializeField] public Team team;
+    [SerializeField] Team team;
     [SerializeField] Specie specie;
     [SerializeField] int skin;
     [SerializeField] int deckSize;
@@ -85,6 +85,30 @@ public class Figther : MonoBehaviour
     public Specie GetSpecie()
     {
         return specie;
+    }
+
+    public void setTeam(Team team)
+    {
+        this.team = team;
+    }
+
+    public void setNoTeam(Team team)
+    {
+        this.team = (Team)Random.Range(0, 8);
+        while (this.team == team)
+        {
+            this.team = (Team)Random.Range(0, 8);
+        }
+    }
+
+    public void FreeTeam()
+    {
+        team = (Team) Random.Range(0, 8);
+    }
+
+    public Team GetTeam()
+    {
+        return team;
     }
 
     public int GetPlayerLive()

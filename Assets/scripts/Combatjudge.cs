@@ -105,6 +105,15 @@ public class Combatjudge : MonoBehaviour
             {
                 figthers[i] = playeres[i];
             }
+            if (i == 0)
+            {
+                figthers[i].FreeTeam();
+            }
+            else
+            {
+                figthers[i].setNoTeam(figthers[i].GetTeam());
+            }
+
             figthers[i].setPlayerLive(initialLives);
             figthers[i].visualFigther = i+1;
             figthers[i].indexFigther = i;
@@ -113,6 +122,9 @@ public class Combatjudge : MonoBehaviour
             figthers[i].initialStone = rocky;
         }
     }
+
+    float time;
+   
 
     // Update is called once per frame
     void Update()
@@ -124,8 +136,14 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.PickDice:
                 break;
             case SetMoments.RollDice:
+                time = Time.time;
                 break;
             case SetMoments.RevealDice:
+                if (Time.time-time >2f)
+                {
+
+                    SetGlowing(FindFirstObjectByType<dice>().value);
+                }
                 break;
             case SetMoments.GlowRock:
                 break;
@@ -147,11 +165,17 @@ public class Combatjudge : MonoBehaviour
                 if (all)
                 {
                     actualAction = SetMoments.Reveal;
+                    time = Time.time;
                 }
 
                 break;
             case SetMoments.Reveal:
-                actualAction = SetMoments.Result;
+                if(Time.time - time > 5f)
+                {
+                    actualAction = SetMoments.Result;
+                }
+                
+                
                 break;
             case SetMoments.Result:
                 Card[] card = new Card[manyFigthers];
@@ -295,18 +319,7 @@ public class Combatjudge : MonoBehaviour
         }
     }
 
-    public void Roled(int value)
-    {
-        RockBehavior lander = figthers[figtherTurn].playerToken.rocky;
-        RockBehavior[] rocker = lander.getNeighbor(value);
-        rocker[0].shiny = true;
-        rocker[1].shiny = true;
-        actualAction = SetMoments.GlowRock;
-        if(figtherTurn != 0)
-        {
-            figthers[figtherTurn].transform.GetComponent<BotPlayer>().pickRock(rocker);
-        }
-    }
+    
 
     public SetMoments GetSetMoments()
     {
@@ -377,5 +390,36 @@ public class Combatjudge : MonoBehaviour
         {
             actualAction = SetMoments.PickDice;
         }
+    }
+
+    public void StartRoling()
+    {
+        actualAction = SetMoments.RollDice;
+    }
+
+    public void Roled()
+    {
+        if (actualAction == SetMoments.RollDice)
+            actualAction = SetMoments.RevealDice;
+    }
+
+    
+
+    public void SetGlowing(int value)
+    {
+        RockBehavior lander = figthers[figtherTurn].playerToken.rocky;
+        RockBehavior[] rocker = lander.getNeighbor(value);
+        rocker[0].shiny = true;
+        rocker[1].shiny = true;
+        actualAction = SetMoments.GlowRock;
+        if (figtherTurn != 0)
+        {
+            figthers[figtherTurn].transform.GetComponent<BotPlayer>().pickRock(rocker);
+        }
+    }
+
+    public int turn()
+    {
+        return figtherTurn;
     }
 }

@@ -57,7 +57,7 @@ public class Roundanimation : MonoBehaviour
                 Vector3 vector3 = transform.localScale;
                 vector3.x = 0;
                 transform.localScale = vector3;
-                estado = true;
+                estado = false;
                 timetytime = Time.time;
             }
             else
@@ -79,6 +79,7 @@ public class Roundanimation : MonoBehaviour
         {
             return;
         }
+        timetytime = Time.time;
         round = true;
         showing = true ;
         transform.parent.GetComponent<Image>().enabled = true;

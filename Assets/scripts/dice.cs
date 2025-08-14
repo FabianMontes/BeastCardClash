@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class dice : MonoBehaviour
 {
-    int value = 0;
+    public int value { get; private set; } = 0;
     int maxValue;
     TextMeshPro texter;
     bool roling;
@@ -21,6 +21,7 @@ public class dice : MonoBehaviour
     {
         if (roling)
         {
+            Combatjudge.combatjudge.StartRoling();
             value = Random.Range(1, maxValue + 1);
         }
 
@@ -29,27 +30,43 @@ public class dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.FocusONTurn())
+        if (Combatjudge.combatjudge.FocusONTurn())
+        {
+            rol();
+        }
+    }
+
+    public void rol()
+    {
+        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
         {
             roling = true;
         }
     }
 
-    private void OnMouseExit()
+    private void OnMouseExit()  
+    {
+        if (Combatjudge.combatjudge.FocusONTurn())
+        {
+            unrol();
+            
+        }
+    }
+    public void unrol()
     {
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.Roled(value);
+            Combatjudge.combatjudge.Roled();
         }
     }
 
     private void OnMouseUp()
     {
-        if (roling)
+        if (Combatjudge.combatjudge.FocusONTurn())
         {
-            roling = false;
-            Combatjudge.combatjudge.Roled(value);
+            unrol();
+
         }
     }
 }

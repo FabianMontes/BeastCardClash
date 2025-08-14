@@ -12,7 +12,7 @@ public class followShield : MonoBehaviour
     {
         figther = GetComponentInParent<Figther>();
         image = GetComponentInChildren<Image>();
-        image.sprite = shields[(int) figther.team];
+        image.sprite = shields[(int) figther.GetTeam()];
     }
 
     // Update is called once per frame
