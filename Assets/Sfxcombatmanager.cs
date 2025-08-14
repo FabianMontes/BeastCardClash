@@ -4,6 +4,7 @@ public class Sfxcombatmanager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     AudioSource audio;
+    int last = -1;
     [SerializeField]AudioClip[] clips;
     void Start()
     {
@@ -16,14 +17,18 @@ public class Sfxcombatmanager : MonoBehaviour
         switch (Combatjudge.combatjudge.GetSetMoments())
         {
             case SetMoments.PickDice:
+                
                 break;
             case SetMoments.RollDice:
+                changeSource(0,true,true);
                 break;
             case SetMoments.RevealDice:
                 break;
             case SetMoments.GlowRock:
+                changeSource(-1, true, false);
                 break;
             case SetMoments.MoveToRock:
+
                 break;
             case SetMoments.SelecCombat:
                 break;
@@ -44,11 +49,22 @@ public class Sfxcombatmanager : MonoBehaviour
         }
     }
 
-    public void changeSource(int index)
+    public void changeSource(int index,bool Force,bool loop)
     {
+
+        if ((audio.isPlaying && !Force )|| index == last)
+        {
+            return;
+        }
+        last = index;
         audio.Stop();
+        if(index == -1)
+        {
+            return;
+        }
         audio.resource = clips[index];
         audio.Play();
-
+        audio.loop = loop;
+        
     }
 }

@@ -178,7 +178,31 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.Result:
                 if (Time.time - time > 5f)
                 {
-                    actualAction = SetMoments.Loop;
+                    if (figthers[0].GetPlayerLive() == 0)
+                    {
+                        actualAction = SetMoments.End;
+                    }
+                    else
+                    {
+                        for (int i = 1; i< figthers.Length; i++)
+                        {
+                            if (figthers[i].GetPlayerLive() == 0)
+                            {
+                                
+                                Destroy(figthers[i].gameObject);
+                            }
+                        }
+                        if (figthers.Length==1)
+                        {
+                            actualAction = SetMoments.End;
+                        }
+                        else
+                        {
+                            actualAction = SetMoments.Loop;
+                        }
+                       
+                    }
+                    
                 }
                 
                 
@@ -264,6 +288,10 @@ public class Combatjudge : MonoBehaviour
 
 
             case SetMoments.End:
+                if (figthers[0].GetPlayerLive() == 0)
+                {
+                    actualAction = SetMoments.End;
+                }
                 break;
 
             default:
