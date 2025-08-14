@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class Roundanimation : MonoBehaviour
     [SerializeField] float timedelay = 2;
     [SerializeField] float timetytime = 0;
     [SerializeField] float movescaletime = 0.5f;
+    TextMeshProUGUI text;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,6 +22,7 @@ public class Roundanimation : MonoBehaviour
         Vector3 vector3 = transform.localScale;
         vector3.x = 0;
         transform.localScale = vector3;
+        text = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -57,7 +60,7 @@ public class Roundanimation : MonoBehaviour
                 Vector3 vector3 = transform.localScale;
                 vector3.x = 0;
                 transform.localScale = vector3;
-                estado = true;
+                estado = false;
                 timetytime = Time.time;
             }
             else
@@ -67,6 +70,7 @@ public class Roundanimation : MonoBehaviour
                 transform.localScale = vector3;
                 round = false;
                 transform.parent.GetComponent<Image>().enabled = false;
+                Combatjudge.combatjudge.endRoundeded();
             }
 
         }
@@ -78,8 +82,10 @@ public class Roundanimation : MonoBehaviour
         {
             return;
         }
+        timetytime = Time.time;
         round = true;
         showing = true ;
         transform.parent.GetComponent<Image>().enabled = true;
+        text.text = $"Ronda {Combatjudge.combatjudge.round}";
     }
 }

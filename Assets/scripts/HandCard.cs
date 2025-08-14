@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.AI;
+using UnityEngine.Playables;
 
 [DefaultExecutionOrder(-4)]
 
@@ -9,7 +11,8 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int handPos;
     [SerializeField] Card card;
-    TextMeshProUGUI textMeshPro;
+    [SerializeField] bool playable = true;
+    [SerializeField] public bool picker = false;
     Figther player;
     Button button;
 
@@ -18,52 +21,89 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        textMeshPro = GetComponentInChildren<TextMeshProUGUI>();
         player = GetComponentInParent<Figther>();
         prevSetMoment = SetMoments.PickDice;
         button = transform.GetComponent<Button>();
-        Visib(false);
+        if (playable)
+        {
+            clickable(false);
+        }
+        else
+        {
+            Visib(false);
+            button.interactable = false;
+        }
+
         SetCard(card);
+
+        transform.GetChild(1).gameObject.SetActive(picker);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
-        if (momo != prevSetMoment)
+        if (!picker)
         {
-            if (momo == SetMoments.PickCard && player.IsFigthing())
+            if (momo != prevSetMoment)
             {
-                if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                if (momo == SetMoments.PickCard && player.IsFigthing())
                 {
-                    Visib(true);
-                    player.avalaibleCard++;
+                    if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                    {
+                        clickable(true);
+                        player.avalaibleCard++;
+                    }
+                    else
+                    {
+
+                    }
                 }
-                else
+                if (momo != SetMoments.PickCard)
                 {
-
+                    clickable(false);
                 }
-            }
-            if (momo != SetMoments.PickCard)
-            {
-                Visib(false);
-            }
 
-            prevSetMoment = momo;
+                prevSetMoment = momo;
+            }
+            if (player.getPicked() != null) clickable(false);
+            return;
         }
 
-        if (player.getPicked() != null) Visib(false);
+
+        if (picker && player.IsFigthing() && momo != SetMoments.SelecCombat)
+        {
+            if (momo == SetMoments.PickCard)
+            {
+                halfVisible(true);
+                Image chil = transform.GetChild(0).GetChild(0).GetComponent<Image>();
+                Color color = chil.color;
+                color.a = card == null ? 0.5f : 1f;
+                chil.color = color;
+            }
+            else if (momo == SetMoments.Reveal)
+            {
+                halfVisible(false);
+                Visib(true);
+            }
+
+
+        }
+
+
     }
 
     private void Visib(bool isVisible)
     {
         //transform.GetChild(0).gameObject.SetActive(isVisible);
-        button.interactable = isVisible;
+        transform.GetChild(1).gameObject.SetActive(isVisible);
+
     }
 
     public void ForceReveal()
     {
-        Visib(true);
+        clickable(true);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -78,34 +118,25 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetCard(Card card)
     {
+
         this.card = card;
-        if (card == null)
+
+        if (card == null || (!playable && !picker))
         {
-            textMeshPro.text = "";
-            transform.GetComponent<Image>().enabled = false;
+            Visib(false);
         }
         else
         {
-            textMeshPro.text = card.GetID();
-
-            Image image = transform.GetComponent<Image>();
-
-            image.enabled = true;
-            switch (card.GetElement())
+            if (picker)
             {
-                case Element.fire:
-                    image.color = Color.red;
-                    break;
-                case Element.earth:
-                    image.color = Color.green;
-                    break;
-                case Element.water:
-                    image.color = Color.blue;
-                    break;
-                case Element.air:
-                    image.color = Color.white;
-                    break;
+                halfVisible(true);
             }
+            else
+            {
+                Visib(true);
+            }
+
+
         }
     }
 
@@ -118,5 +149,34 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public Card GetCard()
     {
         return card;
+    }
+
+    public void clickable(bool isClick)
+    {
+        button.interactable = isClick;
+        if (isClick)
+        {
+            transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.white;
+            transform.GetChild(1).GetChild(1).GetComponent<Image>().color = Color.white;
+            transform.GetChild(1).GetChild(2).GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.gray;
+            transform.GetChild(1).GetChild(1).GetComponent<Image>().color = Color.gray;
+            transform.GetChild(1).GetChild(2).GetComponent<Image>().color = Color.gray;
+
+        }
+    }
+
+    public bool isClickable()
+    {
+        return button.interactable;
+    }
+
+    private void halfVisible(bool visible)
+    {
+        transform.GetChild(0).gameObject.SetActive(visible);
+        //transform.GetChild(2).gameObject.SetActive(front);
     }
 }

@@ -1,17 +1,26 @@
-using System;
+
 using UnityEngine;
+
+public enum Team
+{
+    acetiles, ingeniosos, adn, zootecnicos, RCPTeam, pluma_dorada,real_pincel, photo_agros,va_games
+}
 
 public enum Specie
 {
-    chameleon, bear, snake, frog
+    bear, frog, chameleon, condor
 }
+
 
 [DefaultExecutionOrder(0)]
 public class Figther : MonoBehaviour
 {
     [Header("FigtherData")]
     [SerializeField] int figtherLive;
+    [SerializeField] public string figtherName;    
+    [SerializeField] Team team;
     [SerializeField] Specie specie;
+    [SerializeField] int skin;
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
     public int avalaibleCard = 0;
@@ -36,7 +45,7 @@ public class Figther : MonoBehaviour
         transform.GetChild(3).gameObject.SetActive(false);
         transform.GetChild(visualFigther).gameObject.SetActive(true);
 
-        if (playerToken == null) playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
+        if (playerToken == null) playerToken = Instantiate(tokenPrefab,initialStone.transform.position+Vector3.up*1,Quaternion.identity).transform.GetComponent<PlayerToken>();
         playerToken.player = this;
         playerToken.rocky = initialStone;
 
@@ -78,6 +87,30 @@ public class Figther : MonoBehaviour
         return specie;
     }
 
+    public void setTeam(Team team)
+    {
+        this.team = team;
+    }
+
+    public void setNoTeam(Team team)
+    {
+        this.team = (Team)Random.Range(0, 8);
+        while (this.team == team)
+        {
+            this.team = (Team)Random.Range(0, 8);
+        }
+    }
+
+    public void FreeTeam()
+    {
+        team = (Team) Random.Range(0, 8);
+    }
+
+    public Team GetTeam()
+    {
+        return team;
+    }
+
     public int GetPlayerLive()
     {
         return figtherLive;
@@ -95,7 +128,8 @@ public class Figther : MonoBehaviour
 
     public void randomSpecie()
     {
-        specie = (Specie)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Specie)).Length);
+        specie = Specie.bear;
+        skin = Random.Range(0,2);
     }
 
     public void movePlayer(RockBehavior rocker)
@@ -146,6 +180,7 @@ public class Figther : MonoBehaviour
         {
             if (hand.GetChild(i).GetComponent<HandCard>().GetCard() == null) DrawCard(i);
         }
+        avalaibleCard = 0;
     }
     public bool IsFigthing()
     {

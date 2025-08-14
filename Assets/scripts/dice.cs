@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class dice : MonoBehaviour
 {
-    int value = 0;
+    public int value { get; private set; } = 0;
     int maxValue;
-    TextMeshPro texter;
+    
     bool roling;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,7 +13,7 @@ public class dice : MonoBehaviour
     {
         maxValue = Combatjudge.combatjudge.maxDice;
         roling = false;
-        texter = GetComponentInChildren<TextMeshPro>();
+    
     }
 
     // Update is called once per frame
@@ -21,35 +21,75 @@ public class dice : MonoBehaviour
     {
         if (roling)
         {
+            Combatjudge.combatjudge.StartRoling();
             value = Random.Range(1, maxValue + 1);
+            Vector3 vector3 = new Vector3(0,45,0);
+            switch (value)
+            {
+                case 1:
+                    vector3.z = 90;
+                    break;
+                case 2:
+                    vector3.x = -90;
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+                    vector3.x = 180;
+                    break;
+                case 5:
+                    vector3.x = 90;
+                    break;
+                case 6:
+                    vector3.z = -90;
+                    break;
+            }
+            transform.rotation = Quaternion.Euler(vector3);
         }
 
-        texter.text = value.ToString();
+
     }
 
     private void OnMouseDown()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.FocusONTurn())
+        if (Combatjudge.combatjudge.FocusONTurn())
+        {
+            rol();
+        }
+    }
+
+    public void rol()
+    {
+        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
         {
             roling = true;
         }
     }
 
-    private void OnMouseExit()
+    private void OnMouseExit()  
+    {
+        if (Combatjudge.combatjudge.FocusONTurn())
+        {
+            unrol();
+            
+        }
+    }
+    public void unrol()
     {
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.Roled(value);
+            Combatjudge.combatjudge.Roled();
         }
     }
 
     private void OnMouseUp()
     {
-        if (roling)
+        if (Combatjudge.combatjudge.FocusONTurn())
         {
-            roling = false;
-            Combatjudge.combatjudge.Roled(value);
+            unrol();
+
         }
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum Inscription
 {
-    fire = 0, earth = 1, water = 2, air = 3, duel = 4, pick = 6, empty = 5
+    fire, earth, water, air, duel, pick, empty
 }
 
 [DefaultExecutionOrder(-2)]
@@ -12,10 +12,12 @@ public class RockBehavior : MonoBehaviour
     public PlayZone father;
     [SerializeField] private Sprite[] sprite;
     [SerializeField] public Inscription inscription = Inscription.empty;
+    [SerializeField] private Color[] colors;
 
     PlayerToken[] playersOn = null;
     SpriteRenderer simbol;
     SpriteRenderer itself;
+    SpriteRenderer shyn;
     public Vector3 direction = Vector3.forward;
     public float angle = 0;
     public int numbchild = 0;
@@ -24,9 +26,11 @@ public class RockBehavior : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        simbol = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        simbol = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        shyn = transform.GetChild(0).GetComponent<SpriteRenderer>();
         itself = transform.GetComponent<SpriteRenderer>();
         simbol.sprite = sprite[(int)inscription];
+        itself.color = colors[(int)inscription];
 
         if (father == null) return;
 
@@ -39,12 +43,12 @@ public class RockBehavior : MonoBehaviour
     void Update()
     {
         if (Combatjudge.combatjudge.GetSetMoments() != SetMoments.GlowRock) shiny = false;
-        itself.color = shiny ? Color.yellow : Color.black;
+        shyn.gameObject.SetActive(shiny);
     }
 
     private void OnMouseDown()
     {
-        if (shiny) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
+        if (shiny && Combatjudge.combatjudge.FocusONTurn()) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
     }
 
     public RockBehavior[] getNeighbor(int al)
