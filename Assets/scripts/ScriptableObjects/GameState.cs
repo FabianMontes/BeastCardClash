@@ -48,7 +48,6 @@ public class GameState : MonoBehaviour
 
     // Variables
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
-    [SerializeField] private String battleScene; // Escena de batalla
     [SerializeField] private Languages language; // Idioma actual (por defecto español)
     [SerializeField] private TextAsset spanishFile; // Archivo de diálogos en español
     [SerializeField] private TextAsset englishFile; // Archivo de diálogos en inglés
@@ -104,7 +103,7 @@ public class GameState : MonoBehaviour
                 break;
             // preGame: salta a la escena de batalla
             case GameStates.preGame:
-                SceneManager.LoadScene(battleScene);
+                SceneManager.LoadScene("CombatBase");
                 break;
             // win: no definido
             case GameStates.win:

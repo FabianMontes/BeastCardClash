@@ -15,7 +15,6 @@ public class PlayerAnimation : MonoBehaviour
     [SerializeField] private SpieceEnum SpieceEnum;
     [SerializeField] private NavMeshAgent Agent;
     private MeshAnimation MeshAnimate;
-    private List<int> SpieceList;
     private Vector3 MeshScale = new Vector3(0.5f, 0.5f, 0.5f); // Pone el modelo a la mitad de tamaño
     private Vector3 MeshPosition = new Vector3(0, -1, 0); // Pone el modelo a nivel del suelo
 
@@ -28,10 +27,6 @@ public class PlayerAnimation : MonoBehaviour
         Children.transform.localPosition = MeshPosition;
         MeshAnimate = Children.GetComponent<MeshAnimation>();
         MeshAnimate.SetSkin(0);
-        SpieceList.Add(0);
-        SpieceList.Add(0);
-        SpieceList.Add(0);
-        SpieceList.Add(0);
     }
 
     // Update is called once per frame
@@ -56,6 +51,5 @@ public class PlayerAnimation : MonoBehaviour
         GameObject Children = Instantiate(Prefabs[(int)SpieceEnum], transform.position, transform.rotation);
         Children.transform.parent = transform;
         MeshAnimate = Children.GetComponent<MeshAnimation>();
-        MeshAnimate.SetSkin(SpieceList[(int)SpieceEnum]);
     }
 }

@@ -9,7 +9,6 @@ public class DialogManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textPanel; // Panel del texto del diálogo
 
     // Componentes de jugador y juego
-    [SerializeField] private GameState gameStateManager; // Asset de estado del juego
     [SerializeField] private Transform target; // Target (que el jugador sigue). Necesario para desactivarlo
     [SerializeField] private float maxDistance = 3f; // Distancia máxima para activar el diálogo
     private Target targetScript; // Script del target (necesario para desactivarlo)
@@ -74,11 +73,12 @@ public class DialogManager : MonoBehaviour
     Dialogs[] GetDialogsForState()
     {
         // Carga el contenido del archivo de diálogos. Si no hay, devuelve un array vacío
-        DialogFile dialogFileContent = gameStateManager.DialogFileContent;
+        DialogFile dialogFileContent = GameState.singleton.DialogFileContent;
+        if (dialogFileContent == null) dialogFileContent = GameState.singleton.DialogFileContent;
         if (dialogFileContent == null) return new Dialogs[0];
 
         // Devuelve los diálogos correspondientes al estado actual del juego
-        switch (gameStateManager.CurrentGameState)
+        switch (GameState.singleton.CurrentGameState)
         {
             case GameStates.begin:
                 return dialogFileContent.BeginDialogs;
@@ -123,6 +123,6 @@ public class DialogManager : MonoBehaviour
         currentDialogIndex = 0;
 
         // Pasa al siguiente estado del juego
-        gameStateManager.NextGameState(gameStateManager.CurrentGameState);
+        GameState.singleton.NextGameState(GameState.singleton.CurrentGameState);
     }
 }
