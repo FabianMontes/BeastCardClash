@@ -111,7 +111,7 @@ public class Combatjudge : MonoBehaviour
             }
             else
             {
-                figthers[i].setNoTeam(figthers[i].GetTeam());
+                figthers[i].setNoTeam(figthers[0].GetTeam());
             }
 
             figthers[i].setPlayerLive(initialLives);
@@ -146,10 +146,15 @@ public class Combatjudge : MonoBehaviour
                 }
                 break;
             case SetMoments.GlowRock:
+                if (figtherTurn != 0)
+                {
+                    figthers[figtherTurn].transform.GetComponent<BotPlayer>().thinkingRocks();
+                }
                 break;
             case SetMoments.MoveToRock:
                 break;
             case SetMoments.SelecCombat:
+
                 break;
             case SetMoments.PickCard:
                 all = true;
@@ -191,10 +196,18 @@ public class Combatjudge : MonoBehaviour
                 {
                     for (int j = 0; j < manyFigthers; j++)
                     {
-                        results[i, j] = IndvCombat(card[i], card[j]);
-                        print(results[i, j]);
+                        if (figthers[i].GetTeam() == figthers[j].GetTeam())
+                        {
+                            results[i, j] = Results.draw;
+                        }
+                        else
+                        {
+                            results[i, j] = IndvCombat(card[i], card[j]);
+                        }
+                        
+                        
                     }
-                    print("dd");
+                    
                 }
 
                 int[] destiny = new int[manyFigthers];
@@ -214,7 +227,7 @@ public class Combatjudge : MonoBehaviour
                             break;
                         }
                     }
-                    print(destiny[i]);
+                    //print(destiny[i]);
                     figthers[i].addPlayerLive(destiny[i]);
                 }
 
@@ -261,7 +274,7 @@ public class Combatjudge : MonoBehaviour
             return Results.draw;
         }
 
-        print(combatType);
+        //print(combatType);
         if (combatType != CombatType.full)
         {
             if (one.GetElement() != two.GetElement())
@@ -346,6 +359,7 @@ public class Combatjudge : MonoBehaviour
         else
         {
             actualAction = SetMoments.PickCard;
+            print(rocky.inscription);
             combatType = (CombatType)(int)rocky.inscription;
         }
     }

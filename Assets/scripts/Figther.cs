@@ -180,6 +180,7 @@ public class Figther : MonoBehaviour
         {
             if (hand.GetChild(i).GetComponent<HandCard>().GetCard() == null) DrawCard(i);
         }
+        avalaibleCard = 0;
     }
     public bool IsFigthing()
     {

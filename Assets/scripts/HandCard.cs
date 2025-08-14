@@ -15,7 +15,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] public bool picker = false;
     Figther player;
     Button button;
-    bool front;
 
     SetMoments prevSetMoment;
 
@@ -34,8 +33,11 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             Visib(false);
             button.interactable = false;
         }
-        front = true;
+
         SetCard(card);
+
+        transform.GetChild(1).gameObject.SetActive(picker);
+
     }
 
     // Update is called once per frame
@@ -66,23 +68,36 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 prevSetMoment = momo;
             }
             if (player.getPicked() != null) clickable(false);
+            return;
         }
-        
-        if (picker && player.getPicked() != null)
+
+
+        if (picker && player.IsFigthing() && momo != SetMoments.SelecCombat)
         {
+            if (momo == SetMoments.PickCard)
+            {
+                halfVisible(true);
+                Image chil = transform.GetChild(0).GetChild(0).GetComponent<Image>();
+                Color color = chil.color;
+                color.a = card == null ? 0.5f : 1f;
+                chil.color = color;
+            }
+            else if (momo == SetMoments.Reveal)
+            {
+                halfVisible(false);
+                Visib(true);
+            }
 
-            halfVisible(momo == SetMoments.Reveal);
 
         }
 
-       
+
     }
 
     private void Visib(bool isVisible)
     {
-        transform.GetChild(0).gameObject.SetActive(isVisible);
+        //transform.GetChild(0).gameObject.SetActive(isVisible);
         transform.GetChild(1).gameObject.SetActive(isVisible);
-        
 
     }
 
@@ -112,8 +127,15 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
         {
+            if (picker)
+            {
+                halfVisible(true);
+            }
+            else
+            {
+                Visib(true);
+            }
 
-            Visib(true);
 
         }
     }
@@ -152,9 +174,9 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return button.interactable;
     }
 
-    private void halfVisible(bool front)
+    private void halfVisible(bool visible)
     {
-        transform.GetChild(0).gameObject.SetActive(!front);
-        transform.GetChild(1).gameObject.SetActive(front);
+        transform.GetChild(0).gameObject.SetActive(visible);
+        //transform.GetChild(2).gameObject.SetActive(front);
     }
 }

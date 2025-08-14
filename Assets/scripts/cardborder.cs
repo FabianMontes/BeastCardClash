@@ -8,7 +8,7 @@ public class cardborder : MonoBehaviour
     [SerializeField] private Color[] colors;
     HandCard card;
     Image image;
-    [SerializeField] float darkValue = 0.3f;
+    [SerializeField] float darkValue = 0.2f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,7 +30,7 @@ public class cardborder : MonoBehaviour
         {
             float h, s, v;
             Color.RGBToHSV(color, out h, out s, out v);
-            v = v - darkValue;
+            v = darkValue;
             color = Color.HSVToRGB(h, s, v);
 
         }
