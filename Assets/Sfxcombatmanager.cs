@@ -28,15 +28,18 @@ public class Sfxcombatmanager : MonoBehaviour
                 changeSource(-1, true, false);
                 break;
             case SetMoments.MoveToRock:
-
+                changeSource(1, true, true);
                 break;
             case SetMoments.SelecCombat:
                 break;
             case SetMoments.PickCard:
+                
                 break;
             case SetMoments.Reveal:
+                changeSource(2, true, false);
                 break;
             case SetMoments.Result:
+                changeSource(Combatjudge.combatjudge.hurtPlayer()? 3:4, true, false);
                 break;
             case SetMoments.End:
                 break;

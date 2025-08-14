@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Linq;
+
 
 public enum Element
 {
@@ -188,8 +190,11 @@ public class Combatjudge : MonoBehaviour
                         {
                             if (figthers[i].GetPlayerLive() == 0)
                             {
-                                
-                                Destroy(figthers[i].gameObject);
+                                Figther elmi = figthers[i];
+                                figthers = figthers.Where(f => f != elmi).ToArray();
+
+                                Destroy(elmi.gameObject);
+                                manyFigthers--;
                             }
                         }
                         if (figthers.Length==1)
@@ -467,5 +472,9 @@ public class Combatjudge : MonoBehaviour
     public int turn()
     {
         return figtherTurn;
+    }
+    public bool hurtPlayer()
+    {
+        return figthers[0].noHurt;
     }
 }
