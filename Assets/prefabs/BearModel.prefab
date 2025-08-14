@@ -50,11 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
       propertyPath: m_Name
-<<<<<<< Updated upstream
-      value: bear
-=======
       value: BearModel
->>>>>>> Stashed changes
       objectReference: {fileID: 0}
     - target: {fileID: 1265844832215793396, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -67,12 +63,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5533849381554134534}
-<<<<<<< Updated upstream
-=======
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5396313894197658247}
->>>>>>> Stashed changes
   m_SourcePrefab: {fileID: 100100000, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
 --- !u!1 &2201745171556616174 stripped
 GameObject:
@@ -101,8 +94,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
-<<<<<<< Updated upstream
-=======
 --- !u!114 &5396313894197658247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,4 +109,3 @@ MonoBehaviour:
   Skins:
   - {fileID: 21300000, guid: 20a6730351e39d944863d0d023a22a09, type: 3}
   - {fileID: 21300000, guid: 35991fc094b3aa3468c45eecf9faca70, type: 3}
->>>>>>> Stashed changes

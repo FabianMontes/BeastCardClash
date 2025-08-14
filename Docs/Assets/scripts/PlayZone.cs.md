@@ -1,70 +1,71 @@
 # `PlayZone.cs`
 
 ## 1. Propósito General
-Este script tiene como propósito principal la gestión de la creación y configuración inicial del "estadio" o "zona de batalla" en el juego Beast Card Clash. Genera dinámicamente una serie de objetos de "roca" (representados por `rockPrefab`) alrededor de un punto central, asignándoles propiedades como su posición, rotación e inscripción (tipo de elemento o habilidad).
+Este script `PlayZone` es un `MonoBehaviour` que gestiona la creación y configuración inicial de la zona de juego o "estadio" circular. Su rol principal es instanciar un conjunto de objetos `rockPrefab` en un patrón circular y asignarles propiedades específicas, incluyendo un tipo de "inscripción" que define su funcionalidad dentro del juego. Interactúa principalmente con los prefabs de las rocas y sus componentes `RockBehavior` para configurarlos.
 
 ## 2. Componentes Clave
 
-### `enum SetupConfig`
-Esta enumeración define los posibles patrones de configuración para las inscripciones de las rocas generadas en el estadio.
-
-*   **`normal`**: Configuración estándar que mezcla inscripciones elementales con inscripciones especiales, distribuyéndolas en un patrón predefinido.
-*   **`fullall`**: Todas las rocas recibirán la inscripción `Inscription.pick`.
-*   **`fullone`**: Todas las rocas recibirán la inscripción `Inscription.duel`.
+### `SetupConfig`
+- **Descripción:** Esta enumeración define los distintos modos de configuración para la distribución de las "inscripciones" en las rocas de la zona de juego. Cada valor representa un patrón diferente para cómo se asignarán las propiedades a las rocas instanciadas.
+- **Valores:**
+    - `normal`: Asigna inscripciones de forma variada, alternando entre diferentes tipos de elementos y elementos "no únicos".
+    - `fullall`: Asigna la inscripción `Inscription.pick` a todas las rocas.
+    - `fullone`: Asigna la inscripción `Inscription.duel` a todas las rocas.
 
 ### `PlayZone`
-Esta clase hereda de `MonoBehaviour` y es el componente central para la generación del entorno de juego. Está marcada con `[DefaultExecutionOrder(-3)]`, lo que asegura que su método `Start` se ejecute muy temprano en el ciclo de vida de la escena, antes de la mayoría de otros scripts.
+- **Descripción:** Es la clase principal de este archivo y hereda de `MonoBehaviour`, lo que le permite ser adjuntada a un GameObject en Unity. Se encarga de la generación programática del entorno de batalla. Su atributo `[DefaultExecutionOrder(-3)]` indica que este script se ejecutará muy temprano en el ciclo de vida de los scripts de Unity, antes que la mayoría de los demás, asegurando que la zona de juego esté configurada antes de que otros sistemas dependan de ella.
+- **Variables Públicas / Serializadas:**
+    - `radius` (tipo `float`): Visible en el Inspector bajo el encabezado "StadiumSetup". Define el radio del círculo en el que se distribuirán las rocas. Un valor mayor resultará en una zona de juego más grande.
+    - `many` (tipo `int`): Visible en el Inspector bajo el encabezado "StadiumSetup". Determina la cantidad total de rocas que se instanciarán en el círculo.
+    - `config` (tipo `SetupConfig`): Visible en el Inspector bajo el encabezado "StadiumSetup". Permite seleccionar el patrón de asignación de inscripciones para las rocas, utilizando los valores de la enumeración `SetupConfig`.
+    - `RockScale` (tipo `float`): Visible en el Inspector bajo el encabezado "StadiumRock". Define la escala que se aplicará a cada `rockPrefab` instanciado, afectando su tamaño visual.
+    - `rockPrefab` (tipo `GameObject`): Visible en el Inspector bajo el encabezado "StadiumRock". Es la referencia al prefab de la roca que será instanciada repetidamente para construir la zona de juego. Este prefab se espera que contenga un componente `RockBehavior`.
 
-#### Variables Públicas / Serializadas:
-Las siguientes variables son expuestas en el Inspector de Unity para permitir la configuración del estadio desde el editor:
+- **Métodos Principales:**
+    - `void Start()`: Este es un método del ciclo de vida de Unity, invocado una vez al inicio del juego cuando el script se habilita por primera vez. Contiene toda la lógica para la creación de la zona de batalla:
+        - Calcula el ángulo de separación entre cada roca basándose en la cantidad definida por `many`.
+        - Itera `many` veces para cada roca a crear. En cada iteración:
+            - Calcula la posición `x` y `z` en el círculo usando funciones trigonométricas (`Mathf.Cos`, `Mathf.Sin`) y el `radius`.
+            - Determina el tipo de `Inscription` (`Inscription.empty`, `Inscription.pick`, `Inscription.duel`, u otros elementos cíclicos) para la roca actual, basándose en el valor de la variable `config` y una lógica de distribución interna que varía según el modo seleccionado. Es importante notar que la enumeración `Inscription` no está definida en este archivo, sugiriendo que es una dependencia externa.
+            - Instancia el `rockPrefab` en la escena.
+            - Establece el objeto `PlayZone` (el `transform` del GameObject al que está adjunto este script) como el padre del `stone` recién creado, organizándolos jerárquicamente.
+            - Obtiene el componente `RockBehavior` del `stone` instanciado y le asigna varias propiedades esenciales:
+                - `father`: Una referencia a este mismo script `PlayZone`.
+                - `angle`: El ángulo de rotación de la roca.
+                - `direction`: La dirección vectorial de la roca desde el centro.
+                - `inscription`: El tipo de `Inscription` determinado anteriormente.
+                - `numbchild`: El índice numérico de la roca en el orden de creación.
 
-*   **`radius`**: Un valor `float` que determina la distancia desde el centro del objeto `PlayZone` a la que se colocarán las rocas generadas. Esencialmente, define el radio del círculo de rocas.
-*   **`many`**: Un valor `int` que especifica la cantidad total de rocas que se generarán alrededor del círculo.
-*   **`config`**: Una variable de tipo `SetupConfig` que define el patrón de inscripciones que se aplicará a las rocas individuales. Esto permite cambiar rápidamente la configuración elemental del estadio.
-*   **`RockScale`**: Un valor `float` que controla la escala uniforme de los objetos de roca (`rockPrefab`) instanciados.
-*   **`rockPrefab`**: Una referencia a un `GameObject` que se utilizará como plantilla (prefab) para cada una de las rocas que formarán el estadio. Este prefab debe contener el componente `RockBehavior`.
+    - `void Update()`: Este es un método del ciclo de vida de Unity que se invoca una vez por fotograma. En el código actual, está vacío, lo que indica que `PlayZone` no realiza ninguna lógica de actualización continua en tiempo real. Su función es puramente de inicialización.
 
-#### Métodos Principales:
-
-*   **`void Start()`**:
-    Este método del ciclo de vida de Unity se llama una vez al inicio del juego, justo antes del primer `Update`. Su función principal es inicializar el estadio. Calcula las posiciones angulares para cada roca basándose en `many` y `radius`, e itera para instanciar el `rockPrefab` la cantidad de veces especificada.
-
-    Dentro de este método, se asigna una `Inscription` a cada roca instanciada basándose en el valor de la variable `config`. También se establece el `parent` de cada roca al `transform` de este objeto `PlayZone` y se le pasan propiedades relevantes al componente `RockBehavior` de la roca recién creada, como la referencia al `PlayZone` (`father`), el `angle` de su posición, su `direction` desde el centro, la `inscription` asignada y su `numbchild` (índice de creación).
-
+- **Lógica Clave:**
+    La lógica central reside en el método `Start()`, donde se orquesta la construcción del escenario. Se utiliza un bucle `for` para iterar `many` veces, creando una roca en cada paso. La parte más elaborada es la asignación de la `Inscription`, que se maneja a través de una sentencia `switch` en la variable `config`.
+    
+    Por ejemplo, en el modo `SetupConfig.normal`, la asignación de `Inscription` es cíclica y mezcla elementos genéricos con "elementos no únicos" en un patrón predefinido:
     ```csharp
-    void Start()
+    switch (config)
     {
-        // ... cálculos de ángulo ...
-
-        for (int i = 0; i < many; i++)
-        {
-            // ... lógica para determinar 'inscripcion' basada en 'config' ...
-
-            GameObject stone = Instantiate(rockPrefab);
-            stone.transform.parent = transform;
-            stone.GetComponent<RockBehavior>().father = this;
-            stone.GetComponent<RockBehavior>().angle = -angle * i;
-            stone.GetComponent<RockBehavior>().direction = dir;
-            stone.GetComponent<RockBehavior>().inscription = inscripcion;
-            stone.GetComponent<RockBehavior>().numbchild = i;
-        }
+        case SetupConfig.normal:
+            if (i == divelement * nelem)
+            {
+                inscripcion = (Inscription)(nonelem + 4);
+                nonelem = (nonelem + 1) % 2;
+                nelem++;
+            }
+            else
+            {
+                inscripcion = (Inscription)(elem);
+                elem = (elem + 1) % 4;
+            }
+            break;
+        // ... otros casos
     }
     ```
-
-*   **`void Update()`**:
-    Este método del ciclo de vida de Unity se llama una vez por cada frame. En el contexto de este script, está vacío, lo que indica que no hay lógica de comportamiento en tiempo real o de actualización continua gestionada directamente por `PlayZone` después de la inicialización del estadio.
-
-#### Lógica Clave:
-La lógica principal de `PlayZone` reside en su método `Start`, donde se construye el estadio de batalla. Un bucle `for` itera `many` veces para crear un círculo de rocas. La elección de la `Inscription` para cada roca se maneja mediante una sentencia `switch` que evalúa la variable `config`:
-
-*   Si `config` es `normal`, las inscripciones se asignan en un patrón que alterna entre un conjunto de elementos básicos y un par de elementos especiales (asumiendo que los valores 0-3 del enum `Inscription` son elementos y 4-5 son especiales).
-*   Si `config` es `fullall` o `fullone`, todas las rocas reciben una inscripción específica (`Inscription.pick` o `Inscription.duel` respectivamente), creando un estadio uniforme en cuanto a ese tipo de inscripción.
-
-Finalmente, cada roca instanciada obtiene una referencia a este objeto `PlayZone` a través de su componente `RockBehavior`, lo que permite que las rocas interactúen o consulten el `PlayZone` si es necesario en sus propias lógicas.
+    Esta lógica asegura una distribución variada de los tipos de roca, fundamental para la estrategia del juego.
 
 ## 3. Dependencias y Eventos
-*   **Componentes Requeridos:** Este script no utiliza explícitamente el atributo `[RequireComponent]`. Sin embargo, depende fundamentalmente de que el `rockPrefab` asignado en el Inspector contenga un componente `RockBehavior`, ya que intenta acceder a él para configurar las rocas.
-
-*   **Eventos (Entrada):** `PlayZone` no se suscribe a ningún evento de Unity (como `onClick` de botones) ni a eventos personalizados (`UnityEvent`, `Action`). Su funcionamiento se basa únicamente en el ciclo de vida de `MonoBehaviour` (`Start`).
-
-*   **Eventos (Salida):** Este script no invoca ningún evento (`UnityEvent` o `Action`) para notificar a otros sistemas. Su interacción con el resto del juego se realiza instanciando `GameObjects` y asignando propiedades a sus componentes `RockBehavior` existentes, permitiendo que `RockBehavior` gestione su propia lógica o eventos posteriormente.
+- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, tiene dependencias implícitas:
+    - Requiere que el `GameObject` asignado a la variable `rockPrefab` contenga un componente `RockBehavior` para poder configurarlo correctamente durante la inicialización.
+    - Depende de la existencia de la enumeración `Inscription` y la clase `RockBehavior`, las cuales no están definidas en este archivo y se espera que existan en otro lugar del proyecto.
+- **Eventos (Entrada):** Este script no se suscribe explícitamente a ningún evento de Unity (`UnityEvent`, `Action`) o de UI en el código proporcionado.
+- **Eventos (Salida):** Este script no invoca ni emite ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas. Se comunica con los `RockBehavior` instanciados estableciendo sus propiedades directamente.

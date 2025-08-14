@@ -1,34 +1,35 @@
 # `SelectType.cs`
 
 ## 1. Propósito General
-Este script gestiona la visibilidad y la interacción de una interfaz de usuario (UI) que permite al jugador seleccionar un tipo de elemento durante una fase específica del combate. Actúa como un controlador de UI que se activa o desactiva en función del estado actual del juego, interactuando directamente con el sistema de juicio de combate (`Combatjudge`) para registrar la selección del jugador.
+Este script `SelectType` es un componente `MonoBehaviour` fundamental para la interfaz de usuario del juego. Su rol principal es gestionar la visibilidad de los elementos de la UI relacionados con la selección de tipo o elemento de combate, activándolos solo cuando el juego se encuentra en una fase específica y desactivándolos una vez que la selección ha sido realizada. Interactúa directamente con el sistema `Combatjudge` para consultar el estado actual del juego y notificar la selección del jugador.
 
 ## 2. Componentes Clave
 
 ### `SelectType`
-- **Descripción:** La clase `SelectType` es un componente de Unity (`MonoBehaviour`) que controla un panel de selección de elementos en la UI. Su función principal es mostrar u ocultar este panel en el momento adecuado del juego y procesar la elección del jugador, comunicándola al sistema central de combate.
+La clase `SelectType` es un script de Unity que se adjunta a un GameObject en la escena. Es responsable de controlar una parte específica de la interfaz de usuario del juego.
 
-- **Variables Públicas / Serializadas:**
-    - `prevSetMoment`: Esta variable privada de tipo `SetMoments` almacena el estado de combate anterior del juego. Se utiliza para detectar cuándo hay un cambio en el estado del juego, lo que permite al script reaccionar solo cuando es necesario, evitando comprobaciones redundantes. Aunque es privada, su rol es clave para la lógica de activación de la UI.
+*   **Descripción:** `SelectType` es una clase `MonoBehaviour` que controla la visibilidad de un grupo de elementos de la interfaz de usuario, presumiblemente botones o indicadores para la selección de un tipo o elemento en el combate. Monitorea el estado del juego a través del singleton `Combatjudge` para decidir cuándo mostrar u ocultar estos elementos.
 
-- **Métodos Principales:**
-    - `void Start()`: Este método se llama una vez al inicio del ciclo de vida del script. Su propósito es inicializar la variable `prevSetMoment` al estado `SetMoments.PickDice` y, crucialmente, asegurar que el panel de selección de elementos esté oculto (`Visib(false)`) cuando el juego comienza, preparándolo para ser activado más tarde por la lógica del juego.
+*   **Variables Públicas / Serializadas:** No hay variables públicas o serializadas directamente expuestas en el Inspector de Unity en este script. La variable `prevSetMoment` es interna y se utiliza para rastrear el estado anterior del juego y detectar cambios eficientemente.
 
-    - `void Update()`: Ejecutándose una vez por fotograma, `Update` es el corazón de la lógica de activación de la UI. En cada fotograma, consulta el estado actual del combate a través de `Combatjudge.combatjudge.GetSetMoments()`. Si detecta un cambio de estado y el nuevo estado es `SetMoments.SelecCombat`, hace visible la UI de selección de elementos. Esto asegura que la UI solo aparezca cuando el juego requiere que el jugador elija un elemento.
+*   **Métodos Principales:**
 
-    - `private void Visib(bool isVisible)`: Una función auxiliar interna que controla la visibilidad de los elementos visuales que componen el panel de selección. Recibe un booleano `isVisible` y lo utiliza para activar o desactivar los primeros cuatro GameObjects hijos del `GameObject` al que está adjunto este script, así como el componente `Image` del propio `GameObject`. Esto sugiere que el panel de selección se compone de un fondo (`Image`) y cuatro opciones de selección representadas por los GameObjects hijos.
+    *   `void Start()`: Este método se ejecuta una vez al inicio del ciclo de vida del script. Inicializa `prevSetMoment` con el valor `SetMoments.PickDice` y oculta inmediatamente todos los elementos de la UI gestionados por este script llamando a `Visib(false)`. Esto asegura que la interfaz de selección no sea visible hasta que sea necesaria.
 
-    - `public void PickElement(int element)`: Este método público está diseñado para ser invocado por eventos de UI, como la pulsación de un botón. Toma un entero `element` (que se espera que represente un tipo de `Element` mediante un cast implícito) y lo pasa al sistema `Combatjudge` a través de `Combatjudge.combatjudge.pickElement()`. Si el intento de seleccionar el elemento es exitoso (es decir, `pickElement` devuelve `true`), el panel de selección se oculta automáticamente, indicando que la elección ha sido procesada y no es necesaria una interacción adicional del usuario en ese momento.
+    *   `void Update()`: Ejecutándose en cada frame, este método es el corazón de la lógica de visibilidad. Obtiene el momento actual del juego (`SetMoments`) a través de `Combatjudge.combatjudge.GetSetMoments()`. Si el momento actual es diferente al `prevSetMoment` almacenado, el script verifica si el nuevo momento es `SetMoments.SelecCombat`. Si lo es, activa la visibilidad de los elementos de la UI llamando a `Visib(true)`. Finalmente, actualiza `prevSetMoment` al momento actual para la próxima iteración.
 
-- **Lógica Clave:**
-    La lógica central de `SelectType` reside en su capacidad para reaccionar a los cambios en el estado del combate. Utiliza la variable `prevSetMoment` dentro del método `Update` para detectar transiciones de estado. Cuando el sistema de combate, representado por `Combatjudge`, entra en la fase `SetMoments.SelecCombat`, este script se encarga de mostrar la UI de selección. Una vez que el jugador ha realizado una selección válida a través del método `PickElement`, el script notifica al `Combatjudge` y, si la selección es aceptada, oculta nuevamente la UI. Esto crea un flujo de usuario donde el panel de selección solo es visible y funcional en el momento exacto en que es relevante para la jugabilidad. La estructura `transform.GetChild(X).gameObject.SetActive(isVisible)` implica que este script espera una jerarquía específica de GameObjects para controlar su UI.
+    *   `private void Visib(bool isVisible)`: Este es un método auxiliar privado que encapsula la lógica para activar o desactivar un conjunto de GameObjects hijos y el componente `Image` adjunto al propio GameObject de este script. Se asume que los hijos en los índices 0, 1, 2 y 3 son los elementos de la UI que deben ser controlados. El componente `Image` en el GameObject principal también se habilita o deshabilita.
+
+    *   `public void PickElement(int element)`: Este método público está diseñado para ser invocado externamente, probablemente desde un evento de UI como el `onClick` de un botón. Recibe un entero `element` que se convierte al tipo `Element` (presumiblemente un `enum`). Llama a `Combatjudge.combatjudge.pickElement()` con el elemento seleccionado. Si `pickElement` devuelve `true` (indicando que la selección fue exitosa), el script oculta inmediatamente los elementos de la UI llamando a `Visib(false)`, lo que sugiere que la selección ha concluido para ese turno o fase.
+
+*   **Lógica Clave:** La lógica principal del script se centra en una máquina de estados simplificada para la interfaz de usuario de selección de elementos. En cada `Update`, monitorea el estado global del juego (gestionado por `Combatjudge`). Cuando el juego entra en la fase `SetMoments.SelecCombat`, el script muestra su UI. Una vez que el jugador ha seleccionado un elemento a través del método `PickElement` (probablemente al hacer clic en un botón de UI), el script notifica a `Combatjudge` la selección y luego oculta su propia UI, esperando que el juego avance a la siguiente fase antes de volver a ser relevante.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, asume la presencia de un componente `Image` en el mismo GameObject para controlar su visibilidad a través de `GetComponent<Image>().enabled`. Además, para su funcionamiento, los GameObjects hijos (al menos los primeros cuatro) deben existir en la jerarquía del GameObject para que la función `Visib` pueda activarlos/desactivarlos.
 
-- **Eventos (Entrada):**
-    - Este script se suscribe implícitamente a los cambios de estado del juego al consultar el método `GetSetMoments()` del singleton `Combatjudge.combatjudge` en cada `Update`.
-    - El método `public void PickElement(int element)` está diseñado para ser invocado por eventos externos, probablemente asociados a componentes de UI como `Button.onClick` en el Inspector de Unity, donde cada botón pasaría un valor `int` específico que corresponde a un tipo de `Element`.
+*   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, pero implícitamente requiere que el GameObject al que está adjunto tenga un componente `Image` y al menos cuatro GameObjects hijos en los índices 0 a 3, ya que `Visib` intenta acceder a ellos para controlar su visibilidad.
 
-- **Eventos (Salida):**
-    - Este script invoca el método `pickElement((Element)element)` en el singleton `Combatjudge.combatjudge`, comunicando la selección del jugador al sistema de combate principal. No emite sus propios `UnityEvent` o `Action` para notificar a otros sistemas, su interacción de "salida" es directa con `Combatjudge`.
+*   **Eventos (Entrada):**
+    *   El método `PickElement(int element)` está diseñado para ser un *listener* o *callback* de un evento de UI, típicamente el `onClick()` de botones que representan las diferentes opciones de elementos.
+
+*   **Eventos (Salida):**
+    *   Este script no emite eventos (`UnityEvent` o `Action`) directamente. Sin embargo, su acción de salida principal es llamar a `Combatjudge.combatjudge.pickElement()`, lo que efectivamente notifica al sistema central de combate sobre la elección del jugador y potencialmente desencadena un cambio de estado en ese sistema. También tiene un efecto colateral de modificar la visibilidad de sus propios elementos de UI.

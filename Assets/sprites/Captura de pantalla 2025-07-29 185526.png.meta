@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 29f2d157f6dc85142b8c33cf8fe8d563
+<<<<<<<< HEAD:Assets/sprites/Captura de pantalla 2025-07-29 185526.png.meta
+guid: 6e2d51df7a6158c4a924b90bad1e3cde
+========
+guid: 2280ccfff7804864d9239af8e4f3a89e
+>>>>>>>> 9446100d819c1539cdc8a65cb73804d6b5f7d2ba:Assets/sprites/FloorSprite.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
