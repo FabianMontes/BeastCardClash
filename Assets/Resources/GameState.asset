@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3f1a10df827ab54d94619b403de8c25, type: 3}
   m_Name: GameState
   m_EditorClassIdentifier: 
-  gameState: 0
+  gameState: 3
   battleScene: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
   language: 0
   spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
