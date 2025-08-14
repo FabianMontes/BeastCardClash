@@ -29,6 +29,8 @@ MonoBehaviour:
     _scale: 50
     _velocity: {x: 0, y: 0}
   _shader: {fileID: 4800000, guid: 9a902e6d68fe8344890c5926c684e820, type: 3}
+  _outlineMat: {fileID: 0}
+  _step: {x: 0.00036490534, y: 0.000798, z: 0, w: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
