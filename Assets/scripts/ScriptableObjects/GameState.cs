@@ -57,7 +57,7 @@ public class GameState : MonoBehaviour
     // OnEnable es llamado automáticamente por Unity
     private void OnEnable()
     {
-        if(singleton == null)
+        if (singleton == null)
         {
             singleton = this;
         }
@@ -129,11 +129,13 @@ public class GameState : MonoBehaviour
         LoadDialogFile(); // Recargamos los diálogos con el nuevo idioma.
     }
 
+    // Establece la skin
     public void SetSkin(int newSkin)
     {
         skin = newSkin;
     }
 
+    // Establece el equipo
     public void SetTeam(Team team)
     {
         this.Team = team;

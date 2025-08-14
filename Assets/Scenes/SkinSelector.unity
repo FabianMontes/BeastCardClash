@@ -2536,8 +2536,9 @@ GameObject:
   - component: {fileID: 601727390}
   - component: {fileID: 601727389}
   - component: {fileID: 601727388}
+  - component: {fileID: 601727391}
   m_Layer: 5
-  m_Name: Button
+  m_Name: StartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2607,14 +2608,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 601727391}
+        m_TargetAssemblyTypeName: SkinSelectorStartButton, Assembly-CSharp
+        m_MethodName: SetScene
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2657,6 +2658,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 601727386}
   m_CullTransparentMesh: 1
+--- !u!114 &601727391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601727386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20546921fb2dc2f46aaee9bfa481d370, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &606140212
 GameObject:
   m_ObjectHideFlags: 0
@@ -7432,7 +7445,7 @@ MonoBehaviour:
     WinDialogs: []
     LoseDialogs: []
   gameState: 0
-  battleScene: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
+  battleScene: 
   language: 0
   spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
   englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
