@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WorldPlayer : MonoBehaviour
+public class Player : MonoBehaviour
 {
     // Variables
     NavMeshAgent agent;
