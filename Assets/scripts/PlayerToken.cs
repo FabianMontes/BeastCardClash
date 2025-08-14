@@ -24,7 +24,11 @@ public class PlayerToken : MonoBehaviour
             transform.position = rocky.transform.position;
             lastRock = rocky;
             rocky.AddPlayer(this);
+            Vector3 rot = Vector3.Scale(Vector3.up,  rocky.transform.rotation.eulerAngles);
+            transform.rotation = Quaternion.Euler(rot);
+            destiny = rocky.transform.position;
         }
+        
         
         
         
@@ -52,6 +56,9 @@ public class PlayerToken : MonoBehaviour
                 direction= direction.normalized;
                 rocky.AddPlayer(this);
                 lastRock = rocky;
+                float angulo = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                Quaternion rotacion = Quaternion.Euler(0, angulo, 0);
+                transform.rotation = rotacion;
                 return;
             }
             if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.MoveToRock)
@@ -69,5 +76,9 @@ public class PlayerToken : MonoBehaviour
             }
             
         }
+    }
+    public float Speed()
+    {
+        return characterController.velocity.magnitude/50f;
     }
 }
