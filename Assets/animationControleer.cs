@@ -23,6 +23,9 @@ public class animationControleer : MonoBehaviour
     void Update()
     {
         animato.SetFloat("Speed", player.Speed());
+        animato.SetBool("EndTurn", Combatjudge.combatjudge.GetSetMoments() == SetMoments.Result);
+        animato.SetBool("didWin", figther.noHurt);
+        animato.SetInteger("ElementHurt", (int) Combatjudge.combatjudge.combatType);
     }
 
     void setModel(int index)

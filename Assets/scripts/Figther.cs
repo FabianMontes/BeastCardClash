@@ -17,7 +17,7 @@ public class Figther : MonoBehaviour
 {
     [Header("FigtherData")]
     [SerializeField] int figtherLive;
-    [SerializeField] public string figtherName;    
+    [SerializeField] public string figtherName;
     [SerializeField] Team team;
     [SerializeField] Specie specie;
     [SerializeField] int skin;
@@ -45,7 +45,7 @@ public class Figther : MonoBehaviour
         transform.GetChild(3).gameObject.SetActive(false);
         transform.GetChild(visualFigther).gameObject.SetActive(true);
 
-        if (playerToken == null) playerToken = Instantiate(tokenPrefab,initialStone.transform.position+Vector3.up*1,Quaternion.identity).transform.GetComponent<PlayerToken>();
+        if (playerToken == null) playerToken = Instantiate(tokenPrefab, initialStone.transform.position + Vector3.up * 1, Quaternion.identity).transform.GetComponent<PlayerToken>();
         playerToken.player = this;
         playerToken.rocky = initialStone;
 
@@ -103,7 +103,7 @@ public class Figther : MonoBehaviour
 
     public void FreeTeam()
     {
-        team = (Team) Random.Range(0, 8);
+        team = (Team)Random.Range(0, 8);
     }
 
     public Team GetTeam()
@@ -121,8 +121,11 @@ public class Figther : MonoBehaviour
         figtherLive = pL;
     }
 
+    public bool noHurt {get;private set;}
+
     public void addPlayerLive(int pL)
     {
+        noHurt = pL >= 0;
         figtherLive += pL;
     }
 

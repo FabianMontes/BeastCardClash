@@ -35,12 +35,12 @@ AnimatorStateMachine:
   - {fileID: 5865851505329218961}
   - {fileID: -1509469797104987735}
   m_StateMachineTransitions:
-  - first: {fileID: -283861447091174627}
-    second:
-    - {fileID: -7029634548703819091}
   - first: {fileID: -4473938334845130451}
     second:
     - {fileID: -146125540735484600}
+  - first: {fileID: -283861447091174627}
+    second:
+    - {fileID: -7029634548703819091}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 50, y: 120, z: 0}
@@ -652,7 +652,7 @@ BlendTree:
     m_Motion: {fileID: 4106585866901929630, guid: cbc981a216cece8488d2ace27c1992f2, type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 10
     m_CycleOffset: 0
     m_DirectBlendParameter: Speed
     m_Mirror: 0

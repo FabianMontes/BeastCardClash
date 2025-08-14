@@ -111,7 +111,8 @@ public class Combatjudge : MonoBehaviour
             }
             else
             {
-                figthers[i].setNoTeam(figthers[0].GetTeam());
+                figthers[i].FreeTeam();
+                //figthers[i].setNoTeam(figthers[0].GetTeam());
             }
 
             figthers[i].setPlayerLive(initialLives);
@@ -170,19 +171,20 @@ public class Combatjudge : MonoBehaviour
                 if (all)
                 {
                     actualAction = SetMoments.Reveal;
-                    time = Time.time;
+                    
                 }
 
                 break;
-            case SetMoments.Reveal:
-                if(Time.time - time > 5f)
+            case SetMoments.Result:
+                if (Time.time - time > 5f)
                 {
-                    actualAction = SetMoments.Result;
+                    actualAction = SetMoments.Loop;
                 }
                 
                 
+                
                 break;
-            case SetMoments.Result:
+            case SetMoments.Reveal:
                 Card[] card = new Card[manyFigthers];
                 int a = 0;
                 foreach (Figther player in figthers)
@@ -231,7 +233,9 @@ public class Combatjudge : MonoBehaviour
                     figthers[i].addPlayerLive(destiny[i]);
                 }
 
-                actualAction = SetMoments.Loop;
+                
+                time = Time.time;
+                actualAction = SetMoments.Result;
                 break;
             case SetMoments.Loop:
                 figtherTurn = (figtherTurn + 1) % manyFigthers;
