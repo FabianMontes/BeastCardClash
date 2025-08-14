@@ -45,7 +45,7 @@ public class Figther : MonoBehaviour
         transform.GetChild(3).gameObject.SetActive(false);
         transform.GetChild(visualFigther).gameObject.SetActive(true);
 
-        if (playerToken == null) playerToken = Instantiate(tokenPrefab).transform.GetComponent<PlayerToken>();
+        if (playerToken == null) playerToken = Instantiate(tokenPrefab,initialStone.transform.position+Vector3.up*1,Quaternion.identity).transform.GetComponent<PlayerToken>();
         playerToken.player = this;
         playerToken.rocky = initialStone;
 

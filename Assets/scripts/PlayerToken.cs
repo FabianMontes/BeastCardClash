@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 [DefaultExecutionOrder(1)]
 
@@ -10,9 +11,14 @@ public class PlayerToken : MonoBehaviour
 
     public RockBehavior lastRock;
 
+    CharacterController characterController;
+    Vector3 destiny;
+    Vector3 direction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        characterController = GetComponent<CharacterController>();
+        
         if (rocky != null)
         {
             transform.position = rocky.transform.position;
@@ -20,22 +26,8 @@ public class PlayerToken : MonoBehaviour
             rocky.AddPlayer(this);
         }
         
-        SpriteRenderer rnd = transform.GetComponent<SpriteRenderer>();
-        switch (player.GetSpecie())
-        {
-            case Specie.chameleon:
-                rnd.color = Color.green;
-                break;
-            case Specie.bear:
-                rnd.color = new Color(0.5f, 0.35f, 0.25f);
-                break;
-            case Specie.condor:
-                rnd.color = new Color(1f, 0f, 1f);
-                break;
-            case Specie.frog:
-                rnd.color = Color.yellow;
-                break;
-        }
+        
+        
     }
 
     // Update is called once per frame
@@ -43,13 +35,25 @@ public class PlayerToken : MonoBehaviour
     {
         if (rocky != null)
         {
-            if (rocky.transform.position != transform.position)
+            if (rocky.transform.position != destiny)
             {
                 lastRock.RemovePlayer(this);
 
-                transform.position = rocky.transform.position;
+                destiny = rocky.transform.position;
+                direction = destiny - transform.position;
+                direction.y = 0;
+                direction= direction.normalized;
                 rocky.AddPlayer(this);
                 lastRock = rocky;
+                return;
+            }
+            characterController.Move(direction * Time.deltaTime * 5);
+            Vector3 dir = destiny - transform.position;
+            dir.y = 0;
+            dir = dir.normalized;
+            if (dir != direction && Combatjudge.combatjudge.GetSetMoments() == SetMoments.MoveToRock)
+            {
+                transform.position =destiny;
                 Combatjudge.combatjudge.ArriveAtRock();
             }
         }
