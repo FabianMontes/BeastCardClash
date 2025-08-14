@@ -34,14 +34,17 @@ public class Dialogs
     public string character;
     public string text;
 }
-
-[CreateAssetMenu(fileName = "GameState", menuName = "Managers/Game State")]
-public class GameState : ScriptableObject
+public class GameState : MonoBehaviour
 {
-    // Propiedad pública para el estado actual del juego y para acceder a los diálogos ya cargados
-    public DialogFile DialogFileContent { get; private set; }
+
+    public DialogFile DialogFileContent;
     public GameStates CurrentGameState { get; private set; }
     public Languages CurrentLanguage => language; // Getter público para el idioma
+
+    public static GameState singleton;
+
+    public int skin { get; private set; }
+    public Team Team { get; private set; }
 
     // Variables
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
@@ -54,6 +57,16 @@ public class GameState : ScriptableObject
     // OnEnable es llamado automáticamente por Unity
     private void OnEnable()
     {
+        if(singleton == null)
+        {
+            singleton = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+
         // Carga el archivo de diálogos
         LoadDialogFile();
 
@@ -95,9 +108,11 @@ public class GameState : ScriptableObject
                 break;
             // win: no definido
             case GameStates.win:
+                CurrentGameState = GameStates.begin;
                 break;
             // lose: no definido
             case GameStates.lose:
+                CurrentGameState = GameStates.begin;
                 break;
             // Por defecto: no hace nada
             default:
@@ -110,5 +125,15 @@ public class GameState : ScriptableObject
     {
         language = newLanguage;
         LoadDialogFile(); // Recargamos los diálogos con el nuevo idioma.
+    }
+
+    public void SetSkin(int newSkin)
+    {
+        skin = newSkin;
+    }
+
+    public void SetTeam(Team team)
+    {
+        this.Team = team;
     }
 }
