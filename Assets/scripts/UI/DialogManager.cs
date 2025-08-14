@@ -52,9 +52,6 @@ public class DialogManager : MonoBehaviour
             // Si presiona C, termina el diálogo
             if (Input.GetKeyDown(KeyCode.C)) EndDialog();
         }
-
-        // Hacemos debug del estado actual
-        print($"Estado actual: {gameStateManager.CurrentGameState}");
     }
 
     // Muestra el panel de diálogo
