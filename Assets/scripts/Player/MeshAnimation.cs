@@ -15,6 +15,12 @@ public class MeshAnimation : MonoBehaviour
         objRenderer = GetComponentInChildren<Renderer>();
     }
 
+    void Update()
+    {
+        // Actualiza la skin desde GameState
+        SetSkin(GameState.singleton.skin);
+    }
+
     // Actualiza un parámetro del Animator. Detecta el tipo de parámetro y lo asigna desde un string.
     public void UpdateAnimation(string variableName, string value)
     {
