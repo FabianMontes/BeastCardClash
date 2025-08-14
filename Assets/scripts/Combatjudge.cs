@@ -110,6 +110,7 @@ public class Combatjudge : MonoBehaviour
             if (i == 0)
             {
                 figthers[i].FreeTeam();
+                
             }
             else
             {
