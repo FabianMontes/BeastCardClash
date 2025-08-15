@@ -63,7 +63,7 @@ public class Combatjudge : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        manyFigthers = UnityEngine.Random.Range(2,5);
         actualAction = SetMoments.Loop;
         figtherTurn = -1;
         round = 0;
@@ -110,11 +110,12 @@ public class Combatjudge : MonoBehaviour
             if (i == 0)
             {
                 figthers[i].FreeTeam();
-                
+                figthers[i].setSkin(GameState.singleton.skin);
             }
             else
             {
                 figthers[i].FreeTeam();
+                figthers[i].setRSkin();
                 //figthers[i].setNoTeam(figthers[0].GetTeam());
             }
 
@@ -184,6 +185,7 @@ public class Combatjudge : MonoBehaviour
                     if (figthers[0].GetPlayerLive() == 0)
                     {
                         actualAction = SetMoments.End;
+                        FindFirstObjectByType<EndGame>().EndGamer(true);
                     }
                     else
                     {
@@ -193,14 +195,20 @@ public class Combatjudge : MonoBehaviour
                             {
                                 Figther elmi = figthers[i];
                                 figthers = figthers.Where(f => f != elmi).ToArray();
-
+                                elmi.playerToken.rocky.RemovePlayer(elmi.playerToken);
                                 Destroy(elmi.gameObject);
                                 manyFigthers--;
                             }
+                            
+                        }
+                        for (int i = 1; i < figthers.Length; i++)
+                        {
+                            figthers[i].indexFigther = i;
                         }
                         if (figthers.Length==1)
                         {
                             actualAction = SetMoments.End;
+                            FindFirstObjectByType<EndGame>().EndGamer(false);
                         }
                         else
                         {
@@ -294,10 +302,7 @@ public class Combatjudge : MonoBehaviour
 
 
             case SetMoments.End:
-                if (figthers[0].GetPlayerLive() == 0)
-                {
-                    actualAction = SetMoments.End;
-                }
+                
                 break;
 
             default:
@@ -477,5 +482,12 @@ public class Combatjudge : MonoBehaviour
     public bool hurtPlayer()
     {
         return figthers[0].noHurt;
+    }
+
+    public void Surrender()
+    {
+        actualAction = SetMoments.End;
+        FindFirstObjectByType<EndGame>().EndGamer(false);
+
     }
 }

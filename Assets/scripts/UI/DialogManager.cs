@@ -88,6 +88,10 @@ public class DialogManager : MonoBehaviour
                 return dialogFileContent.WinDialogs;
             case GameStates.lose:
                 return dialogFileContent.LoseDialogs;
+
+            case GameStates.Repeat:
+                return dialogFileContent.RepeatDialogs;
+                
             default:
                 return new Dialogs[0];
         }

@@ -14,7 +14,7 @@ public enum Languages
 [Serializable]
 public enum GameStates
 {
-    begin, preGame, win, lose
+    begin, preGame, win, lose, Repeat
 }
 
 // Contenido del archivo de diálogos
@@ -25,6 +25,7 @@ public class DialogFile
     public Dialogs[] PreGameDialogs;
     public Dialogs[] WinDialogs;
     public Dialogs[] LoseDialogs;
+    public Dialogs[] RepeatDialogs;
 }
 
 // Componente de diálogo
@@ -44,7 +45,7 @@ public class GameState : MonoBehaviour
     public static GameState singleton;
 
     public int skin { get; private set; }
-    public Team Team { get; private set; }
+    public Team team { get; private set; }
 
     // Variables
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
@@ -59,6 +60,7 @@ public class GameState : MonoBehaviour
         if (singleton == null)
         {
             singleton = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -103,17 +105,20 @@ public class GameState : MonoBehaviour
                 break;
             // preGame: salta a la escena de batalla
             case GameStates.preGame:
-                SceneManager.LoadScene("CombatBase");
+                SceneManager.LoadScene(3);
                 break;
             // win: no definido
             case GameStates.win:
-                CurrentGameState = GameStates.begin;
-                SceneManager.LoadScene(2);
+                CurrentGameState = GameStates.Repeat;
+                
                 break;
             // lose: no definido
             case GameStates.lose:
-                CurrentGameState = GameStates.begin;
-                SceneManager.LoadScene(2);
+                CurrentGameState = GameStates.Repeat;
+                
+                break;
+            case GameStates.Repeat:
+                SceneManager.LoadScene(3);
                 break;
             // Por defecto: no hace nada
             default:
@@ -137,6 +142,6 @@ public class GameState : MonoBehaviour
     // Establece el equipo
     public void SetTeam(Team team)
     {
-        this.Team = team;
+        this.team = team;
     }
 }

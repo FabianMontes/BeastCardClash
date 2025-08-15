@@ -20,7 +20,7 @@ public class Figther : MonoBehaviour
     [SerializeField] public string figtherName;
     [SerializeField] Team team;
     [SerializeField] Specie specie;
-    [SerializeField] int skin;
+    public int skin { get; private set; }
     [SerializeField] int deckSize;
     [SerializeField] int handSize = 6;
     public int avalaibleCard = 0;
@@ -92,6 +92,26 @@ public class Figther : MonoBehaviour
         this.team = team;
     }
 
+    public void setSkin(int skin)
+    {
+        this.skin=skin;
+    }
+
+    public void setNoSkin(int skin)
+    {
+        int a = Random.Range(0, 6);
+        while (a== skin)
+        {
+            a = Random.Range(0, 6);
+        }
+        this.skin = a;
+    }
+
+    public void setRSkin()
+    {
+        skin = Random.Range(0, 6);
+    }
+
     public void setNoTeam(Team team)
     {
         this.team = (Team)Random.Range(0, 8);
@@ -126,7 +146,12 @@ public class Figther : MonoBehaviour
     public void addPlayerLive(int pL)
     {
         noHurt = pL >= 0;
+
         figtherLive += pL;
+        if(figtherLive> Combatjudge.combatjudge.initialLives)
+        {
+            figtherLive = Combatjudge.combatjudge.initialLives;
+        }
     }
 
     public void randomSpecie()

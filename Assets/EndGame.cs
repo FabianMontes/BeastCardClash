@@ -64,6 +64,8 @@ public class EndGame : MonoBehaviour
                 transform.localScale = vector3;
                 estado = false;
                 timetytime = Time.time;
+                GameState.singleton.NextGameState(win ? GameStates.win : GameStates.lose);
+                transform.parent.GetComponent<Image>().enabled = false;
             }
             else
             {
@@ -71,8 +73,8 @@ public class EndGame : MonoBehaviour
                 vector3.x = vector3.x - Time.deltaTime / movescaletime;
                 transform.localScale = vector3;
                 round = false;
-                transform.parent.GetComponent<Image>().enabled = false;
-                GameState.singleton.NextGameState(win? GameStates.win:GameStates.lose);
+                
+
             }
 
         }
