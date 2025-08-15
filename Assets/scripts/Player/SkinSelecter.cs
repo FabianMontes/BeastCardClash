@@ -19,6 +19,7 @@ public class SkinSelecter: MonoBehaviour
     void Update()
     {
         // Actualiza la skin desde GameState
+        figther = GetComponentInParent<PlayerToken>().player;
         SetSkin(figther.skin);
     }
 
