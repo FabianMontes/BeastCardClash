@@ -66,7 +66,7 @@ public class GameState : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        team = Team.ingeniosos;
 
         // Carga el archivo de diálogos
         LoadDialogFile();
