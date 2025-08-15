@@ -3348,8 +3348,7 @@ MonoBehaviour:
   figtherName: 
   team: 0
   specie: 0
-  skin: 0
-  deckSize: 12
+  deckSize: 24
   handSize: 6
   avalaibleCard: 0
   tokenPrefab: {fileID: 6461416782824158601, guid: bcef3dd17339fd449aeda4b8048de20e, type: 3}

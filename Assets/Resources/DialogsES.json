@@ -9,12 +9,12 @@
       "text": "Veo que tienes interés en participar en Beast Card Clash"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¡Sí! De qué trata"
     },
     {
       "character": "Mr. Bear",
-      "text": "Es un juego de cartas en el que 4 jugadores se enfrentan con un maso de 6 cartas para ver quién gana!"
+      "text": "Es un juego de cartas en el que los jugadores se enfrentan con un maso de cartas para ver quién gana! Pueden pelear solos o enfrentar equipos"
     },
     {
       "character": "Mr. Bear",
@@ -26,14 +26,14 @@
     },
     {
       "character": "Mr. Bear",
-      "text": "Estas cartas vienen con números de 1 a 10, para un total de 40 cartas"
+      "text": "Estas cartas vienen con números de 1 a 10, siendo 10 la mas fuerte"
     },
     {
       "character": "Mr. Bear",
       "text": "¿Hasta aquí está claro?, ¿tienes alguna pregunta adicional?"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "Si es como un piedra papel o tijeras, ¿Qué elementos le ganan a qué elementos?"
     },
     {
@@ -61,11 +61,11 @@
       "text": "Dos elementos iguales compiten por su número, el más alto gana"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "Ah ya veo, o sea que si empatan con respecto al elemento, le gana la carta que tenga el número mayor"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¿Y si todos sacan el mismo número?"
     },
     {
@@ -73,7 +73,7 @@
       "text": "¡De plano empatan y vuelves a comenzar!"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¿Y cómo sé cuando gano?"
     },
     {
@@ -82,18 +82,18 @@
     },
     {
       "character": "Mr. Bear",
-      "text": "Gana el que tenga más energía entre los 4 jugadores y elimine a los otros 3"
+      "text": "Gana el ultimo equipo en pie"
     },
     {
       "character": "Mr. Bear",
-      "text": "Todos empiezan con 10 puntos de energía"
+      "text": "Todos empiezan con 5 puntos de energía"
     },
     {
       "character": "Mr. Bear",
       "text": "Y vas quitándole puntos a tus rivales en la medida en la que les vayas ganando!"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "Oh vale, ya entiendo"
     },
     {
@@ -117,10 +117,10 @@
     },
     {
       "character": "Mr. Bear",
-      "text": "¡Y el jugador que dure con la mayor energía al final del juego ganará 10.000 dólares!"
+      "text": "¡Y el equipo ganador al final del juego ganará 10.000 dólares!"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¿10.000 dólares? Wow! No puedo creerlo!"
     },
     {
@@ -138,11 +138,11 @@
       "text": "¡Felicitaciones, has ganado 10.000 dólares! ¿Cómo te pareció la experiencia?"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¡Estuvo muy divertido el juego!"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "Le mando un saludo a mis primos, Kenny, Wolfy y a mi madre que vea que estoy triunfando"
     },
     {
@@ -150,7 +150,7 @@
       "text": "Qué bueno, ¿en qué vas a invertir el dinero que acabas de ganar?"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "En pagar mi educación, la verdad es que este lugar vale mucho la pena"
     },
     {
@@ -173,7 +173,7 @@
       "text": "¡Oh, has perdido! Pero no te preocupes, aquí tienes 1.000 dólares de compensación"
     },
     {
-      "character": "Player",
+      "character": "OsoRio",
       "text": "¡Muchas gracias! Te agradezco bastante."
     },
     {
@@ -186,8 +186,14 @@
     },
     {
       "character": "Mr. Bear",
-      "text": "¡Espero verte por aquí!",
+      "text": "¡Espero verte por aquí! si quieres volver a combatir solo acercate a mi y jugamos de nuevo",
       "_note": "Aquí acabaría la demo del juego"
+    }
+  ],
+  "RepeatDialogs": [
+    {
+      "character": "Mr. Bear",
+      "text": "Parece que estas listo para jugar otra vez."
     }
   ]
 }
