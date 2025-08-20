@@ -109,19 +109,51 @@ public class Combatjudge : MonoBehaviour
             }
             if (i == 0)
             {
-                figthers[i].FreeTeam();
+                figthers[i].setTeam(GameState.singleton.team);
                 figthers[i].setSkin(GameState.singleton.skin);
             }
             else
             {
-                figthers[i].FreeTeam();
+                if(manyFigthers == 2)
+                {
+                    figthers[i].setNoTeam(GameState.singleton.team);
+                }else if(manyFigthers == 3 && i ==2)
+                {
+
+                    if (figthers[0].GetTeam() == figthers[1].GetTeam())
+                    {
+                        figthers[i].setNoTeam(GameState.singleton.team);
+                    }
+                    else
+                    {
+                        figthers[i].FreeTeam();
+                    }
+                }
+                else if(manyFigthers == 4 && i == 3)
+                {
+                    if (figthers[0].GetTeam() == figthers[1].GetTeam() && figthers[0].GetTeam() == figthers[2].GetTeam())
+                    {
+                        figthers[i].setNoTeam(GameState.singleton.team);
+                    }
+                    else
+                    {
+                        figthers[i].FreeTeam();
+                    }
+                }
+                else
+                {
+                    figthers[i].FreeTeam();
+                }
                 figthers[i].setRSkin();
                 //figthers[i].setNoTeam(figthers[0].GetTeam());
+                
             }
 
             figthers[i].setPlayerLive(initialLives);
             figthers[i].visualFigther = i+1;
             figthers[i].indexFigther = i;
+
+            figthers[i].figtherName = i==0? GameState.singleton.playerName : $"O{i}O";
 
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
             figthers[i].initialStone = rocky;
@@ -144,7 +176,7 @@ public class Combatjudge : MonoBehaviour
                 time = Time.time;
                 break;
             case SetMoments.RevealDice:
-                if (Time.time-time >2f)
+                if (Time.time-time >0.5f)
                 {
 
                     SetGlowing(FindFirstObjectByType<dice>().value);
@@ -182,16 +214,16 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.Result:
                 if (Time.time - time > 5f)
                 {
-                    if (figthers[0].GetPlayerLive() == 0)
+                    if (figthers[0].GetPlayerLive() <= 0)
                     {
                         actualAction = SetMoments.End;
-                        FindFirstObjectByType<EndGame>().EndGamer(true);
+                        FindFirstObjectByType<EndGame>().EndGamer(false);
                     }
                     else
                     {
                         for (int i = 1; i< figthers.Length; i++)
                         {
-                            if (figthers[i].GetPlayerLive() == 0)
+                            if (figthers[i].GetPlayerLive() <= 0)
                             {
                                 Figther elmi = figthers[i];
                                 figthers = figthers.Where(f => f != elmi).ToArray();
@@ -205,10 +237,10 @@ public class Combatjudge : MonoBehaviour
                         {
                             figthers[i].indexFigther = i;
                         }
-                        if (figthers.Length==1)
+                        if (figthers.Length<=1)
                         {
                             actualAction = SetMoments.End;
-                            FindFirstObjectByType<EndGame>().EndGamer(false);
+                            FindFirstObjectByType<EndGame>().EndGamer(true);
                         }
                         else
                         {
@@ -257,15 +289,7 @@ public class Combatjudge : MonoBehaviour
                     for (int j = 0; j < manyFigthers; j++)
                     {
                         int resulta = (int)results[i, j] - 1;
-                        if (destiny[i] == 0)
-                        {
-                            destiny[i] = resulta;
-                        }
-                        else if (destiny[i] != resulta && resulta != 0)
-                        {
-                            destiny[i] = 0;
-                            break;
-                        }
+                        destiny[i] += resulta;
                     }
                     //print(destiny[i]);
                     figthers[i].addPlayerLive(destiny[i]);
@@ -397,7 +421,16 @@ public class Combatjudge : MonoBehaviour
         }
         if (rocky.inscription == Inscription.pick)
         {
-            actualAction = SetMoments.SelecCombat;
+            if (turn() != 0)
+            {
+                actualAction = SetMoments.PickCard;
+                combatType = (CombatType)UnityEngine.Random.Range(0,4);
+            }
+            else
+            {
+                actualAction = SetMoments.SelecCombat;
+            }
+            
         }
         else
         {

@@ -44,6 +44,9 @@ public class GameState : MonoBehaviour
 
     public static GameState singleton;
 
+    public string playerName { get; private set; }
+    
+
     public int skin { get; private set; }
     public Team team { get; private set; }
 
@@ -66,7 +69,7 @@ public class GameState : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        team = Team.ingeniosos;
 
         // Carga el archivo de diálogos
         LoadDialogFile();
@@ -109,11 +112,13 @@ public class GameState : MonoBehaviour
                 break;
             // win: no definido
             case GameStates.win:
+                SceneManager.LoadScene(2);
                 CurrentGameState = GameStates.Repeat;
                 
                 break;
             // lose: no definido
             case GameStates.lose:
+                SceneManager.LoadScene(2);
                 CurrentGameState = GameStates.Repeat;
                 
                 break;
@@ -143,5 +148,10 @@ public class GameState : MonoBehaviour
     public void SetTeam(Team team)
     {
         this.team = team;
+    }
+
+    public void SetPlayer(string name)
+    {
+        this.playerName = name;
     }
 }
