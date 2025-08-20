@@ -152,6 +152,10 @@ public class Figther : MonoBehaviour
         {
             figtherLive = Combatjudge.combatjudge.initialLives;
         }
+        if(figtherLive< 0)
+        {
+            figtherLive = 0;
+        }
     }
 
     public void randomSpecie()

@@ -214,16 +214,16 @@ public class Combatjudge : MonoBehaviour
             case SetMoments.Result:
                 if (Time.time - time > 5f)
                 {
-                    if (figthers[0].GetPlayerLive() == 0)
+                    if (figthers[0].GetPlayerLive() <= 0)
                     {
                         actualAction = SetMoments.End;
-                        FindFirstObjectByType<EndGame>().EndGamer(true);
+                        FindFirstObjectByType<EndGame>().EndGamer(false);
                     }
                     else
                     {
                         for (int i = 1; i< figthers.Length; i++)
                         {
-                            if (figthers[i].GetPlayerLive() == 0)
+                            if (figthers[i].GetPlayerLive() <= 0)
                             {
                                 Figther elmi = figthers[i];
                                 figthers = figthers.Where(f => f != elmi).ToArray();
@@ -237,10 +237,10 @@ public class Combatjudge : MonoBehaviour
                         {
                             figthers[i].indexFigther = i;
                         }
-                        if (figthers.Length==1)
+                        if (figthers.Length<=1)
                         {
                             actualAction = SetMoments.End;
-                            FindFirstObjectByType<EndGame>().EndGamer(false);
+                            FindFirstObjectByType<EndGame>().EndGamer(true);
                         }
                         else
                         {
