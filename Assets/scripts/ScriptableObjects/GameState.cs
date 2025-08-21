@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 
 // Idiomas disponibles en el juego
@@ -14,7 +13,7 @@ public enum Languages
 [Serializable]
 public enum GameStates
 {
-    begin, preGame, win, lose, Repeat
+    begin, preGame, win, lose, repeat
 }
 
 // Contenido del archivo de diálogos
@@ -37,29 +36,26 @@ public class Dialogs
 }
 public class GameState : MonoBehaviour
 {
-
-    public DialogFile DialogFileContent;
-    public GameStates CurrentGameState { get; private set; }
+    // Propiedades
+    public GameStates CurrentGameState { get; private set; } // Getter público para el estado actual del juego
     public Languages CurrentLanguage => language; // Getter público para el idioma
-
-    public static GameState singleton;
-
-    public string playerName { get; private set; }
-    
-
-    public int skin { get; private set; }
-    public Team team { get; private set; }
+    public static GameState singleton; // Instancia única del GameState
+    public string playerName { get; private set; } // Getter público para el nombre del jugador
+    public int skin { get; private set; } // Getter público para la skin
+    public Team team { get; private set; } // Getter público para el equipo
 
     // Variables
+    [Header("GameState, languages and files")]
     [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
     [SerializeField] private Languages language; // Idioma actual (por defecto español)
     [SerializeField] private TextAsset spanishFile; // Archivo de diálogos en español
     [SerializeField] private TextAsset englishFile; // Archivo de diálogos en inglés
     private TextAsset selectedFile; // Archivo de diálogos seleccionado
+    public DialogFile dialogFileContent; // Contenido del archivo de diálogos
 
-    // OnEnable es llamado automáticamente por Unity
     private void OnEnable()
     {
+        // Mantiene la instancia única del GameState
         if (singleton == null)
         {
             singleton = this;
@@ -69,6 +65,8 @@ public class GameState : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        // Establece el equipo (por defecto: Ingeniosos)
         team = Team.ingeniosos;
 
         // Carga el archivo de diálogos
@@ -86,13 +84,14 @@ public class GameState : MonoBehaviour
         selectedFile = (language == Languages.spanish) ? spanishFile : englishFile;
 
         // Intenta cargar el archivo de diálogos correspondiente
+        // Si no hay, alerta del error en consola y establece el contenido en null
         if (selectedFile != null)
         {
-            DialogFileContent = JsonUtility.FromJson<DialogFile>(selectedFile.text);
+            dialogFileContent = JsonUtility.FromJson<DialogFile>(selectedFile.text);
         }
         else
         {
-            DialogFileContent = null;
+            dialogFileContent = null;
             Debug.LogError("¡Error en GameState! No se ha asignado un archivo de diálogos en el Inspector.");
         }
     }
@@ -113,16 +112,15 @@ public class GameState : MonoBehaviour
             // win: no definido
             case GameStates.win:
                 SceneManager.LoadScene(2);
-                CurrentGameState = GameStates.Repeat;
-                
+                CurrentGameState = GameStates.repeat;
                 break;
             // lose: no definido
             case GameStates.lose:
                 SceneManager.LoadScene(2);
-                CurrentGameState = GameStates.Repeat;
-                
+                CurrentGameState = GameStates.repeat;
                 break;
-            case GameStates.Repeat:
+            // repeat: vuelve a la escena de inicio
+            case GameStates.repeat:
                 SceneManager.LoadScene(3);
                 break;
             // Por defecto: no hace nada
@@ -131,11 +129,13 @@ public class GameState : MonoBehaviour
         }
     }
 
-    // Permite que un gestor externo (como LanguagesManager) cambie el idioma.
+    // Cambia el idioma desde afuera
     public void SetLanguage(Languages newLanguage)
     {
         language = newLanguage;
-        LoadDialogFile(); // Recargamos los diálogos con el nuevo idioma.
+
+        // Recargamos los diálogos con el nuevo idioma
+        LoadDialogFile();
     }
 
     // Establece la skin
@@ -150,6 +150,7 @@ public class GameState : MonoBehaviour
         this.team = team;
     }
 
+    // Establece el nombre del jugador
     public void SetPlayer(string name)
     {
         this.playerName = name;

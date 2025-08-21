@@ -8,6 +8,8 @@ public enum CurrentPanel
     Panel1, Panel2, Panel3
 }
 
+// TODO: refactorizar este código, en las funciones de activación y desactivación del paneles
+
 public class TutorialMenuManager : MonoBehaviour
 {
     // Paneles de tutorial en español
@@ -30,19 +32,18 @@ public class TutorialMenuManager : MonoBehaviour
     [SerializeField] private Button NextButton; // Botón de siguiente página
     private CurrentPanel CurrentPanel; // Panel actual
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Desactiva la rama de páneles correspondientes al idioma no usado
+        // Y al iniciar, mostramos solo el primer panel
         InitializePanels();
-
-        // Al iniciar, mostramos solo el primer panel
         ShowPanel1();
     }
 
-    // Desactivan los páneles del idioma inactivo
+    // Desactiva los páneles del idioma inactivo
     void InitializePanels()
     {
+        // Espaañol: desactiva lo del inglés
         if (gameState.CurrentLanguage == Languages.spanish)
         {
             // Activa el panel español y desactiva el inglés
@@ -54,7 +55,8 @@ public class TutorialMenuManager : MonoBehaviour
             panel2Es.gameObject.SetActive(false);
             panel3Es.gameObject.SetActive(false);
         }
-        else
+        // Inglés: desactiva lo del español
+        else if (gameState.CurrentLanguage == Languages.english)
         {
             // Activa el panel inglés y desactiva el español
             enPanels.gameObject.SetActive(true);
@@ -68,15 +70,18 @@ public class TutorialMenuManager : MonoBehaviour
     }
 
     // Cambian de panel en cada caso. Cada panel es una pagina diferente de tutorial
-    // Estos métodos públicos se asignarán a los eventos OnClick de los botones en el editor de Unity
+    // Se asignan a los botones en el editor de Unity
+    // Muestra el panel 1
     public void ShowPanel1()
     {
+        // Español
         if (gameState.CurrentLanguage == Languages.spanish)
         {
             panel1Es.gameObject.SetActive(true);
             panel2Es.gameObject.SetActive(false);
             panel3Es.gameObject.SetActive(false);
         }
+        // Inglés
         else
         {
             panel1En.gameObject.SetActive(true);
@@ -86,15 +91,18 @@ public class TutorialMenuManager : MonoBehaviour
 
         CurrentPanel = CurrentPanel.Panel1;
     }
+
+    // Muestra el panel 2
     public void ShowPanel2()
     {
+        // Español
         if (gameState.CurrentLanguage == Languages.spanish)
         {
-
             panel1Es.gameObject.SetActive(false);
             panel2Es.gameObject.SetActive(true);
             panel3Es.gameObject.SetActive(false);
         }
+        // Inglés
         else
         {
             panel1En.gameObject.SetActive(false);
@@ -104,15 +112,18 @@ public class TutorialMenuManager : MonoBehaviour
 
         CurrentPanel = CurrentPanel.Panel2;
     }
+
+    // Muestra el panel 3
     public void ShowPanel3()
     {
+        // Español
         if (gameState.CurrentLanguage == Languages.spanish)
         {
-
             panel1Es.gameObject.SetActive(false);
             panel2Es.gameObject.SetActive(false);
             panel3Es.gameObject.SetActive(true);
         }
+        // Inglés
         else
         {
             panel1En.gameObject.SetActive(false);
@@ -121,10 +132,12 @@ public class TutorialMenuManager : MonoBehaviour
         }
 
         CurrentPanel = CurrentPanel.Panel3;
-        // NextButton.gameObject.SetActive(false); // Ocultamos el botón de siguiente (opcional)
+
+        // Ocultamos el botón de siguiente (opcional)
+        // NextButton.gameObject.SetActive(false);
     }
 
-    // Cambia la función del botón en función del panel actual
+    // Cambia la función del botón de siguiente página en función del panel actual
     public void OnClick()
     {
         switch (CurrentPanel)

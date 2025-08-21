@@ -4,11 +4,13 @@ using UnityEngine;
 public class DialogManager : MonoBehaviour
 {
     // Componentes de UI
+    [Header("UI Elements")]
     [SerializeField] private GameObject dialogPanel; // Panel de diálogos
     [SerializeField] private TextMeshProUGUI namePanel; // Panel del nombre del personaje
     [SerializeField] private TextMeshProUGUI textPanel; // Panel del texto del diálogo
 
     // Componentes de jugador y juego
+    [Header("Player and games components")]
     [SerializeField] private Transform target; // Target (que el jugador sigue). Necesario para desactivarlo
     [SerializeField] private float maxDistance = 3f; // Distancia máxima para activar el diálogo
     private Target targetScript; // Script del target (necesario para desactivarlo)
@@ -73,8 +75,8 @@ public class DialogManager : MonoBehaviour
     Dialogs[] GetDialogsForState()
     {
         // Carga el contenido del archivo de diálogos. Si no hay, devuelve un array vacío
-        DialogFile dialogFileContent = GameState.singleton.DialogFileContent;
-        if (dialogFileContent == null) dialogFileContent = GameState.singleton.DialogFileContent;
+        DialogFile dialogFileContent = GameState.singleton.dialogFileContent;
+        if (dialogFileContent == null) dialogFileContent = GameState.singleton.dialogFileContent;
         if (dialogFileContent == null) return new Dialogs[0];
 
         // Devuelve los diálogos correspondientes al estado actual del juego
@@ -89,9 +91,9 @@ public class DialogManager : MonoBehaviour
             case GameStates.lose:
                 return dialogFileContent.LoseDialogs;
 
-            case GameStates.Repeat:
+            case GameStates.repeat:
                 return dialogFileContent.RepeatDialogs;
-                
+
             default:
                 return new Dialogs[0];
         }

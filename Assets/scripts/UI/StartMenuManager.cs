@@ -10,11 +10,10 @@ public class StartMenuManager : MonoBehaviour
 
     // Elementos de la UI
     [Header("UI Elements (Start Menu)")]
-    [SerializeField] private TextMeshProUGUI startButtonText;
-    [SerializeField] private TextMeshProUGUI creditsButtonText;
-    [SerializeField] private TextMeshProUGUI languagesLabelText;
+    [SerializeField] private TextMeshProUGUI startButtonText; // Texto del botón de inicio
+    [SerializeField] private TextMeshProUGUI creditsButtonText; // Texto del botón de créditos
+    [SerializeField] private TextMeshProUGUI languagesLabelText; // Texto de la etiqueta de idiomas
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Al iniciar, actualizamos el texto con el idioma que ya está guardado en GameState
@@ -37,19 +36,23 @@ public class StartMenuManager : MonoBehaviour
     // Sobreescribe el texto según el idioma
     private void UpdateUIText(Languages language)
     {
+        // Si no hay menú, retorna y advierte del error
         if (menuTexts == null)
         {
             Debug.LogError("El asset 'MenuTexts' no está asignado en el StartMenuManager.");
             return;
         }
 
+        // Actualizamos el texto según el idioma
+        // Español
         if (language == Languages.spanish)
         {
             startButtonText.text = menuTexts.startButton_es;
             creditsButtonText.text = menuTexts.creditsButton_es;
             languagesLabelText.text = menuTexts.languagesLabel_es;
         }
-        else // English
+        // Inglés
+        else
         {
             startButtonText.text = menuTexts.startButton_en;
             creditsButtonText.text = menuTexts.creditsButton_en;

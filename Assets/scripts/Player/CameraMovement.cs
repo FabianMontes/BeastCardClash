@@ -3,9 +3,9 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     // Variables
-    [SerializeField] Transform player;
+    [Header("Player")]
+    [SerializeField] Transform player; // Jugador
 
-    // Update is called once per frame
     void Update()
     {
         transform.position = player.position;
