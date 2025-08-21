@@ -5,7 +5,7 @@ public class dice : MonoBehaviour
 {
     public int value { get; private set; } = 0;
     int maxValue;
-    
+
     bool roling;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,7 +13,7 @@ public class dice : MonoBehaviour
     {
         maxValue = Combatjudge.combatjudge.maxDice;
         roling = false;
-    
+
     }
 
     // Update is called once per frame
@@ -23,7 +23,7 @@ public class dice : MonoBehaviour
         {
             Combatjudge.combatjudge.StartRoling();
             value = Random.Range(1, maxValue + 1);
-            Vector3 vector3 = new Vector3(0,45,0);
+            Vector3 vector3 = new Vector3(0, 45, 0);
             switch (value)
             {
                 case 1:
@@ -55,11 +55,11 @@ public class dice : MonoBehaviour
     {
         if (Combatjudge.combatjudge.FocusONTurn())
         {
-            rol();
+            Roll();
         }
     }
 
-    public void rol()
+    public void Roll()
     {
         if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
         {
@@ -67,15 +67,15 @@ public class dice : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()  
+    private void OnMouseExit()
     {
         if (Combatjudge.combatjudge.FocusONTurn())
         {
-            unrol();
-            
+            Unroll();
+
         }
     }
-    public void unrol()
+    public void Unroll()
     {
         if (roling)
         {
@@ -88,7 +88,7 @@ public class dice : MonoBehaviour
     {
         if (Combatjudge.combatjudge.FocusONTurn())
         {
-            unrol();
+            Unroll();
 
         }
     }

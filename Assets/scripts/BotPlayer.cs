@@ -1,14 +1,11 @@
-using System;
 using UnityEngine;
-
-// TODO: Corregir los nombres de método "rol" y "unrol", aquí y en el archivo dice.cs
 
 [DefaultExecutionOrder(1)]
 public class BotPlayer : MonoBehaviour
 {
     // Variables de instancia
-    Figther figther;
-    Transform hand;
+    Figther figther; // Bot que posee este script
+    Transform hand; // Mano de cartas del bot (disponibles como hijos del GameObject)
 
     void Start()
     {
@@ -18,14 +15,16 @@ public class BotPlayer : MonoBehaviour
         picking = false;
     }
 
-    // Tiempo, indicador si se está seleccionando y total
+    // Tiempo actual y total. Necesario para contabilizar
     float time;
-    bool picking; // picking es una bandera que evita que se repita el código en cada frame
     float total;
+
+    // Bandera, que evita que se repita el código erróneamente en cada frame
+    bool picking;
 
     void Update()
     {
-        // Si no hay jugador, no hace nada
+        // Si no hay bot, no hace nada
         if (figther == null) return;
 
         // Determina el tiempo de pensar antes de elegir la carta
@@ -37,7 +36,7 @@ public class BotPlayer : MonoBehaviour
             time = Time.time;
 
             // Establece un tiempo aleatorio entre 1 y 3 segundos (para "pensar")
-            total = (float)Random.Range(100, 300) / 100.0f;
+            total = Random.Range(1.0f, 3.0f);
 
             // Activa la bandera
             picking = true;
@@ -55,9 +54,9 @@ public class BotPlayer : MonoBehaviour
                 picking = false;
 
                 // Elige una carta al azar
-                int a = Random.Range(0, 6); // Índice de la carta a elegir
-                int b = 0; // b controla la búsqueda de cartas
-                HandCard card = hand.transform.GetChild(a).GetComponent<HandCard>(); // Carta elegida
+                int a = Random.Range(0, 6); // a: Índice de la carta a elegir
+                int b = 0; // b: Contador para limitar la búsqueda de cartas
+                HandCard card = hand.transform.GetChild(a).GetComponent<HandCard>(); // Obtiene la carta
 
                 // Verifica que la carta elegida exista y sea seleccionable
                 // Repite hasta 100 veces (usando b)
@@ -81,10 +80,10 @@ public class BotPlayer : MonoBehaviour
             time = Time.time;
 
             // Establece un tiempo aleatorio entre 0.5 y 3 segundos (para "lanzar")
-            total = (float)Random.Range(50, 300) / 100.0f;
+            total = Random.Range(0.5f, 3.0f);
 
             // Lanza el dado
-            FindFirstObjectByType<dice>().rol(); // ! ¿rol? ¿no será "roll"?
+            FindFirstObjectByType<dice>().Roll();
         }
         // Lanza el dado cuando ya se acabó el tiempo de lanzar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
@@ -92,10 +91,10 @@ public class BotPlayer : MonoBehaviour
         else if (Time.time - time > total && Combatjudge.combatjudge.turn() == figther.indexFigther)
         {
             // Termina de lanzar el dado
-            FindFirstObjectByType<dice>().unrol(); // ! ¿unrol? ¿no será "unroll"?
+            FindFirstObjectByType<dice>().Unroll();
         }
         // Establece el tiempo antes de elegir el tipo de ataque
-        // Verifica si el jugador está en momento de elegir ataque y es su turno
+        // Verifica si el bot está en momento de elegir ataque y es su turno
         // Si se cumple, establece el tiempo para "pensar"
         else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && !picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
         {
@@ -103,12 +102,11 @@ public class BotPlayer : MonoBehaviour
             time = Time.time;
 
             // Establece un tiempo aleatorio entre 0.5 y 2 segundos (para "pensar")
-            total = (float)Random.Range(50, 200) / 100.0f;
+            total = Random.Range(0.5f, 2.0f);
 
             // Activa la bandera
             picking = true;
         }
-        // TODO: Hacer esto --------------------------------------
         // Elige el elemento de ataque cuando ya se acabó el tiempo de pensar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, elige el elemento
@@ -123,53 +121,63 @@ public class BotPlayer : MonoBehaviour
                 // Inicializa el arreglo. Cada elemento almacenará la cantidad de cartas disponibles de cada elemento
                 int[] elem = new int[4];
 
-                // Rellena el arreglo con los valores correspondientes
-                for (int i = 0; i < 6; i++)
+                // Luego rellena el arreglo con los valores correspondientes
+                for (int i = 0; i < hand.childCount; i++) // ? childcount evita errores si la mano cambia de tamaño alguna vez
                 {
                     // Extrae la carta actual
-                    HandCard card = transform.GetChild(i).GetComponent<HandCard>();
+                    HandCard card = hand.transform.GetChild(i).GetComponent<HandCard>();
 
-                    // Pone en el arreglo 
+                    // Salta si una carta no existe
+                    if (card == null) continue;
+
+                    // Pone la carta en el arreglo 
                     elem[(int)card.GetCard().GetElement()] = elem[(int)card.GetCard().GetElement()] + 1;
                 }
 
-                int big = 0; // Índice de la carta de mayor valor (actual)
-                             // int next = 1; // Siguiente carta
-
-                // // Itera sobre los elementos para hallar el de mayor valor
-                // while (next < 4)
-                // {
-                //     // Si hay más cartas en un elemento que en el actual, reasigna
-                //     if (big < next) big = next;
-                //     next++;
-                // }
+                // Índice de la carta de mayor valor (actual)
+                int big = 0;
 
                 // Itera sobre los elementos para hallar el de mayor valor (corregido)
-                // ! Vas aquí
+                for (int i = 1; i < 4; i++)
+                {
+                    if (elem[i] > elem[big]) big = i;
+                }
 
                 // Elige el elemento con más cartas
                 GetComponentInChildren<SelectType>().PickElement(big);
             }
         }
-        // TODO: --------------------------------------
     }
 
+    // Prepara al bot para elegir a qué roca del tablero moverse.
+    // Inicia un temporizador para simular que "piensa" su decisión.
     RockBehavior[] rocks;
-    public void pickRock(RockBehavior[] rocks)
+    public void PickRock(RockBehavior[] rocks)
     {
+        // Desactiva la bandera (esencial)
         picking = false;
+
+        // Almacena el momento en el que se acciona este bloque
         time = Time.time;
-        total = (float)Random.Range(100, 200) / 100.0f;
+
+        // Establece un tiempo aleatorio entre 1 y 2 segundos (para "pensar")
+        total = Random.Range(1.0f, 2.0f);
+
+        // Almacena en el arreglo las rocas disponibles
         this.rocks = rocks;
-        return;
     }
 
-    public void thinkingRocks()
+    // Toma la decisión de elegir roca una vez se acaba el tiempo de pensar
+    public void ThinkingRocks()
     {
+        // Verifica si ya transcurrió el tiempo establecido
         if (Time.time - time > total)
         {
-            int a = Random.Range(0, rocks.Length);
-            Combatjudge.combatjudge.MoveToRock(rocks[a]);
+            // Elige una roca al azar
+            int chosenRockIndex = Random.Range(0, rocks.Length);
+
+            // Le indica a CombatJudge que se moverá a esa roca
+            Combatjudge.combatjudge.MoveToRock(rocks[chosenRockIndex]);
         }
     }
 }

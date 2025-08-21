@@ -109,17 +109,17 @@ public class GameState : MonoBehaviour
             case GameStates.preGame:
                 SceneManager.LoadScene(3);
                 break;
-            // win: no definido
+            // win: pasa a la escena del mundo y establece el estado en repeat
             case GameStates.win:
                 SceneManager.LoadScene(2);
                 CurrentGameState = GameStates.repeat;
                 break;
-            // lose: no definido
+            // lose: pasa a la escena de mundo y establece el estado en repeat
             case GameStates.lose:
                 SceneManager.LoadScene(2);
                 CurrentGameState = GameStates.repeat;
                 break;
-            // repeat: vuelve a la escena de inicio
+            // repeat: vuelve a la escena de batalla
             case GameStates.repeat:
                 SceneManager.LoadScene(3);
                 break;
