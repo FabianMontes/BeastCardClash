@@ -1,38 +1,40 @@
 # `Card.cs`
 
 ## 1. Propósito General
-Este script define la estructura y el comportamiento fundamental de una carta individual en el juego "Beast Card Clash". Su rol principal es gestionar las propiedades básicas de la carta, como su valor numérico y su tipo elemental, inicializándolas de forma aleatoria al inicio del juego.
+Este script define las propiedades fundamentales de una carta dentro del juego "Beast Card Clash". Gestiona los valores esenciales de una carta, como su elemento y su valor numérico, y se encarga de su inicialización al inicio del juego.
 
 ## 2. Componentes Clave
 
 ### `Card`
-- **Descripción:** La clase `Card` es un `MonoBehaviour` que representa una carta coleccionable dentro del juego. Cada instancia de `Card` encapsula propiedades esenciales como un `element` (tipo elemental), un `value` (valor numérico), un `identifier` único generado dinámicamente, y un `indexer`. Al heredar de `MonoBehaviour`, esta clase puede adjuntarse a un `GameObject` en la jerarquía de Unity, permitiéndole ser parte de la escena del juego. El atributo `[DefaultExecutionOrder(-5)]` indica que la ejecución de este script ocurrirá muy temprano en el ciclo de vida de Unity, antes que la mayoría de los otros scripts, asegurando que las cartas estén inicializadas rápidamente.
+-   **Descripción:** La clase `Card` hereda de `MonoBehaviour`, lo que le permite ser un componente adjunto a GameObjects en Unity. Su propósito principal es encapsular la información intrínseca de una carta del juego, como su tipo elemental, su poder numérico y un identificador único. Además, se encarga de inicializar estas propiedades de forma aleatoria cuando el juego comienza.
+    El atributo `[DefaultExecutionOrder(-5)]` asegura que este script se ejecute muy temprano en el ciclo de vida de los scripts de Unity, incluso antes que la mayoría de los demás componentes. Esto es útil para garantizar que las propiedades de la carta estén definidas antes de que otros sistemas intenten acceder a ellas.
 
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] private Element element;`: Una variable privada que representa el tipo elemental de la carta. Aunque es privada, el atributo `[SerializeField]` la hace visible y editable en el Inspector de Unity. Su valor se asigna aleatoriamente en tiempo de ejecución.
-    - `[SerializeField] private int value;`: Una variable privada que almacena el valor numérico o "poder" de la carta. También es visible en el Inspector de Unity y su valor se establece aleatoriamente al inicio.
-    - `[SerializeField] public int indexer = 0;`: Un entero público que puede utilizarse para propósitos de indexación o identificación en listas y colecciones de cartas. Es visible en el Inspector de Unity y accesible desde otros scripts.
-    - `public string identifier;`: Una cadena de texto pública que actúa como un identificador único para la carta. Se genera combinando el `value` y el `element` de la carta.
+-   **Variables Públicas / Serializadas:**
+    *   `[SerializeField] private Element element;`: Define el tipo elemental de la carta (e.g., Fuego, Agua, Tierra). Al ser `private` con `[SerializeField]`, es editable desde el Inspector de Unity sin ser directamente accesible desde otros scripts, salvo a través de métodos públicos. La definición del `enum Element` no está incluida en este archivo y se asume que existe en otro lugar del proyecto.
+    *   `[SerializeField] private int value;`: Representa el valor numérico o la fuerza de la carta. También es editable en el Inspector y su valor se inicializa aleatoriamente en tiempo de ejecución.
+    *   `[SerializeField] public int indexer = 0;`: Un índice entero para la carta. Es público y serializado, lo que significa que es accesible desde otros scripts y visible/editable en el Inspector. Su uso exacto podría depender de sistemas externos (e.g., posición en una mano o en el tablero).
+    *   `public string identifier;`: Un identificador único de tipo cadena para la carta, generado dinámicamente al concatenar su valor y su elemento. Es público para facilitar su acceso desde otros componentes.
 
-- **Métodos Principales:**
-    - `private void Start()`: Este es un método del ciclo de vida de Unity que se invoca una única vez al inicio del juego, justo antes del primer `Update` del frame. Su propósito principal es inicializar las propiedades aleatorias de la carta:
-        -   `value` se establece con un número entero aleatorio entre 1 y 10 (inclusive).
-        -   `element` se asigna a un tipo elemental aleatorio, seleccionado de todos los valores definidos en el enum `Element` (el cual se espera esté definido en otra parte del proyecto).
-        -   `identifier` se construye concatenando la representación en cadena del `value` y el `element`, creando un identificador único para esa instancia de la carta.
+-   **Métodos Principales:**
+    *   `private void Start()`: Este es un método del ciclo de vida de Unity, llamado una vez cuando el script está habilitado por primera vez en el GameObject.
         ```csharp
-        value = UnityEngine.Random.Range(1, 11);
-        element = (Element)UnityEngine.Random.Range(0, Enum.GetNames(typeof(Element)).Length);
-        identifier = value.ToString() + element.ToString();
+        private void Start()
+        {
+            value = UnityEngine.Random.Range(1, 11);
+            element = (Element)UnityEngine.Random.Range(0, Enum.GetNames(typeof(Element)).Length);
+            identifier = value.ToString() + element.ToString();
+        }
         ```
-    - `public int GetValue()`: Este método proporciona acceso de solo lectura al `value` numérico de la carta. Permite que otros scripts consulten el poder de la carta.
-    - `public Element GetElement()`: Este método proporciona acceso de solo lectura al `element` (tipo elemental) de la carta. Permite que otros scripts consulten la afinidad elemental de la carta.
-    - `public string GetID()`: Este método proporciona acceso de solo lectura al `identifier` único de la carta, que puede ser útil para depuración o para identificar cartas específicas por sus propiedades iniciales.
-    - `void Update()`: Este es un método del ciclo de vida de Unity que se invoca una vez por cada fotograma. En la implementación actual, este método está vacío, lo que indica que la carta no realiza ninguna lógica continua o actualización por fotograma.
+        Dentro de este método, se inicializan aleatoriamente el `value` de la carta (un número entre 1 y 10, ambos inclusive) y el `element` (eligiendo uno al azar del `enum Element`). Finalmente, se construye el `identifier` concatenando estos dos valores.
+    *   `public int GetValue()`: Retorna el valor numérico (`int`) de la carta.
+    *   `public Element GetElement()`: Retorna el elemento (`Element`) de la carta.
+    *   `public string GetID()`: Retorna el identificador único (`string`) de la carta.
 
-- **Lógica Clave:**
-    La lógica central de la clase `Card` se encuentra en su fase de inicialización dentro del método `Start`. Aquí, cada nueva carta creada recibe un `value` y un `element` de forma completamente aleatoria. Esta aleatoriedad es fundamental para la rejugabilidad y la variabilidad en el juego, ya que cada partida podría presentar cartas con diferentes atributos. El `identifier` generado a partir de estas propiedades sirve como una huella digital simple para cada carta.
+-   **Lógica Clave:**
+    La lógica central de este script reside en el método `Start()`, donde se genera la "identidad" fundamental de la carta. El `value` se determina aleatoriamente entre 1 y 10, y el `element` se selecciona aleatoriamente de todos los posibles valores definidos en el `enum Element`. Posteriormente, se crea un `identifier` combinando estos dos valores, lo que permite una representación única y legible de la carta (ej: "5Fire", "8Water").
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, lo que significa que no exige la presencia de ningún otro componente específico en el `GameObject` al que se adjunta.
-- **Eventos (Entrada):** El script `Card` no se suscribe ni escucha ningún evento externo (como eventos de interfaz de usuario, eventos del sistema, o eventos de otros scripts) para realizar sus operaciones. Su comportamiento se inicia y gestiona internamente, principalmente a través del ciclo de vida de Unity (`Start`).
-- **Eventos (Salida):** Este script no invoca ni emite ningún evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas o scripts sobre cambios en su estado o acciones. Sus métodos públicos son puramente "getters" para consultar sus propiedades.
+-   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, por lo que no requiere explícitamente la presencia de ningún otro componente en el mismo GameObject para funcionar.
+-   **Eventos (Entrada):** Este script no se suscribe a ningún evento externo (como eventos de UI o de otros sistemas). Su lógica de inicialización ocurre de forma interna en el método `Start()` de Unity.
+-   **Eventos (Salida):** Este script no invoca ni emite ningún evento (como `UnityEvent` o `Action`) para notificar a otros sistemas sobre cambios o acciones relacionadas con la carta. Proporciona sus propiedades a través de métodos `Get` públicos.
+-   **Dependencias Implícitas:** Requiere la definición del `enum Element` en algún lugar accesible del proyecto para que el código compile y funcione correctamente.

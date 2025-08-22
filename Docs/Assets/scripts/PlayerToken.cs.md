@@ -1,45 +1,43 @@
 # `PlayerToken.cs`
 
 ## 1. Propósito General
-Este script gestiona la representación visual y la posición de un token de jugador en el tablero de juego. Su rol principal es asegurar que el token se alinee con la "roca" (un objeto `RockBehavior`) designada para el jugador y notificar al sistema de combate cuando el jugador llega a una nueva ubicación.
+Este script gestiona la representación visual y el movimiento de un token de jugador en el campo de juego. Su rol principal es asegurar que el token se posicione y se mueva correctamente entre las "rocas" (`RockBehavior`) designadas, coordinándose con el sistema de combate central (`Combatjudge`) para ejecutar movimientos durante el turno apropiado del jugador asociado.
 
 ## 2. Componentes Clave
 
 ### `PlayerToken`
-- **Descripción:** Esta clase es un `MonoBehaviour` que controla el comportamiento visual y posicional de un token de jugador. Se encarga de colocar el token en la roca correcta, actualizar su posición en movimiento y notificar a los sistemas relevantes sobre la llegada a una nueva roca. El atributo `[DefaultExecutionOrder(1)]` asegura que su método `Start` se ejecute después de los scripts con orden de ejecución por defecto (0) pero antes de otros con números mayores, lo que puede ser importante si depende de la inicialización de otros componentes.
-- **Variables Públicas / Serializadas:**
-    - `public RockBehavior rocky;`: Referencia a la instancia de `RockBehavior` que representa la roca *actual* o *objetivo* sobre la que debe estar el token del jugador.
-    - `public Figther player;`: Referencia al objeto `Figther` (presumiblemente el personaje del jugador) asociado con este token. Se utiliza para obtener información como la especie del jugador.
-    - `public RockBehavior lastRock;`: Almacena la referencia a la `RockBehavior` en la que el token se encontraba *previamente*, útil para gestionar la salida de una roca y la entrada a otra.
-- **Métodos Principales:**
-    - `void Start()`:
-        - **Descripción:** Se llama una vez en el ciclo de vida del script cuando el objeto se activa.
-        - **Funcionalidad:**
-            - Si `rocky` está asignado, inicializa la posición del `PlayerToken` a la misma posición que la de `rocky`.
-            - Guarda la `rocky` actual en `lastRock`.
-            - Llama a `rocky.AddPlayer(this)` para registrar este token en la roca actual.
-            - Obtiene el componente `SpriteRenderer` del GameObject y establece su color basándose en la `Specie` del `player` asociado, proporcionando una distinción visual.
-    - `void Update()`:
-        - **Descripción:** Se llama una vez por frame.
-        - **Funcionalidad:**
-            - Monitorea continuamente si la posición de la `rocky` (la roca objetivo) ha cambiado con respecto a la posición actual del `PlayerToken`.
-            - Si detecta un cambio (lo que indica que el jugador ha "movido" su token a una nueva roca a través de la actualización de `rocky` por otro sistema):
-                - Elimina el token de la `lastRock` llamando a `lastRock.RemovePlayer(this)`.
-                - Actualiza la posición del `PlayerToken` a la nueva `rocky.transform.position`.
-                - Añade el token a la nueva `rocky` llamando a `rocky.AddPlayer(this)`.
-                - Actualiza `lastRock` para que apunte a la nueva `rocky`.
-                - Notifica al sistema de combate llamando a `Combatjudge.combatjudge.ArriveAtRock()`, lo que probablemente desencadena verificaciones o lógica de combate.
-- **Lógica Clave:**
-    La lógica principal de este script reside en su método `Update`, que actúa como un sistema de detección de movimiento pasivo. No inicia el movimiento por sí mismo, sino que reacciona a los cambios externos en la variable `rocky`. Cuando `rocky` se actualiza a una nueva posición (presumiblemente por una entrada del jugador o lógica de IA que designa una nueva roca para el jugador), el `PlayerToken` se reposiciona automáticamente. Esta reposición no solo es visual, sino que también gestiona las asociaciones del token con las rocas (entrada/salida) y crucialmente, informa al `Combatjudge` para posibles interacciones de combate.
+-   **Descripción:** `PlayerToken` es un componente de Unity (`MonoBehaviour`) que controla el comportamiento de un token de jugador en 3D. Se encarga de la inicialización de la posición del token en una roca de inicio, la detección de la necesidad de movimiento hacia nuevas rocas, y la ejecución del movimiento físico utilizando un `CharacterController`.
+-   **Variables Públicas / Serializadas:**
+    -   `public RockBehavior rocky;`: Referencia a la instancia de `RockBehavior` que representa la roca *actual* o *destino* del `PlayerToken`. Se asigna en el Inspector o mediante código en tiempo de ejecución. Es crucial para el posicionamiento y la lógica de movimiento.
+    -   `public Figther player;`: Referencia a la instancia de `Figther` asociada a este token de jugador. Se utiliza para determinar si es el turno de este jugador, comparando su `indexFigther` con el turno actual gestionado por `Combatjudge`.
+    -   `public RockBehavior lastRock;`: Almacena la referencia a la `RockBehavior` de la cual el `PlayerToken` se ha movido (o se está moviendo). Se usa para notificar a la roca anterior que el jugador ya no está sobre ella.
+-   **Métodos Principales:**
+    -   `void Start()`: Método de ciclo de vida de Unity que se ejecuta una vez al inicio.
+        -   Inicializa la referencia al componente `CharacterController` en el mismo GameObject.
+        -   Si `rocky` está asignado, posiciona el token en la ubicación de `rocky`, lo registra en `rocky` llamando a `rocky.AddPlayer(this)`, y establece la rotación inicial basada en la rotación Y de `rocky`. También inicializa `destiny` a la posición de `rocky`.
+    -   `void Update()`: Método de ciclo de vida de Unity que se ejecuta en cada frame. Contiene la lógica principal de movimiento del token.
+        -   **Lógica de detección de movimiento:** Comprueba si `rocky` no es nulo y si es el turno del jugador (`player.indexFigther == Combatjudge.combatjudge.turn()`).
+        -   Si la posición actual de `rocky` difiere de `destiny` (lo que indica que la roca actual ha cambiado o ha sido reasignada, o se ha movido), se desencadena una actualización de la ruta:
+            -   El token se desvincula de `lastRock` (llamando a `lastRock.RemovePlayer(this)`).
+            -   Se actualiza `destiny` a la nueva posición de `rocky`.
+            -   Se calcula la `direction` hacia el `destiny` y se normaliza (ignorando el componente Y).
+            -   El token se vincula a la nueva `rocky` (llamando a `rocky.AddPlayer(this)`).
+            -   Se actualiza `lastRock` a la `rocky` actual.
+            -   Se calcula y aplica una nueva rotación al token para que mire hacia `direction`.
+            -   La función retorna, evitando que la lógica de movimiento se ejecute en el mismo frame que se inició una nueva ruta.
+        -   **Lógica de ejecución de movimiento:** Si el `Combatjudge` indica que el estado actual es `SetMoments.MoveToRock`, el token se mueve físicamente hacia su `destiny` usando `characterController.Move()`.
+            -   Una vez que la dirección restante hacia el destino (`dir`) difiere de la `direction` original (indicando que se ha llegado o pasado el destino), el token se ajusta con precisión a la `destiny`, se notifica al `Combatjudge` mediante `Combatjudge.combatjudge.ArriveAtRock()`, y el movimiento se detiene.
+    -   `public float Speed()`: Un método auxiliar que calcula y devuelve la "velocidad" relativa del `CharacterController`. Divide la magnitud de la velocidad actual por un factor de 50, posiblemente para normalizarla para propósitos de animación o UI.
+
+-   **Lógica Clave:**
+    La lógica central del `PlayerToken` se basa en dos fases controladas por el método `Update`:
+    1.  **Detección y Preparación del Movimiento:** Cada frame, el script verifica si la roca a la que está asignado (`rocky`) ha cambiado de posición o si se ha reasignado una nueva roca. Si esto ocurre, recalcula el destino y la dirección, y notifica a las rocas sobre el cambio de estado del jugador.
+    2.  **Ejecución del Movimiento:** Una vez que se ha establecido un destino y la condición de `Combatjudge.combatjudge.GetSetMoments() == SetMoments.MoveToRock` se cumple, el `CharacterController` mueve el token hacia el destino. Se realiza una verificación de proximidad para "encajar" el token en la posición exacta del destino una vez que está lo suficientemente cerca, y se notifica al sistema de combate sobre la llegada. Este proceso solo ocurre si es el turno del jugador (`player.indexFigther == Combatjudge.combatjudge.turn()`).
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    - No utiliza explícitamente `[RequireComponent]`. Sin embargo, para que la funcionalidad de coloración del token en `Start()` funcione, el GameObject al que está adjunto este script debe tener un componente `SpriteRenderer`.
-    - Implícitamente depende de la existencia y asignación de instancias de `RockBehavior` para sus variables `rocky` y `lastRock`, y una instancia de `Figther` para `player`.
-- **Eventos (Entrada):**
-    - Este script no se suscribe a eventos de `UnityEvent` o `Action` directamente. Su lógica de movimiento es reactiva a la asignación de la variable pública `rocky` por otros sistemas (por ejemplo, un controlador de jugador o un sistema de IA).
-- **Eventos (Salida):**
-    - Este script invoca métodos en otros sistemas, actuando como una notificación:
-        - `rocky.AddPlayer(this)`: Notifica a la roca actual que este token está ahora sobre ella.
-        - `lastRock.RemovePlayer(this)`: Notifica a la roca anterior que este token ya no está sobre ella.
-        - `Combatjudge.combatjudge.ArriveAtRock()`: Notifica al sistema de `Combatjudge` que un token de jugador ha llegado a una nueva roca, lo que podría desencadenar la lógica de inicio de combate o verificación de condiciones.
+-   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, pero *requiere* la presencia de un componente `CharacterController` en el mismo GameObject para su funcionamiento (`characterController = GetComponent<CharacterController>();`).
+-   **Eventos (Entrada):** Este script no se suscribe directamente a `UnityEvent` o `Action` explícitos. En su lugar, se basa en la **consulta de estado** del sistema `Combatjudge` para determinar cuándo debe realizar acciones:
+    -   Consulta `Combatjudge.combatjudge.turn()` para saber si es el turno del jugador asociado.
+    -   Consulta `Combatjudge.combatjudge.GetSetMoments()` para verificar el estado actual del combate (específicamente `SetMoments.MoveToRock`).
+-   **Eventos (Salida):** Este script invoca un método en el sistema `Combatjudge` para notificar un evento:
+    -   `Combatjudge.combatjudge.ArriveAtRock()`: Se llama cuando el `PlayerToken` ha llegado a su roca de destino.

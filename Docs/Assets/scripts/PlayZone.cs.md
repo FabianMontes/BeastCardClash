@@ -1,71 +1,65 @@
 # `PlayZone.cs`
 
 ## 1. Propósito General
-Este script `PlayZone` es un `MonoBehaviour` que gestiona la creación y configuración inicial de la zona de juego o "estadio" circular. Su rol principal es instanciar un conjunto de objetos `rockPrefab` en un patrón circular y asignarles propiedades específicas, incluyendo un tipo de "inscripción" que define su funcionalidad dentro del juego. Interactúa principalmente con los prefabs de las rocas y sus componentes `RockBehavior` para configurarlos.
+Este script `PlayZone` es el responsable principal de la creación y configuración dinámica de la zona de juego o "estadio" en Beast Card Clash. Genera proceduralmente una disposición circular de elementos del tablero, representados por "rocas" (stones), asignándoles propiedades iniciales como su posición, orientación e "inscripción" basada en diferentes modos de configuración.
 
 ## 2. Componentes Clave
 
-### `SetupConfig`
-- **Descripción:** Esta enumeración define los distintos modos de configuración para la distribución de las "inscripciones" en las rocas de la zona de juego. Cada valor representa un patrón diferente para cómo se asignarán las propiedades a las rocas instanciadas.
+### `enum SetupConfig`
+- **Descripción:** Este enumerador define los diferentes esquemas o modos de distribución de las "inscripciones" (tipos o propiedades) que serán asignadas a las rocas generadas en el campo de batalla.
 - **Valores:**
-    - `normal`: Asigna inscripciones de forma variada, alternando entre diferentes tipos de elementos y elementos "no únicos".
+    - `normal`: Un modo de configuración que distribuye inscripciones de forma variada, alternando entre un conjunto principal de elementos y elementos "no únicos" especiales.
     - `fullall`: Asigna la inscripción `Inscription.pick` a todas las rocas.
     - `fullone`: Asigna la inscripción `Inscription.duel` a todas las rocas.
 
 ### `PlayZone`
-- **Descripción:** Es la clase principal de este archivo y hereda de `MonoBehaviour`, lo que le permite ser adjuntada a un GameObject en Unity. Se encarga de la generación programática del entorno de batalla. Su atributo `[DefaultExecutionOrder(-3)]` indica que este script se ejecutará muy temprano en el ciclo de vida de los scripts de Unity, antes que la mayoría de los demás, asegurando que la zona de juego esté configurada antes de que otros sistemas dependan de ella.
+- **Descripción:** La clase `PlayZone` es un `MonoBehaviour` que gestiona la generación del entorno de juego circular. Su propósito principal es instanciar múltiples objetos `rockPrefab` en una formación circular y configurar sus propiedades iniciales, como su comportamiento y tipo de inscripción, al inicio del juego.
 - **Variables Públicas / Serializadas:**
-    - `radius` (tipo `float`): Visible en el Inspector bajo el encabezado "StadiumSetup". Define el radio del círculo en el que se distribuirán las rocas. Un valor mayor resultará en una zona de juego más grande.
-    - `many` (tipo `int`): Visible en el Inspector bajo el encabezado "StadiumSetup". Determina la cantidad total de rocas que se instanciarán en el círculo.
-    - `config` (tipo `SetupConfig`): Visible en el Inspector bajo el encabezado "StadiumSetup". Permite seleccionar el patrón de asignación de inscripciones para las rocas, utilizando los valores de la enumeración `SetupConfig`.
-    - `RockScale` (tipo `float`): Visible en el Inspector bajo el encabezado "StadiumRock". Define la escala que se aplicará a cada `rockPrefab` instanciado, afectando su tamaño visual.
-    - `rockPrefab` (tipo `GameObject`): Visible en el Inspector bajo el encabezado "StadiumRock". Es la referencia al prefab de la roca que será instanciada repetidamente para construir la zona de juego. Este prefab se espera que contenga un componente `RockBehavior`.
-
+    - `[SerializeField] public float radius = 5;`: Define el radio del círculo sobre el cual se distribuirán las rocas. Es la distancia desde el centro de la `PlayZone` a cada roca.
+    - `[SerializeField] public int many = 10;`: Determina la cantidad total de rocas que se generarán en la zona de juego.
+    - `[SerializeField] SetupConfig config;`: Selecciona el modo de configuración (`normal`, `fullall`, `fullone`) que determinará cómo se asignarán las inscripciones a cada roca.
+    - `[SerializeField] public float RockScale = 1;`: Controla la escala visual de cada roca instanciada.
+    - `[SerializeField] GameObject rockPrefab;`: Es la referencia al prefab del objeto `GameObject` que representa una "roca" individual. Este prefab debe contener el script `RockBehavior` para que la configuración funcione correctamente.
 - **Métodos Principales:**
-    - `void Start()`: Este es un método del ciclo de vida de Unity, invocado una vez al inicio del juego cuando el script se habilita por primera vez. Contiene toda la lógica para la creación de la zona de batalla:
-        - Calcula el ángulo de separación entre cada roca basándose en la cantidad definida por `many`.
-        - Itera `many` veces para cada roca a crear. En cada iteración:
-            - Calcula la posición `x` y `z` en el círculo usando funciones trigonométricas (`Mathf.Cos`, `Mathf.Sin`) y el `radius`.
-            - Determina el tipo de `Inscription` (`Inscription.empty`, `Inscription.pick`, `Inscription.duel`, u otros elementos cíclicos) para la roca actual, basándose en el valor de la variable `config` y una lógica de distribución interna que varía según el modo seleccionado. Es importante notar que la enumeración `Inscription` no está definida en este archivo, sugiriendo que es una dependencia externa.
-            - Instancia el `rockPrefab` en la escena.
-            - Establece el objeto `PlayZone` (el `transform` del GameObject al que está adjunto este script) como el padre del `stone` recién creado, organizándolos jerárquicamente.
-            - Obtiene el componente `RockBehavior` del `stone` instanciado y le asigna varias propiedades esenciales:
-                - `father`: Una referencia a este mismo script `PlayZone`.
-                - `angle`: El ángulo de rotación de la roca.
-                - `direction`: La dirección vectorial de la roca desde el centro.
-                - `inscription`: El tipo de `Inscription` determinado anteriormente.
-                - `numbchild`: El índice numérico de la roca en el orden de creación.
-
-    - `void Update()`: Este es un método del ciclo de vida de Unity que se invoca una vez por fotograma. En el código actual, está vacío, lo que indica que `PlayZone` no realiza ninguna lógica de actualización continua en tiempo real. Su función es puramente de inicialización.
-
+    - `void Start()`: Este método del ciclo de vida de Unity se ejecuta una vez al inicio del script. Contiene toda la lógica para crear la zona de batalla:
+        - Calcula el ángulo necesario entre cada roca para distribuirlas uniformemente en un círculo.
+        - Itera `many` veces, una por cada roca a generar.
+        - En cada iteración, determina las coordenadas `x` y `z` para la posición de la roca en el círculo utilizando trigonometría (`Mathf.Cos`, `Mathf.Sin`).
+        - Aplica la lógica del `switch (config)` para decidir qué tipo de `Inscription` (que se asume es un `enum` definido en otro lugar del proyecto, como `Inscription.empty`, `Inscription.pick`, `Inscription.duel`) se asignará a la roca actual.
+        - Instancia un `GameObject` a partir de `rockPrefab`.
+        - Configura el padre de la roca instanciada para que sea el `transform` de esta `PlayZone`, manteniendo la jerarquía organizada.
+        - Obtiene el componente `RockBehavior` de la roca instanciada y le asigna varias propiedades cruciales:
+            - `father`: Una referencia a este mismo script `PlayZone`.
+            - `angle`: El ángulo de rotación de la roca, ajustado para que "mire" hacia el centro.
+            - `direction`: El vector de dirección desde el centro hasta la roca.
+            - `inscription`: La `Inscription` determinada por la lógica de configuración.
+            - `numbchild`: El índice de la roca dentro del bucle de creación.
+    - `void Update()`: Este método se ejecuta una vez por fotograma. En el código actual, está vacío y no realiza ninguna acción.
 - **Lógica Clave:**
-    La lógica central reside en el método `Start()`, donde se orquesta la construcción del escenario. Se utiliza un bucle `for` para iterar `many` veces, creando una roca en cada paso. La parte más elaborada es la asignación de la `Inscription`, que se maneja a través de una sentencia `switch` en la variable `config`.
-    
-    Por ejemplo, en el modo `SetupConfig.normal`, la asignación de `Inscription` es cíclica y mezcla elementos genéricos con "elementos no únicos" en un patrón predefinido:
+    La lógica principal reside en el método `Start()`, donde se genera el "estadio" circular. Se calcula el ángulo para cada posición basándose en la cantidad de rocas (`many`) y se utiliza `Mathf.Cos` y `Mathf.Sin` para obtener las coordenadas `x` y `z` en un círculo. La distribución de las `Inscription`s es modular y dependiente del `config` seleccionado:
     ```csharp
+    // Ejemplo de cómo se determina la inscripción dentro del bucle de Start():
     switch (config)
     {
         case SetupConfig.normal:
-            if (i == divelement * nelem)
-            {
-                inscripcion = (Inscription)(nonelem + 4);
-                nonelem = (nonelem + 1) % 2;
-                nelem++;
-            }
-            else
-            {
-                inscripcion = (Inscription)(elem);
-                elem = (elem + 1) % 4;
-            }
+            // Lógica para distribuir inscripciones normales y "no únicas"
+            // (Inscription)(elem) o (Inscription)(nonelem + 4)
             break;
-        // ... otros casos
+        case SetupConfig.fullall:
+            inscripcion = Inscription.pick;
+            break;
+        case SetupConfig.fullone:
+            inscripcion = Inscription.duel;
+            break;
     }
     ```
-    Esta lógica asegura una distribución variada de los tipos de roca, fundamental para la estrategia del juego.
+    Cada roca instanciada (`stone`) obtiene una referencia a su padre (`PlayZone`), su posición angular, dirección y su inscripción, lo que permite que el `RockBehavior` asociado a cada roca funcione de manera contextual.
 
 ## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, tiene dependencias implícitas:
-    - Requiere que el `GameObject` asignado a la variable `rockPrefab` contenga un componente `RockBehavior` para poder configurarlo correctamente durante la inicialización.
-    - Depende de la existencia de la enumeración `Inscription` y la clase `RockBehavior`, las cuales no están definidas en este archivo y se espera que existan en otro lugar del proyecto.
-- **Eventos (Entrada):** Este script no se suscribe explícitamente a ningún evento de Unity (`UnityEvent`, `Action`) o de UI en el código proporcionado.
-- **Eventos (Salida):** Este script no invoca ni emite ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas. Se comunica con los `RockBehavior` instanciados estableciendo sus propiedades directamente.
+- **Componentes Requeridos:**
+    - Este script no utiliza el atributo `[RequireComponent]` para forzar la presencia de otros componentes en el mismo `GameObject`.
+    - Sin embargo, el script depende fuertemente de la existencia de un componente `RockBehavior` en el `rockPrefab` que se instanciará, ya que accede y establece sus propiedades directamente (`stone.GetComponent<RockBehavior>()....`). Si `RockBehavior` no está presente, se producirá un error en tiempo de ejecución.
+- **Eventos (Entrada):**
+    - Este script no se suscribe a eventos externos de otros componentes (como `button.onClick` o eventos personalizados). Su funcionalidad principal se activa y completa durante el método de ciclo de vida `Start()` de Unity.
+- **Eventos (Salida):**
+    - `PlayZone` no invoca ni emite `UnityEvents` o `Actions` para notificar a otros sistemas. Su interacción con otras partes del juego se realiza estableciendo directamente las propiedades del script `RockBehavior` en los GameObjects que instancia.

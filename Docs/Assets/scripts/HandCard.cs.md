@@ -1,41 +1,69 @@
 # `HandCard.cs`
 
 ## 1. Propósito General
-El script `HandCard` gestiona la representación visual y la interactividad de una única carta en la mano del jugador dentro de la interfaz de usuario del juego. Su rol principal es sincronizar el estado UI de una carta (su visibilidad, color y texto) con el estado lógico del juego, particularmente durante las diferentes fases del combate, y facilitar la selección de la carta por parte del jugador.
+El script `HandCard.cs` es el componente principal que gestiona la representación visual y la interactividad de una carta individual dentro de la mano del jugador o en un panel de selección. Su rol es asegurar que la carta se muestre correctamente y que sea interactuable (o no) en función del estado actual del combate y las reglas del juego, interactuando con los sistemas de `Figther` (jugador) y `Combatjudge` (juez de combate).
 
 ## 2. Componentes Clave
 
 ### `HandCard`
--   **Descripción:** Esta clase, que hereda de `MonoBehaviour`, actúa como el controlador para un objeto de interfaz de usuario que representa una carta individual en la mano de un `Figther` (jugador). Implementa las interfaces `IPointerEnterHandler` y `IPointerExitHandler` para gestionar interacciones del puntero (mouse/toque), aunque sus métodos asociados están actualmente sin implementar. La directiva `[DefaultExecutionOrder(-4)]` indica que este script se ejecuta muy temprano en el ciclo de vida de los scripts de Unity, lo cual puede ser crucial para el orden de inicialización con otros sistemas.
+-   **Descripción:** Esta clase hereda de `MonoBehaviour` y se encarga de la lógica de una carta específica en la interfaz de usuario. También implementa las interfaces `IPointerEnterHandler` y `IPointerExitHandler` para manejar eventos del puntero del mouse sobre la carta, aunque estos métodos están actualmente vacíos. Su función principal es mostrar los datos de una `Card` asociada y controlar si el jugador puede interactuar con ella (por ejemplo, seleccionarla o jugarla) en momentos específicos del combate.
 -   **Variables Públicas / Serializadas:**
-    -   `[SerializeField] int handPos`: Un entero que probablemente indica la posición de la carta dentro de la mano del jugador. Su uso directo no se observa en el código proporcionado, pero es una variable serializada.
-    -   `[SerializeField] Card card`: Referencia al objeto de datos `Card` que esta representación UI está mostrando. Es el modelo de datos asociado a esta vista.
-    -   `TextMeshProUGUI textMeshPro`: Componente de TextMeshPro que se usa para mostrar el identificador (`ID`) de la carta en la UI.
-    -   `Figther player`: Referencia al objeto `Figther` (el jugador) al que pertenece esta carta. Este script interactúa con el `Figther` para notificarle sobre la selección de cartas.
-    -   `Button button`: Referencia al componente `Button` de Unity UI, utilizado para controlar la interactividad (habilitado/deshabilitado) de la carta en la mano.
-    -   `SetMoments prevSetMoment`: Almacena el estado de la fase de combate (`SetMoments`) del frame anterior para detectar cambios de fase y reaccionar apropiadamente.
+    *   `[SerializeField] int handPos;`: Representa la posición numérica de esta carta dentro de la mano del jugador.
+    *   `[SerializeField] Card card;`: Es el objeto `ScriptableObject` o clase que contiene los datos lógicos de la carta (nombre, elemento, habilidades, etc.). Este script se encarga de mostrar visualmente la información de esta `Card`.
+    *   `[SerializeField] bool playable = true;`: Un booleano que determina si esta instancia de `HandCard` está diseñada para ser una carta que el jugador puede jugar (`true`) o si es un espacio especial/no jugable (`false`), como una ranura de revelación.
+    *   `[SerializeField] public bool picker = false;`: Un booleano que, si es `true`, indica que esta carta funciona como un "selector" en lugar de una carta de mano regular. Los selectores pueden tener un comportamiento de visibilidad e interactividad distinto, a menudo relacionados con fases de "revelación" o selección inicial.
+    *   `Figther player;`: Una referencia al script `Figther` del jugador al que pertenece esta carta. Se utiliza para consultar el estado del jugador y para enviarle la acción de "jugar carta".
+    *   `Button button;`: Una referencia al componente `UnityEngine.UI.Button` asociado a este GameObject. Se usa para controlar la interactividad del botón y visualmente indicar si la carta es clickeable.
+    *   `SetMoments prevSetMoment;`: Almacena el estado de `SetMoments` del ciclo de combate del frame anterior. Se utiliza para detectar cambios en el estado del combate y aplicar la lógica de interactividad y visibilidad en consecuencia.
 
 -   **Métodos Principales:**
-    -   `void Start()`: Este método de ciclo de vida de Unity se llama una vez al inicio. Es responsable de inicializar las referencias a los componentes hijos (`TextMeshProUGUI`) y a los componentes padre (`Figther`), así como al propio `Button`. Inicialmente, la carta se establece como no visible/interactuable (`Visib(false)`) y luego se invoca `SetCard()` con la `card` serializada para inicializar su apariencia.
-    -   `void Update()`: Este método de ciclo de vida de Unity se ejecuta en cada frame. Su función principal es monitorear el cambio de fases de combate (`SetMoments`) a través de `Combatjudge.combatjudge.GetSetMoments()`. Si la fase de combate cambia a `SetMoments.PickCard` y el jugador asociado está en combate (`player.IsFigthing()`), la carta se hace visible y interactuable si su elemento (`card.GetElement()`) coincide con el tipo de combate actual (`Combatjudge.combatjudge.combatType`) o si el combate es de tipo `full`. Si la fase de combate no es `PickCard`, la carta se oculta. También se oculta si el jugador ya ha "elegido" algo (`player.getPicked() != null`), previniendo interacciones adicionales.
-    -   `private void Visib(bool isVisible)`: Un método auxiliar que controla la interactividad del `Button` asociado. Si `isVisible` es `true`, el botón se hace interactuable; de lo contrario, se desactiva.
-    -   `public void ForceReveal()`: Un método público que simplemente llama a `Visib(true)` para forzar que la carta se muestre y sea interactuable, independientemente de la lógica de la fase de combate.
-    -   `public void OnPointerEnter(PointerEventData eventData)`: Método de la interfaz `IPointerEnterHandler`, llamado cuando el puntero del mouse entra en el área de la carta. Actualmente está vacío, lo que sugiere una funcionalidad de hover pendiente o no implementada.
-    -   `public void OnPointerExit(PointerEventData eventData)`: Método de la interfaz `IPointerExitHandler`, llamado cuando el puntero del mouse sale del área de la carta. También está vacío actualmente.
-    -   `public void SetCard(Card card)`: Este método actualiza la carta de datos asociada a este componente UI y refresca su representación visual. Si la `card` es `null`, limpia el texto y deshabilita la imagen. Si hay una `card`, establece el texto con su `ID` y cambia el color de la `Image` del botón según el `Element` de la carta (rojo para fuego, verde para tierra, azul para agua, blanco para aire).
-    -   `public void SelectedCard()`: Este método está diseñado para ser invocado cuando el jugador selecciona esta carta (probablemente a través del evento `onClick` del `Button`). Notifica al `player` llamando a `player.PlayCard(card)` con la carta actual y luego limpia el slot de la mano invocando `SetCard(null)`.
-    -   `public Card GetCard()`: Un método simple que devuelve el objeto `Card` que actualmente está asociado con esta representación UI.
+    *   `void Start()`:
+        *   Este método del ciclo de vida de Unity se llama una vez al inicio.
+        *   Inicializa las referencias a `player` (obtenido del componente `Figther` en un padre) y `button`.
+        *   Establece el `prevSetMoment` inicial a `SetMoments.PickDice`.
+        *   Configura la clickabilidad inicial de la carta y su visibilidad (`Visib(false)`) si `playable` es `false`.
+        *   Llama a `SetCard()` para inicializar la visualización de la carta asignada.
+        *   Controla la visibilidad de un elemento visual secundario (índice 1 del hijo) basado en el valor de `picker`.
+    *   `void Update()`:
+        *   Este método del ciclo de vida se ejecuta en cada frame.
+        *   Consulta el estado actual del combate (`SetMoments`) desde `Combatjudge.combatjudge`.
+        *   Si la carta no es un `picker`:
+            *   Detecta cambios en `SetMoments`.
+            *   Si el momento es `SetMoments.PickCard` y el `player` está en combate, habilita la carta para ser clickeable si el tipo de combate coincide con el elemento de la carta o es un combate "completo". También incrementa un contador de cartas disponibles en el jugador (`player.avalaibleCard`).
+            *   Si el momento no es `SetMoments.PickCard`, la carta se hace no clickeable.
+            *   Si el jugador ya ha "seleccionado" una carta (`player.getPicked() != null`), esta carta se hace no clickeable para evitar múltiples selecciones.
+        *   Si la carta es un `picker`:
+            *   Maneja la visibilidad de la carta basándose en el `SetMoments` actual.
+            *   En `SetMoments.PickCard`, hace la carta "halfVisible" (parcialmente visible) y ajusta su transparencia.
+            *   En `SetMoments.Reveal`, la hace completamente visible.
+    *   `void Visib(bool isVisible)`:
+        *   Controla la activación/desactivación de un GameObject hijo específico (índice 1 del hijo de la carta), que probablemente representa la información o el arte de la carta.
+    *   `void ForceReveal()`:
+        *   Fuerza la carta a ser clickeable, activando la interactividad de su botón.
+    *   `void SetCard(Card card)`:
+        *   Asigna un objeto `Card` a esta instancia de `HandCard`.
+        *   Gestiona la visibilidad de la carta. Si no hay `card` asignada o si la carta no es jugable y no es un `picker`, la oculta. De lo contrario, la muestra según sea `picker` o no.
+    *   `void SelectedCard()`:
+        *   Este método está diseñado para ser invocado cuando el botón de la carta es presionado (a menudo configurado en el Inspector de Unity).
+        *   Notifica al objeto `player` para que "juegue" la `card` actualmente asignada a esta `HandCard`.
+        *   Después de jugar, establece la `card` de esta `HandCard` a `null`, ocultando su representación visual.
+    *   `void clickable(bool isClick)`:
+        *   Activa o desactiva la interactividad del `button` de la carta.
+        *   También cambia el color de tres imágenes hijas específicas (índices 0, 1 y 2 del hijo con índice 1), volviéndolas blancas si es clickeable o grises si no lo es, proporcionando un feedback visual de interactividad.
+    *   `private void halfVisible(bool visible)`:
+        *   Controla la activación/desactivación de otro GameObject hijo (índice 0 del hijo de la carta), probablemente el elemento visual principal o frontal de la carta.
 
 -   **Lógica Clave:**
-    La lógica central reside en el método `Update`, que actúa como un observador del estado global del juego (gestionado por `Combatjudge`). La visibilidad e interactividad de la carta se rigen por un sistema de máquina de estados implícito basado en `SetMoments`. Solo se permite la interacción con la carta si la fase del juego es `PickCard` y si el tipo de combate actual permite el elemento de la carta, o si es un combate `full`. Este control dinámico asegura que los jugadores solo puedan interactuar con las cartas en los momentos apropiados del juego.
+    La lógica principal reside en el método `Update`, que actúa como una máquina de estados simplificada para la interactividad de la carta. Monitorea constantemente el `SetMoments` del `Combatjudge`. Dependiendo de si la `HandCard` es una carta `playable` normal o un `picker`, ajusta su visibilidad y clickabilidad. Por ejemplo, las cartas jugables solo son clickeables durante la fase `SetMoments.PickCard` y solo si el tipo de combate actual permite jugar esa carta en particular (por su elemento). Los `picker` cambian su visibilidad para "revelar" una carta en fases específicas.
 
 ## 3. Dependencias y Eventos
 -   **Componentes Requeridos:**
-    Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que el GameObject al que está adjunto tenga componentes `Button` y `Image` (para el fondo de la carta), y que un componente `TextMeshProUGUI` esté presente como hijo para mostrar el ID de la carta. También depende de que un componente `Figther` exista en un GameObject padre y que la clase `Combatjudge` esté disponible globalmente (posiblemente como un singleton).
-
+    *   Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, es fundamental que el GameObject al que se adjunta tenga un componente `UnityEngine.UI.Button` para la interactividad, y que su `player` tenga un componente `Figther` en un GameObject padre.
 -   **Eventos (Entrada):**
-    El script implementa las interfaces `IPointerEnterHandler` y `IPointerExitHandler`, lo que significa que Unity invoca `OnPointerEnter` y `OnPointerExit` cuando el puntero del mouse (o el toque) entra o sale del área de la UI de la carta.
-    Además, aunque no se ve explícitamente en el código C#, el método público `SelectedCard()` está diseñado para ser llamado por el evento `OnClick()` del componente `Button` de Unity UI, que normalmente se configura en el Inspector de Unity.
-
+    *   `IPointerEnterHandler`, `IPointerExitHandler`: La clase implementa estas interfaces, lo que permite que Unity llame a sus métodos `OnPointerEnter` y `OnPointerExit` cuando el puntero del mouse entra o sale del área de la carta. Actualmente, estos métodos están vacíos, lo que indica que no hay lógica de "hover" implementada aún.
+    *   `Button.onClick`: Aunque no se suscribe directamente mediante código en el `Start`, el método `SelectedCard()` está diseñado para ser el `onClick` listener del componente `Button` de la carta (típicamente configurado en el Inspector de Unity).
 -   **Eventos (Salida):**
-    Este script no invoca sus propios `UnityEvent` o `Action` para notificar a otros sistemas. En su lugar, se comunica directamente con el sistema `Figther` (al cual pertenece) llamando a `player.PlayCard(card)` cuando la carta es seleccionada. También consulta el estado del sistema de combate a través de `Combatjudge.combatjudge.GetSetMoments()` y `Combatjudge.combatjudge.combatType`.
+    *   Este script no invoca explícitamente `UnityEvent`s o `Action`s propios. En cambio, se comunica con otros sistemas llamando a métodos directamente:
+        *   `player.PlayCard(card)`: Notifica al jugador que se ha jugado una carta.
+        *   `Combatjudge.combatjudge.GetSetMoments()`: Consulta el estado actual del combate.
+        *   `player.IsFigthing()`, `player.avalaibleCard++`, `player.getPicked()`: Consulta o modifica el estado del jugador.
