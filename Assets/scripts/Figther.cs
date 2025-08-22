@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum Team
 {
-    acetiles, ingeniosos, adn, zootecnicos, RCPTeam, pluma_dorada,real_pincel, photo_agros,va_games
+    acetiles, ingeniosos, adn, zootecnicos, RCPTeam, pluma_dorada, real_pincel, photo_agros, va_games
 }
 
 public enum Specie
@@ -11,6 +11,7 @@ public enum Specie
     bear, frog, chameleon, condor
 }
 
+// TODO: Ponerle los nombres de los métodos en PascalCase
 
 [DefaultExecutionOrder(0)]
 public class Figther : MonoBehaviour
@@ -94,13 +95,13 @@ public class Figther : MonoBehaviour
 
     public void setSkin(int skin)
     {
-        this.skin=skin;
+        this.skin = skin;
     }
 
     public void setNoSkin(int skin)
     {
         int a = Random.Range(0, 6);
-        while (a== skin)
+        while (a == skin)
         {
             a = Random.Range(0, 6);
         }
@@ -141,18 +142,18 @@ public class Figther : MonoBehaviour
         figtherLive = pL;
     }
 
-    public bool noHurt {get;private set;}
+    public bool noHurt { get; private set; }
 
     public void addPlayerLive(int pL)
     {
         noHurt = pL >= 0;
 
         figtherLive += pL;
-        if(figtherLive> Combatjudge.combatjudge.initialLives)
+        if (figtherLive > Combatjudge.combatjudge.initialLives)
         {
             figtherLive = Combatjudge.combatjudge.initialLives;
         }
-        if(figtherLive< 0)
+        if (figtherLive < 0)
         {
             figtherLive = 0;
         }
@@ -161,7 +162,7 @@ public class Figther : MonoBehaviour
     public void randomSpecie()
     {
         specie = Specie.bear;
-        skin = Random.Range(0,2);
+        skin = Random.Range(0, 2);
     }
 
     public void movePlayer(RockBehavior rocker)
@@ -179,7 +180,7 @@ public class Figther : MonoBehaviour
         Transform deck = transform.GetChild(0).GetChild(0);
 
         if (index >= deck.childCount || index < 0) return;
-        
+
         Card card = deck.GetChild(index).GetComponent<Card>();
         deck.GetChild(index).gameObject.SetActive(false);
         Transform hand = transform.GetChild(0).GetChild(1);
@@ -227,7 +228,7 @@ public class Figther : MonoBehaviour
             if (a == indexFigther) return red != 0;
             a++;
         }
-        
+
         return false;
     }
 
