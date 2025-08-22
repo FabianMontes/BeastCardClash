@@ -110,6 +110,7 @@ public class BotPlayer : MonoBehaviour
         // Elige el elemento de ataque cuando ya se acabó el tiempo de pensar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, elige el elemento
+        // TODO: Estar pendiente de esta parte en especial
         else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
         {
             // Verifica si ya transcurrió el tiempo establecido

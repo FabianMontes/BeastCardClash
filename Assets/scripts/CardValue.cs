@@ -1,30 +1,29 @@
-
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CardValue : MonoBehaviour
 {
-    HandCard card;
-    TextMeshProUGUI textMeshPro;
+    // Variables
+    HandCard card; // Carta
+    TextMeshProUGUI textMeshPro; // Componente de texto del valor de la carta
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        textMeshPro = GetComponent<TextMeshProUGUI>();
+        // Inicializa la carta y su texto
         card = GetComponentInParent<HandCard>();
+        textMeshPro = GetComponent<TextMeshProUGUI>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Si no hay carta, limpia el texto
         if (card.GetCard() == null)
         {
             textMeshPro.text = "";
             return;
         }
-        textMeshPro.text = card.GetCard().GetValue().ToString();
 
+        // Si hay carta, actualiza el texto con el valor de la carta
+        textMeshPro.text = card.GetCard().GetValue().ToString();
     }
 }
