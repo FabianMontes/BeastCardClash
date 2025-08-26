@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 
 // Lista de elementos
+// TODO: Pasar este enum a camelCase
 public enum Element
 {
     fire, earth, water, air
