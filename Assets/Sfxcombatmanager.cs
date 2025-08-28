@@ -30,7 +30,7 @@ public class Sfxcombatmanager : MonoBehaviour
             case SetMoments.MoveToRock:
                 changeSource(1, true, true);
                 break;
-            case SetMoments.SelecCombat:
+            case SetMoments.SelectCombat:
                 break;
             case SetMoments.PickCard:
                 

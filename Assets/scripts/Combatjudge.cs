@@ -2,7 +2,9 @@ using System;
 using UnityEngine;
 using System.Linq;
 
-// Lista de elementos
+/// <summary>
+/// Lista de elementos 
+/// </summary>
 public enum Element
 {
     Fire,
@@ -11,8 +13,10 @@ public enum Element
     Air
 }
 
-// Lista de momentos de la batalla
 // TODO: Corregir si esta lista de estados está mal comentada
+/// <summary>
+/// Lista de momentos de la batalla
+/// </summary>
 public enum SetMoments
 {
     PickDice, // Elegir dado
@@ -20,7 +24,7 @@ public enum SetMoments
     RevealDice, // Revelar valor del dado
     GlowRock, // Resaltar las rocas disponibles
     MoveToRock, // Moverse a la roca elegida
-    SelecCombat, // Seleccionar tipo de combate
+    SelectCombat, // Seleccionar tipo de combate
     PickCard, // Elegir carta
     Reveal, // Revelar carta
     Result, // Mostrar resultados
@@ -30,28 +34,33 @@ public enum SetMoments
     Rounded // Fin de ronda
 }
 
-// Lista de resultados de la batalla
+/// <summary>
+/// Lista de resultados de la batalla 
+/// </summary>
 public enum Results
 {
-    lose,
-    draw,
-    win
+    Lose,
+    Draw,
+    Win
 }
 
-// Lista de tipos de combate (elementos)
+/// <summary>
+/// Lista de tipos de combate (elementos)
+/// </summary>
 public enum CombatType
 {
-    fire,
-    earth,
-    water,
-    air,
-    full
+    Fire,
+    Earth,
+    Water,
+    Air,
+    Full
 }
 
 // TODO: Renombrar esta clase en formato PascalCase
-// TODO: Averiguar el uso de todas las variables y documentarlo bien
-// TODO: Renombrar las variables, especialmente los errores de ortografía
 
+/// <summary>
+/// CombatJudge se encarga de gestionar las batallas de cartas, los jugadores y los resultados
+/// </summary>
 [DefaultExecutionOrder(-1)]
 public class Combatjudge : MonoBehaviour
 {
@@ -246,8 +255,8 @@ public class Combatjudge : MonoBehaviour
             // MoveToRock: sigue sin hacer nada
             case SetMoments.MoveToRock:
                 break;
-            // SelecCombat: sigue sin hacer nada
-            case SetMoments.SelecCombat:
+            // SelectCombat: sigue sin hacer nada
+            case SetMoments.SelectCombat:
                 break;
             // PickCard: elige la carta y la revela en cuanto todos los jugadores han elegido
             case SetMoments.PickCard:
@@ -339,7 +348,7 @@ public class Combatjudge : MonoBehaviour
                     for (int j = 0; j < manyFigthers; j++)
                     {
                         results[i, j] = figthers[i].GetTeam() == figthers[j].GetTeam()
-                            ? Results.draw
+                            ? Results.Draw
                             : IndividualCombat(card[i], card[j]);
                     }
                 }
@@ -399,17 +408,22 @@ public class Combatjudge : MonoBehaviour
                 break;
         }
     }
-
-    // Calcula los pares de cartas en la batalla, quien gana y lo que pasa
+    
+    /// <summary>
+    /// Calcula los pares de cartas en la batalla, quien gana y lo que pasa
+    /// </summary>
+    /// <param name="one">Carta uno</param>
+    /// <param name="two">Carta dos</param>
+    /// <returns>Resultado del duelo: ganar, perder o empatar</returns>
     private Results IndividualCombat(Card one, Card two)
     {
         // Si alguna de las cartas no existe, es empate
-        if (one == null || two == null) return Results.draw;
+        if (one == null || two == null) return Results.Draw;
 
-        // Si el tipo de combate no es "full" (es decir, es un tipo de elemento específico) y los elementos de las cartas son diferentes
+        // Si el tipo de combate no es "Full" (es decir, es un tipo de elemento específico) y los elementos de las cartas son diferentes
         // El resultado se determina por si el elemento de la primera carta coincide con el tipo de combate.
-        if (combatType != CombatType.full && one.GetElement() != two.GetElement())
-            return (int)one.GetElement() == (int)combatType ? Results.win : Results.lose;
+        if (combatType != CombatType.Full && one.GetElement() != two.GetElement())
+            return (int)one.GetElement() == (int)combatType ? Results.Win : Results.Lose;
 
         // Cantidad de elementos, su mitad y la diferencia de elementos
         int countElements = Enum.GetValues(typeof(Element)).Length;
@@ -421,32 +435,37 @@ public class Combatjudge : MonoBehaviour
         {
             // Si los elementos no son ni diferentes in opuestos, evalúa quien gana usando la diferencia de elementos
             if (elementDiff != 0 && elementDiff != halfElements)
-                return elementDiff > halfElements ? Results.win : Results.lose;
+                return elementDiff > halfElements ? Results.Win : Results.Lose;
 
             // Si la carta uno es mayor, gana
-            if (one.GetValue() > two.GetValue()) return Results.win;
+            if (one.GetValue() > two.GetValue()) return Results.Win;
 
             // Si la carta uno es menor, pierde, si no, empate
-            return one.GetValue() < two.GetValue() ? Results.lose : Results.draw;
+            return one.GetValue() < two.GetValue() ? Results.Lose : Results.Draw;
         }
 
         // Si los elementos son diferentes, evalúa quien gana usando la diferencia de elementos
-        if (elementDiff != 0) return elementDiff > halfElements ? Results.win : Results.lose;
+        if (elementDiff != 0) return elementDiff > halfElements ? Results.Win : Results.Lose;
 
         // Si la carta uno es mayor, gana
-        if (one.GetValue() > two.GetValue()) return Results.win;
+        if (one.GetValue() > two.GetValue()) return Results.Win;
 
         // Si la carta uno es menor, pierde, si no, empate
-        return one.GetValue() < two.GetValue() ? Results.lose : Results.draw;
+        return one.GetValue() < two.GetValue() ? Results.Lose : Results.Draw;
     }
 
-    // Obtiene el estado actual del juego
+    /// <summary> 
+    /// Obtiene el estado actual del juego
+    /// </summary>
+    /// <returns>Estado actual del juego, del enum SetMoments</returns>
     public SetMoments GetSetMoments()
     {
         return actualAction;
     }
 
-    // 
+    /// <summary>
+    /// 
+    /// </summary>
     public void ArriveAtRock()
     {
         RockBehavior rocky = figthers[figtherTurn].playerToken.rocky;
@@ -469,7 +488,7 @@ public class Combatjudge : MonoBehaviour
             }
             else
             {
-                actualAction = SetMoments.SelecCombat;
+                actualAction = SetMoments.SelectCombat;
             }
         }
         else
@@ -480,18 +499,25 @@ public class Combatjudge : MonoBehaviour
         }
     }
 
-    // Mueve al jugador a la roca elegida
+    /// <summary>
+    /// Mueve al jugador a la roca elegida, y establece el estado del juego
+    /// </summary>
+    /// <param name="rocker"></param>
     public void MoveToRock(RockBehavior rocker)
     {
         figthers[figtherTurn].playerToken.rocky = rocker;
         actualAction = SetMoments.MoveToRock;
     }
 
-    // Determina cuando elegir un elemento (en las rocas que lo permiten) y lo hace
+    /// <summary>
+    /// Determina cuando elegir un elemento (en las rocas que lo permiten) y lo hace
+    /// </summary>
+    /// <param name="element">Elemento a elegir</param>
+    /// <returns>true si elegimos el elemento, false si no es así</returns>
     public bool PickElement(Element element)
     {
         // Si no estamos en combate, devuelve falso
-        if (SetMoments.SelecCombat != actualAction) return false;
+        if (SetMoments.SelectCombat != actualAction) return false;
 
         // Intenta escoger el elemento. Si marca error, lo indica y devuelve falso
         try
@@ -509,34 +535,53 @@ public class Combatjudge : MonoBehaviour
         return true;
     }
 
-    // Obtiene la cantidad de jugadores en juego
+    /// <summary>
+    /// Obtiene la cantidad de jugadores en juego 
+    /// </summary>
+    /// <returns>Cantidad de jugadores activos</returns>
     public int GetPlayersFighting()
     {
         return playersFigthing;
     }
-
-    // Obtiene si el turno actual coincide con el jugador activo
+    
+    
+    /// <summary>
+    /// Obtiene si el turno actual coincide con el jugador activo
+    /// </summary>
+    /// <returns>true si estamos en nuestro turno</returns>
     public bool FocusOnTurn()
     {
         return figthers[figtherTurn].visualFigther == 1;
     }
 
-    // 
+    /// <summary>
+    /// Evalúa si acabo la ronda, si es así pasamos a escoger dado
+    /// </summary>
     public void EndRounded()
     {
         if (actualAction == SetMoments.Rounded) actualAction = SetMoments.PickDice;
     }
 
+    /// <summary>
+    /// Acciona RollDice para iniciar el lanzamiento del dado
+    /// </summary>
     public void StartRolling()
     {
         actualAction = SetMoments.RollDice;
     }
 
+    /// <summary>
+    /// Si ya lanzamos el dado, pasamos a mostrarlo
+    /// </summary>
     public void Rolled()
     {
         if (actualAction == SetMoments.RollDice) actualAction = SetMoments.RevealDice;
     }
 
+    /// <summary>
+    /// Resalta las rocas a moverse
+    /// </summary>
+    /// <param name="value"></param>
     private void SetGlowing(int value)
     {
         RockBehavior lander = figthers[figtherTurn].playerToken.rocky;
@@ -548,16 +593,27 @@ public class Combatjudge : MonoBehaviour
         if (figtherTurn != 0) figthers[figtherTurn].transform.GetComponent<BotPlayer>().PickRock(rocker);
     }
 
+    /// <summary>
+    /// Obtiene el turno actual
+    /// </summary>
+    /// <returns>El turno actual</returns>
     public int Turn()
     {
         return figtherTurn;
     }
 
+    /// <summary>
+    /// Determina si un jugador recibió daño
+    /// </summary>
+    /// <returns>true si el jugador recibió daño</returns>
     public bool HurtPlayer()
     {
         return figthers[0].noHurt;
     }
 
+    /// <summary>
+    /// Hace que se rinda el jugador, saliendo de la partida
+    /// </summary>
     public void Surrender()
     {
         actualAction = SetMoments.End;

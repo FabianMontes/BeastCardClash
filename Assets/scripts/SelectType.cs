@@ -15,7 +15,7 @@ public class SelectType : MonoBehaviour
     void Update()
     {
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
-        if (momo == SetMoments.SelecCombat && Combatjudge.combatjudge.FocusOnTurn() && figther.indexFigther == 0)
+        if (momo == SetMoments.SelectCombat && Combatjudge.combatjudge.FocusOnTurn() && figther.indexFigther == 0)
         {
             Visib(true);
         }

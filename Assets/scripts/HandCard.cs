@@ -50,7 +50,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 if (momo == SetMoments.PickCard && player.IsFigthing())
                 {
-                    if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                    if (Combatjudge.combatjudge.combatType == CombatType.Full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
                     {
                         clickable(true);
                         player.avalaibleCard++;
@@ -72,7 +72,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
 
-        if (picker && player.IsFigthing() && momo != SetMoments.SelecCombat)
+        if (picker && player.IsFigthing() && momo != SetMoments.SelectCombat)
         {
             if (momo == SetMoments.PickCard)
             {
