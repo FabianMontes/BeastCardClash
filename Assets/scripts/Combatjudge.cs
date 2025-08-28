@@ -13,7 +13,6 @@ public enum Element
     Air
 }
 
-// TODO: Corregir si esta lista de estados está mal comentada
 /// <summary>
 /// Lista de momentos de la batalla
 /// </summary>
@@ -465,7 +464,7 @@ public class Combatjudge : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Mueve el personaje hacia la roca
     /// </summary>
     public void ArriveAtRock()
     {
@@ -482,14 +481,14 @@ public class Combatjudge : MonoBehaviour
 
         if (rocky.inscription == Inscription.pick)
         {
-            if (Turn() != 0)
+            if (Turn() == 0)
             {
-                actualAction = SetMoments.PickCard;
-                combatType = (CombatType)UnityEngine.Random.Range(0, 4);
+                actualAction = SetMoments.SelectCombat;
             }
             else
             {
-                actualAction = SetMoments.SelectCombat;
+                actualAction = SetMoments.PickCard;
+                combatType = (CombatType)UnityEngine.Random.Range(0, 4);
             }
         }
         else
@@ -514,7 +513,7 @@ public class Combatjudge : MonoBehaviour
     /// Determina cuando elegir un elemento (en las rocas que lo permiten) y lo hace
     /// </summary>
     /// <param name="element">Elemento a elegir</param>
-    /// <returns>true si elegimos el elemento, false si no es así</returns>
+    /// <returns>True si elegimos el elemento, false si no es así</returns>
     public bool PickElement(Element element)
     {
         // Si no estamos en combate, devuelve falso
@@ -549,7 +548,7 @@ public class Combatjudge : MonoBehaviour
     /// <summary>
     /// Obtiene si el turno actual coincide con el jugador activo
     /// </summary>
-    /// <returns>true si estamos en nuestro turno</returns>
+    /// <returns>True si estamos en nuestro turno</returns>
     public bool FocusOnTurn()
     {
         return figthers[figtherTurn].visualFigther == 1;
@@ -606,7 +605,7 @@ public class Combatjudge : MonoBehaviour
     /// <summary>
     /// Determina si un jugador recibió daño
     /// </summary>
-    /// <returns>true si el jugador recibió daño</returns>
+    /// <returns>True si el jugador recibió daño</returns>
     public bool HurtPlayer()
     {
         return figthers[0].noHurt;
