@@ -217,7 +217,7 @@ public class Figther : MonoBehaviour
     }
     public bool IsFigthing()
     {
-        int figthers = Combatjudge.combatjudge.GetPlayersFigthing();
+        int figthers = Combatjudge.combatjudge.GetPlayersFighting();
         int a = 0;
 
         while (figthers > 0)

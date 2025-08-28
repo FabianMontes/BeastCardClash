@@ -74,7 +74,7 @@ public class BotPlayer : MonoBehaviour
         // Establece el tiempo antes de lanzar el dado cuando es turno del bot
         // Verifica si el bot está en momento de tomar el dado y es su turno
         // Si se cumple, establece el tiempo para "lanzar" el dado
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.Turn() == figther.indexFigther)
         {
             // Almacena el momento en el que se acciona este bloque
             time = Time.time;
@@ -88,7 +88,7 @@ public class BotPlayer : MonoBehaviour
         // Lanza el dado cuando ya se acabó el tiempo de lanzar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, lanza el dado
-        else if (Time.time - time > total && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (Time.time - time > total && Combatjudge.combatjudge.Turn() == figther.indexFigther)
         {
             // Termina de lanzar el dado
             FindFirstObjectByType<dice>().Unroll();
@@ -96,7 +96,7 @@ public class BotPlayer : MonoBehaviour
         // Establece el tiempo antes de elegir el tipo de ataque
         // Verifica si el bot está en momento de elegir ataque y es su turno
         // Si se cumple, establece el tiempo para "pensar"
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && !picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && !picking && Combatjudge.combatjudge.Turn() == figther.indexFigther)
         {
             // Almacena el momento en el que se acciona este bloque
             time = Time.time;
@@ -111,7 +111,7 @@ public class BotPlayer : MonoBehaviour
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, elige el elemento
         // TODO: Estar pendiente de esta parte en especial
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && picking && Combatjudge.combatjudge.Turn() == figther.indexFigther)
         {
             // Verifica si ya transcurrió el tiempo establecido
             if (Time.time - time > total)

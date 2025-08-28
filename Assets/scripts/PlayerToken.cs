@@ -37,7 +37,7 @@ public class PlayerToken : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (rocky != null && player.indexFigther == Combatjudge.combatjudge.turn())
+        if (rocky != null && player.indexFigther == Combatjudge.combatjudge.Turn())
         {
             if (rocky.transform.position != destiny)
             {

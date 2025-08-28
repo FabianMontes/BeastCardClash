@@ -48,7 +48,7 @@ public class RockBehavior : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (shiny && Combatjudge.combatjudge.FocusONTurn()) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
+        if (shiny && Combatjudge.combatjudge.FocusOnTurn()) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
     }
 
     public RockBehavior[] getNeighbor(int al)

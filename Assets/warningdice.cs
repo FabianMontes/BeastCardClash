@@ -18,7 +18,7 @@ public class warningdice : MonoBehaviour
         SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
         if(momo == SetMoments.PickDice || momo == SetMoments.RollDice)
         {
-            if(Combatjudge.combatjudge.turn() == figther.indexFigther)
+            if(Combatjudge.combatjudge.Turn() == figther.indexFigther)
             {
                 image.enabled = true;
                 return;

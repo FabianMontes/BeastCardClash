@@ -21,7 +21,7 @@ public class dice : MonoBehaviour
     {
         if (roling)
         {
-            Combatjudge.combatjudge.StartRoling();
+            Combatjudge.combatjudge.StartRolling();
             value = Random.Range(1, maxValue + 1);
             Vector3 vector3 = new Vector3(0, 45, 0);
             switch (value)
@@ -53,7 +53,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Combatjudge.combatjudge.FocusONTurn())
+        if (Combatjudge.combatjudge.FocusOnTurn())
         {
             Roll();
         }
@@ -69,7 +69,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (Combatjudge.combatjudge.FocusONTurn())
+        if (Combatjudge.combatjudge.FocusOnTurn())
         {
             Unroll();
 
@@ -80,13 +80,13 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.Roled();
+            Combatjudge.combatjudge.Rolled();
         }
     }
 
     private void OnMouseUp()
     {
-        if (Combatjudge.combatjudge.FocusONTurn())
+        if (Combatjudge.combatjudge.FocusOnTurn())
         {
             Unroll();
 

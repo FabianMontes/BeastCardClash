@@ -39,15 +39,15 @@ public class Sfxcombatmanager : MonoBehaviour
                 changeSource(2, true, false);
                 break;
             case SetMoments.Result:
-                changeSource(Combatjudge.combatjudge.hurtPlayer()? 3:4, true, false);
+                changeSource(Combatjudge.combatjudge.HurtPlayer()? 3:4, true, false);
                 break;
             case SetMoments.End:
                 break;
             case SetMoments.Loop:
                 break;
-            case SetMoments.round:
+            case SetMoments.Round:
                 break;
-            case SetMoments.rounded:
+            case SetMoments.Rounded:
                 break;
         }
     }
