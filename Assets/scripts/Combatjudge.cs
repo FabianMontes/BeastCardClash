@@ -64,11 +64,12 @@ public enum CombatType
 [DefaultExecutionOrder(-1)]
 public class Combatjudge : MonoBehaviour
 {
+    public int round { get; private set; } // Getter público de la ronda actual
+    
     // Variables
     [Header("Players")] [SerializeField] GameObject player; // Jugador principal
     [SerializeField] GameObject bots; // Bots
     [SerializeField] int manyFigthers; // Cantidad de jugadores
-    public int round { get; private set; } // Getter público de la ronda actual
     Figther[] figthers; // Array de jugadores y bots
 
     [Header("GameRules")] [SerializeField] SetMoments actualAction; // Estado actual del juego
