@@ -37,7 +37,7 @@ public class PlayerToken : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (rocky != null && player.indexFigther == Combatjudge.combatjudge.turn())
+        if (rocky != null && player.indexFigther == CombatJudge.CombatJudgeInstance.Turn())
         {
             if (rocky.transform.position != destiny)
             {
@@ -61,16 +61,16 @@ public class PlayerToken : MonoBehaviour
                 transform.rotation = rotacion;
                 return;
             }
-            if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.MoveToRock)
+            if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.MoveToRock)
             {
                 characterController.Move(direction * Time.deltaTime * 50);
                 Vector3 dir = destiny - transform.position;
                 dir.y = 0;
                 dir = dir.normalized;
-                if (dir != direction && Combatjudge.combatjudge.GetSetMoments() == SetMoments.MoveToRock)
+                if (dir != direction && CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.MoveToRock)
                 {
                     transform.position = destiny;
-                    Combatjudge.combatjudge.ArriveAtRock();
+                    CombatJudge.CombatJudgeInstance.ArriveAtRock();
                     characterController.Move(Vector3.zero);
                 }
             }

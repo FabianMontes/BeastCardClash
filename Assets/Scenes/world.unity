@@ -3053,16 +3053,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3f1a10df827ab54d94619b403de8c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DialogFileContent:
+  gameState: 0
+  language: 0
+  spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
+  englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
+  dialogFileContent:
     BeginDialogs: []
     PreGameDialogs: []
     WinDialogs: []
     LoseDialogs: []
     RepeatDialogs: []
-  gameState: 0
-  language: 0
-  spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
-  englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
 --- !u!4 &1402433419
 Transform:
   m_ObjectHideFlags: 0

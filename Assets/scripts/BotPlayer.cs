@@ -30,7 +30,7 @@ public class BotPlayer : MonoBehaviour
         // Determina el tiempo de pensar antes de elegir la carta
         // Verifica si el bot está en batalla (sin haber perdido, por ejemplo), en momento para seleccionar y no haya seleccionado carta en ese turno
         // Si se cumple, establece el tiempo para "pensar" del bot
-        if (figther.IsFigthing() && Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && figther.getPicked() == null && !picking)
+        if (figther.IsFigthing() && CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickCard && figther.getPicked() == null && !picking)
         {
             // Almacena el momento en el que se acciona este bloque
             time = Time.time;
@@ -44,7 +44,7 @@ public class BotPlayer : MonoBehaviour
         // Determina y selecciona la carta cuando ya se acabó el tiempo de pensar
         // Verifica si el bot ya ha elegido y esté en momento para seleccionar
         // Si se cumple, empieza a elegir la carta
-        else if (picking && Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard)
+        else if (picking && CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickCard)
         {
             // Verifica si ya transcurrió el tiempo establecido
             // Si es así, elige carta
@@ -74,7 +74,7 @@ public class BotPlayer : MonoBehaviour
         // Establece el tiempo antes de lanzar el dado cuando es turno del bot
         // Verifica si el bot está en momento de tomar el dado y es su turno
         // Si se cumple, establece el tiempo para "lanzar" el dado
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickDice && CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
         {
             // Almacena el momento en el que se acciona este bloque
             time = Time.time;
@@ -83,20 +83,20 @@ public class BotPlayer : MonoBehaviour
             total = Random.Range(0.5f, 3.0f);
 
             // Lanza el dado
-            FindFirstObjectByType<dice>().Roll();
+            FindFirstObjectByType<Dice>().Roll();
         }
         // Lanza el dado cuando ya se acabó el tiempo de lanzar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, lanza el dado
-        else if (Time.time - time > total && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (Time.time - time > total && CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
         {
             // Termina de lanzar el dado
-            FindFirstObjectByType<dice>().Unroll();
+            FindFirstObjectByType<Dice>().Unroll();
         }
         // Establece el tiempo antes de elegir el tipo de ataque
         // Verifica si el bot está en momento de elegir ataque y es su turno
         // Si se cumple, establece el tiempo para "pensar"
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && !picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.SelectCombat && !picking && CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
         {
             // Almacena el momento en el que se acciona este bloque
             time = Time.time;
@@ -110,8 +110,7 @@ public class BotPlayer : MonoBehaviour
         // Elige el elemento de ataque cuando ya se acabó el tiempo de pensar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
         // Si se cumple, elige el elemento
-        // TODO: Estar pendiente de esta parte en especial
-        else if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.SelecCombat && picking && Combatjudge.combatjudge.turn() == figther.indexFigther)
+        else if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.SelectCombat && picking && CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
         {
             // Verifica si ya transcurrió el tiempo establecido
             if (Time.time - time > total)
@@ -177,8 +176,8 @@ public class BotPlayer : MonoBehaviour
             // Elige una roca al azar
             int chosenRockIndex = Random.Range(0, rocks.Length);
 
-            // Le indica a CombatJudge que se moverá a esa roca
-            Combatjudge.combatjudge.MoveToRock(rocks[chosenRockIndex]);
+            // Le indica a combatJudge que se moverá a esa roca
+            CombatJudge.CombatJudgeInstance.MoveToRock(rocks[chosenRockIndex]);
         }
     }
 }

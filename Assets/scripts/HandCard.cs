@@ -43,14 +43,14 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Update is called once per frame
     void Update()
     {
-        SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
+        SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
         if (!picker)
         {
             if (momo != prevSetMoment)
             {
                 if (momo == SetMoments.PickCard && player.IsFigthing())
                 {
-                    if (Combatjudge.combatjudge.combatType == CombatType.full || (int)Combatjudge.combatjudge.combatType == (int)card.GetElement())
+                    if (CombatJudge.CombatJudgeInstance.CombatType == CombatType.Full || (int)CombatJudge.CombatJudgeInstance.CombatType == (int)card.GetElement())
                     {
                         clickable(true);
                         player.avalaibleCard++;
@@ -72,7 +72,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
 
-        if (picker && player.IsFigthing() && momo != SetMoments.SelecCombat)
+        if (picker && player.IsFigthing() && momo != SetMoments.SelectCombat)
         {
             if (momo == SetMoments.PickCard)
             {

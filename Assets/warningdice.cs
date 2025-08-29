@@ -15,10 +15,10 @@ public class warningdice : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SetMoments momo = Combatjudge.combatjudge.GetSetMoments();
+        SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
         if(momo == SetMoments.PickDice || momo == SetMoments.RollDice)
         {
-            if(Combatjudge.combatjudge.turn() == figther.indexFigther)
+            if(CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
             {
                 image.enabled = true;
                 return;
