@@ -83,7 +83,7 @@ public class BotPlayer : MonoBehaviour
             total = Random.Range(0.5f, 3.0f);
 
             // Lanza el dado
-            FindFirstObjectByType<dice>().Roll();
+            FindFirstObjectByType<Dice>().Roll();
         }
         // Lanza el dado cuando ya se acabó el tiempo de lanzar
         // Verifica si el tiempo de espera ya acabó y es nuestro turno
@@ -91,7 +91,7 @@ public class BotPlayer : MonoBehaviour
         else if (Time.time - time > total && CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
         {
             // Termina de lanzar el dado
-            FindFirstObjectByType<dice>().Unroll();
+            FindFirstObjectByType<Dice>().Unroll();
         }
         // Establece el tiempo antes de elegir el tipo de ataque
         // Verifica si el bot está en momento de elegir ataque y es su turno

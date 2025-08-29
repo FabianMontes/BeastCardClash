@@ -236,7 +236,7 @@ public class CombatJudge : MonoBehaviour
                 break;
             // RevealDice: espera medio segundo, y si se cumple, resalta las rocas a las que puede moverse
             case SetMoments.RevealDice:
-                if (Time.time - _time > 0.5f) SetGlowing(FindFirstObjectByType<dice>().value);
+                if (Time.time - _time > 0.5f) SetGlowing(FindFirstObjectByType<Dice>().Value);
                 break;
             // GlowRock: si es el turno del bot, llama a ThinkingRocks() para elegir roca
             case SetMoments.GlowRock:
