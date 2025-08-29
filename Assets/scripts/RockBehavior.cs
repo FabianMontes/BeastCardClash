@@ -42,13 +42,13 @@ public class RockBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() != SetMoments.GlowRock) shiny = false;
+        if (CombatJudge.CombatJudgeInstance.GetSetMoments() != SetMoments.GlowRock) shiny = false;
         shyn.gameObject.SetActive(shiny);
     }
 
     private void OnMouseDown()
     {
-        if (shiny && Combatjudge.combatjudge.FocusOnTurn()) FindFirstObjectByType<Combatjudge>().MoveToRock(this);
+        if (shiny && CombatJudge.CombatJudgeInstance.FocusOnTurn()) FindFirstObjectByType<CombatJudge>().MoveToRock(this);
     }
 
     public RockBehavior[] getNeighbor(int al)

@@ -11,7 +11,7 @@ public class dice : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        maxValue = Combatjudge.combatjudge.maxDice;
+        maxValue = CombatJudge.CombatJudgeInstance.maxDice;
         roling = false;
 
     }
@@ -21,7 +21,7 @@ public class dice : MonoBehaviour
     {
         if (roling)
         {
-            Combatjudge.combatjudge.StartRolling();
+            CombatJudge.CombatJudgeInstance.StartRolling();
             value = Random.Range(1, maxValue + 1);
             Vector3 vector3 = new Vector3(0, 45, 0);
             switch (value)
@@ -53,7 +53,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Combatjudge.combatjudge.FocusOnTurn())
+        if (CombatJudge.CombatJudgeInstance.FocusOnTurn())
         {
             Roll();
         }
@@ -61,7 +61,7 @@ public class dice : MonoBehaviour
 
     public void Roll()
     {
-        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice)
+        if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickDice)
         {
             roling = true;
         }
@@ -69,7 +69,7 @@ public class dice : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (Combatjudge.combatjudge.FocusOnTurn())
+        if (CombatJudge.CombatJudgeInstance.FocusOnTurn())
         {
             Unroll();
 
@@ -80,13 +80,13 @@ public class dice : MonoBehaviour
         if (roling)
         {
             roling = false;
-            Combatjudge.combatjudge.Rolled();
+            CombatJudge.CombatJudgeInstance.Rolled();
         }
     }
 
     private void OnMouseUp()
     {
-        if (Combatjudge.combatjudge.FocusOnTurn())
+        if (CombatJudge.CombatJudgeInstance.FocusOnTurn())
         {
             Unroll();
 

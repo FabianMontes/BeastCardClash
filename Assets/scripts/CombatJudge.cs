@@ -44,7 +44,7 @@ public enum Results
 }
 
 /// <summary>
-/// Lista de tipos de combate (elementos)
+/// Lista de tipos de combate (elementos) en las rocas de la zona de batalla
 /// </summary>
 public enum CombatType
 {
@@ -52,43 +52,45 @@ public enum CombatType
     Earth,
     Water,
     Air,
-    Full
+    Full // Full es para las rocas que permiten elegir elemento
 }
-
-// TODO: Renombrar esta clase en formato PascalCase
 
 /// <summary>
 /// CombatJudge se encarga de gestionar las batallas de cartas, los jugadores y los resultados
 /// </summary>
 [DefaultExecutionOrder(-1)]
-public class Combatjudge : MonoBehaviour
+public class CombatJudge : MonoBehaviour
 {
-    public int round { get; private set; } // Getter público de la ronda actual
-    
-    // Variables
-    [Header("Players")] [SerializeField] GameObject player; // Jugador principal
-    [SerializeField] GameObject bots; // Bots
-    [SerializeField] int manyFigthers; // Cantidad de jugadores
-    Figther[] figthers; // Array de jugadores y bots
+    // Getters e instancias
+    public int Round { get; private set; } // Getter público de la ronda actual
+    public CombatType CombatType { get; private set; } // Getter público del tipo de combate
+    public static CombatJudge CombatJudgeInstance; // Instancia pública de CombatJudge
 
-    [Header("GameRules")] [SerializeField] SetMoments actualAction; // Estado actual del juego
+    // Variables de jugador
+    [Header("Players")]
+    [SerializeField] GameObject player;
+    [SerializeField] GameObject bots;
+    [SerializeField] int manyFighters; // Cantidad de jugadores
+    Figther[] _fighters; // Array de jugadores y bots
+
+    // Variables de juego
+    [Header("GameRules")]
+    [SerializeField] SetMoments actualAction; // Estado actual del juego
     [SerializeField] public int initialLives; // Cantidad de vidas iniciales de cada jugador
     [SerializeField] public int maxDice; // Valor máximo del dado (6)
-    [SerializeField] int figtherTurn; // Turno actual
+    [SerializeField] int fighterTurn; // Turno actual
     [SerializeField] int damageDealt; // Cantidad de daño por ataque
     [SerializeField] int damageHeal; // Cantidad de curación por atacar
 
-    public CombatType combatType { get; private set; } // Getter público del tipo de combate
-    public static Combatjudge combatjudge; // 
-    private int playersFigthing; // Cantidad de jugadores que están en juego
-    private bool all; // Indica si todos los jugadores han elegido du carta
+    // Otras variables
+    int _playersFighting; // Máscara de bits que representa a los jugadores en el combate actual
+    bool _allPlayersChose; // Indica si todos los jugadores han elegido su carta
 
     void Start()
     {
-        // Verifica que la instancia de Combatjudge no esté creada
-        if (combatjudge == null)
+        if (CombatJudgeInstance == null)
         {
-            combatjudge = this;
+            CombatJudgeInstance = this;
         }
         else
         {
@@ -96,37 +98,30 @@ public class Combatjudge : MonoBehaviour
         }
 
         // Inicializa la cantidad de jugadores, bots turno, ronda y jugadores humanos
-        manyFigthers = UnityEngine.Random.Range(2, 5); // Entre dos y cuatro jugadores
-        actualAction = SetMoments.Loop; // Estado inicial del juego: loop
-        figtherTurn = -1; // Primer turno (o turno indefinido)
-        round = 0; // Primera ronda
+        manyFighters = UnityEngine.Random.Range(2, 5); // Entre dos y cuatro jugadores
+        actualAction = SetMoments.Loop; // Loop es el inicio de ronda
+        fighterTurn = -1; // -1 fuerza a que el jugador sea el que comience
+        Round = 0; // Primera ronda (vale 0 para cuando se ejecute Round++ más tarde)
 
-        // Obtiene los jugadores humanos
+        // Obtiene todos los jugadores
         Figther[] players = FindObjectsByType<Figther>(FindObjectsSortMode.InstanceID);
-
-        // TODO: Implementa o elimina esto
-        // // Ordena a los jugadores usando el dígito inicial de su nombre de objeto (mejorado, opcional)
-        // // Usa LINQ para consultar, extraer y ordenar los componentes por su nombre, con una función nativa de C#
-        // players = players.OrderBy(p => int.Parse(p.name[0].ToString())).ToArray();
 
         // Ordena los jugadores usando el dígito inicial de su nombre de objeto
         int a = 0;
         while (a < players.Length)
         {
-            // Extrae el primer caracter del nombre de los jugadores y lo pasa a entero
-            // Actúa como indicador de su posición en la lista de jugadores
+            // Extrae el primer carácter del nombre de los jugadores y lo pasa a entero para saber su orden
             int numero = int.Parse(players[a].name[0].ToString());
 
             // Almacena al jugador en la posición correcta de la lista, haciendo un intercambio hacia su sitio
             (players[a], players[numero]) = (players[numero], players[a]);
 
-            // Si "a" es igual a "numero" quiere decir que el jugador ya estaba bien colocado. Entonces pasa al siguiente jugador
+            // Si "a" es igual a "número" quiere decir que el jugador ya estaba bien colocado. Entonces pasa al siguiente jugador
             if (a == numero) a++;
         }
 
-        // Recorta la lista al tamaño real de jugadores activos
-        // Itera desde el primer jugador sobrante hasta el final y los destruye.
-        for (int i = manyFigthers; i < players.Length; i++)
+        // Recorta la lista al tamaño real de jugadores activos. Itera desde el primer jugador sobrante hasta el final y los destruye.
+        for (int i = manyFighters; i < players.Length; i++)
         {
             Destroy(players[i].gameObject);
         }
@@ -136,108 +131,103 @@ public class Combatjudge : MonoBehaviour
         Canvas canvas = FindFirstObjectByType<Canvas>();
 
         // Calcula el espaciado en rocas entre los jugadores
-        int div = zone.many / manyFigthers;
+        int div = zone.many / manyFighters;
 
-        // Crea el array que almacenará a los jugadores
-        figthers = new Figther[manyFigthers];
+        // Crea el array que almacenará a los jugadores y luego lo llena
+        _fighters = new Figther[manyFighters];
 
-        for (int i = 0; i < manyFigthers; i++)
+        for (int i = 0; i < manyFighters; i++)
         {
             // El primer jugador es humano, el resto son bots
-            GameObject figther = i == 0 ? player : bots;
+            GameObject fighter = i == 0 ? player : bots;
 
             // Reutiliza los luchadores que ya están en la escena verificando si estamos dentro de la lista de jugadores ya existentes
             // Si no hay suficientes, crea nuevos a partir de los prefabs. Si los hay, entonces asigna los existentes
-            if (i >= players.Length)
+            if (i < players.Length)
             {
-                // Crea la instancia nueva de jugador, su espacio en la UI y una especie aleatoria
-                figthers[i] = Instantiate(figther).GetComponent<Figther>();
-                figthers[i].transform.SetParent(canvas.transform, false);
-                figthers[i].randomSpecie();
+                // Asigna al jugador existente
+                _fighters[i] = players[i];
             }
             else
             {
-                // Asigna al jugador existente
-                figthers[i] = players[i];
+                // Crea la instancia nueva de jugador, su espacio en la UI y una especie aleatoria
+                _fighters[i] = Instantiate(fighter).GetComponent<Figther>();
+                _fighters[i].transform.SetParent(canvas.transform, false);
+                _fighters[i].randomSpecie();
             }
 
-            // Asigna el jugador y skin a cada jugador
-            // Si es el primero, lo asigna como jugador humano. Si no, lo hará como bot
+            // Asigna el jugador y skin a cada jugador. Si es el primero, lo asigna como humano. Si no, lo hará como bot
             if (i == 0)
             {
-                // Asigna el equipo y skin elegidos por el jugador (estan en el GameState)
-                figthers[i].setTeam(GameState.singleton.team);
-                figthers[i].setSkin(GameState.singleton.skin);
+                // Asigna el equipo y skin elegidos por el jugador (están en el GameState)
+                _fighters[i].setTeam(GameState.singleton.team);
+                _fighters[i].setSkin(GameState.singleton.skin);
             }
             else
             {
                 // Si hay dos jugadores, simplemente asignamos un equipo diferente al del humano, con setNoTeam
-                if (manyFigthers == 2)
+                if (manyFighters == 2)
                 {
-                    figthers[i].setNoTeam(GameState.singleton.team);
+                    _fighters[i].setNoTeam(GameState.singleton.team);
                 }
-                // Si hay tres jugadores y estamos con el último bot, verificamos que el humano y el otro bot tengan el mismo equipo
+                // Si hay tres jugadores y estamos con el último, verificamos que el humano y el otro bot tengan el mismo equipo
                 // Si es así, ponemos un equipo diferente. Si no, lo asignamos al azar
-                else if (manyFigthers == 3 && i == 2)
+                else if (manyFighters == 3 && i == 2)
                 {
-                    if (figthers[0].GetTeam() == figthers[1].GetTeam())
+                    if (_fighters[0].GetTeam() == _fighters[1].GetTeam())
                     {
-                        figthers[i].setNoTeam(GameState.singleton.team);
+                        _fighters[i].setNoTeam(GameState.singleton.team);
                     }
                     else
                     {
-                        figthers[i].FreeTeam();
+                        _fighters[i].FreeTeam();
                     }
                 }
-                // Si hay cuatro jugadores y estamos con el último bot, verificamos que el humano tengan el mismo equipo que alguno de los otros dos bots
+                // Si hay cuatro jugadores y estamos con el último, verificamos que los tres primeros jugadores comparten equipo
                 // Si es así, ponemos un equipo diferente. Si no, lo asignamos al azar
-                else if (manyFigthers == 4 && i == 3)
+                else if (manyFighters == 4 && i == 3)
                 {
-                    if (figthers[0].GetTeam() == figthers[1].GetTeam() &&
-                        figthers[0].GetTeam() == figthers[2].GetTeam())
+                    if (_fighters[0].GetTeam() == _fighters[1].GetTeam() && _fighters[0].GetTeam() == _fighters[2].GetTeam())
                     {
-                        figthers[i].setNoTeam(GameState.singleton.team);
+                        _fighters[i].setNoTeam(GameState.singleton.team);
                     }
                     else
                     {
-                        figthers[i].FreeTeam();
+                        _fighters[i].FreeTeam();
                     }
                 }
-                // Si no es ningún caso, es poco práctico seguir la misma lógica de antes
-                // Simplemente asignamos al azar los equipos de los bots
+                // Si no es ningún caso, asignamos al azar los equipos de los bots
                 else
                 {
-                    figthers[i].FreeTeam();
+                    _fighters[i].FreeTeam();
                 }
 
                 // Damos una skin aleatoria al bot
-                figthers[i].setRSkin();
+                _fighters[i].setRSkin();
             }
 
             // Asignamos al jugador sus valores iniciales
-            figthers[i].setPlayerLive(initialLives); // Vida inicial
-            figthers[i].visualFigther = i + 1; // Identificador de jugador
-            figthers[i].indexFigther = i; // Identificador de jugador (en el arreglo)
+            _fighters[i].setPlayerLive(initialLives); // Vida inicial
+            _fighters[i].visualFigther = i + 1; // Identificador de jugador
+            _fighters[i].indexFigther = i; // Identificador de jugador (en el arreglo)
 
-            // Asignamos al jugador su nombre
-            // Si es humano (el primero) usa el nombre desde GameState. Si es bot, le pone un identificador
-            figthers[i].figtherName = i == 0 ? GameState.singleton.playerName : $"O{i}O";
+            // Asignamos al jugador su nombre. Si es humano, usa el nombre desde GameState. Si no, le pone un identificador
+            _fighters[i].figtherName = i == 0 ? GameState.singleton.playerName : $"O{i}O";
 
-            // Instancia a la roca usando el espaciado (div) y se la asigna al jugador como su punto de inicio
+            // Referencia a la roca usando el espaciado (div) y se la asigna al jugador como su punto de inicio
             RockBehavior rocky = zone.transform.GetChild(i * div).GetComponent<RockBehavior>();
-            figthers[i].initialStone = rocky;
+            _fighters[i].initialStone = rocky;
         }
     }
 
     // Variable para controlar el tiempo en diferentes estados del juego
-    private float _time;
+    float _time;
 
     void Update()
     {
         // Cambia de acción dependiendo del estado actual
         switch (actualAction)
         {
-            // PickDice: sigue sin hacer nada
             case SetMoments.PickDice:
                 break;
             // RollDice: actualiza la hora para los contadores
@@ -250,42 +240,35 @@ public class Combatjudge : MonoBehaviour
                 break;
             // GlowRock: si es el turno del bot, llama a ThinkingRocks() para elegir roca
             case SetMoments.GlowRock:
-                if (figtherTurn != 0) figthers[figtherTurn].transform.GetComponent<BotPlayer>().ThinkingRocks();
+                if (fighterTurn != 0) _fighters[fighterTurn].transform.GetComponent<BotPlayer>().ThinkingRocks();
                 break;
-            // MoveToRock: sigue sin hacer nada
             case SetMoments.MoveToRock:
-                break;
-            // SelectCombat: sigue sin hacer nada
             case SetMoments.SelectCombat:
                 break;
-            // PickCard: elige la carta y la revela en cuanto todos los jugadores han elegido
+            // PickCard: comprueba que todos han elegido carta y las revela si es así
             case SetMoments.PickCard:
                 // Asume que todos han elegido carta
-                all = true;
+                _allPlayersChose = true;
 
                 // Itera sobre todos los jugadores
-                foreach (Figther fighter in figthers)
+                // Si un jugador ha elegido o no está en batalla, lo ignora. De lo contrario, indica que aún falta alguno
+                foreach (Figther fighter in _fighters)
                 {
-                    // Si un jugador ha elegido o no esta en batalla, lo ignora
                     if (fighter.getPicked() != null || !fighter.IsFigthing()) continue;
-
-                    // De lo contrario, indica que aún falta alguno
-                    all = false;
+                    _allPlayersChose = false;
                     break;
                 }
 
-                // Si todos han elegido como lo sugiere "all", pasa a revelar las cartas
-                if (all) actualAction = SetMoments.Reveal;
+                // Si todos han elegido como lo sugiere _allPlayersChose, pasa a revelar las cartas
+                if (_allPlayersChose) actualAction = SetMoments.Reveal;
                 break;
-            // Result: espera 5 segundos y elimina a los jugadores eliminados
-            // También actúa en caso de ganar, perder, continuar, etc.
+            // Result: espera 5 segundos y elimina a los jugadores eliminados. También actúa en caso de ganar, perder, continuar, etc.
             case SetMoments.Result:
-                // Espera 5 segundos
                 if (Time.time - _time > 5f)
                 {
-                    // Si el jugador humano pierde, termina el juego y llama a EndGamer() para eso
+                    // Si el jugador humano pierde, termina el juego y llama a EndGamer() para eso.
                     // De lo contrario hace otra cosa para continuar, según corresponda
-                    if (figthers[0].GetPlayerLive() <= 0)
+                    if (_fighters[0].GetPlayerLive() <= 0)
                     {
                         actualAction = SetMoments.End;
                         FindFirstObjectByType<EndGame>().EndGamer(false);
@@ -293,29 +276,27 @@ public class Combatjudge : MonoBehaviour
                     else
                     {
                         // Elimina a los jugadores que han perdido
-                        for (int i = 1; i < figthers.Length; i++)
+                        for (int i = 1; i < _fighters.Length; i++)
                         {
                             // Los que tengan vida se ignoran
-                            if (figthers[i].GetPlayerLive() > 0) continue;
+                            if (_fighters[i].GetPlayerLive() > 0) continue;
 
                             // Los que no, se eliminan
-                            Figther deletedFigther = figthers[i]; // Indica que el jugador actual y su índice se elimina
-                            figthers = figthers.Where(f => f != deletedFigther)
-                                .ToArray(); // Busca a todos los jugadores que no sean el eliminado
-                            deletedFigther.playerToken.rocky.RemovePlayer(deletedFigther
-                                .playerToken); // Remueve al jugador
-                            Destroy(deletedFigther.gameObject); // Destruye el GameObject asociado
-                            manyFigthers--; // Le resta uno a los jugadores totales
+                            Figther deletedFighter = _fighters[i]; // Referencia al jugador a eliminar
+                            _fighters = _fighters.Where(f => f != deletedFighter).ToArray(); // Busca y actualiza a todos los jugadores que no sean el eliminado
+                            deletedFighter.playerToken.rocky.RemovePlayer(deletedFighter.playerToken); // Remueve al jugador
+                            Destroy(deletedFighter.gameObject); // Destruye el GameObject asociado
+                            manyFighters--; // Le resta uno al conteo de jugadores
                         }
 
                         // Corrige los índices después de eliminar al jugador, si es necesario
-                        for (int i = 1; i < figthers.Length; i++)
+                        for (int i = 1; i < _fighters.Length; i++)
                         {
-                            figthers[i].indexFigther = i;
+                            _fighters[i].indexFigther = i;
                         }
 
                         // Si hay un jugador o menos, salta al final de la partida. De lo contrario pasa a loop, para continuar
-                        if (figthers.Length <= 1)
+                        if (_fighters.Length <= 1)
                         {
                             actualAction = SetMoments.End;
                             FindFirstObjectByType<EndGame>().EndGamer(true);
@@ -330,46 +311,47 @@ public class Combatjudge : MonoBehaviour
                 break;
             // Reveal: revela las cartas y procesa los resultados de ellas
             case SetMoments.Reveal:
-                // Almacena las cartas elegidas por todos
-                Card[] card = new Card[manyFigthers];
-                int a = 0;
+                // El arreglo almacena las cartas elegidas por todos. El bucle las guarda
+                Card[] card = new Card[manyFighters];
 
-                // Guarda las cartas de todos los jugadores en el arreglo
-                foreach (Figther fighter in figthers)
+                int a = 0;
+                foreach (Figther fighter in _fighters)
                 {
                     card[a] = fighter.getPicked();
                     a++;
                 }
 
                 // Calcula los resultados de todos los jugadores en forma de matriz. Así detecta todos los ataques y su influencia en el puntaje
-                Results[,] results = new Results[manyFigthers, manyFigthers];
-                for (int i = 0; i < manyFigthers; i++)
+                Results[][] results = new Results[manyFighters][];
+                for (int index = 0; index < manyFighters; index++)
                 {
-                    for (int j = 0; j < manyFigthers; j++)
+                    results[index] = new Results[manyFighters];
+                }
+
+                for (int i = 0; i < manyFighters; i++)
+                {
+                    for (int j = 0; j < manyFighters; j++)
                     {
-                        results[i, j] = figthers[i].GetTeam() == figthers[j].GetTeam()
+                        results[i][j] = _fighters[i].GetTeam() == _fighters[j].GetTeam()
                             ? Results.Draw
                             : IndividualCombat(card[i], card[j]);
                     }
                 }
 
-                // Calcula el daño de los jugadores con base en los resultados
-                // Arreglo que almacena el daño de cada jugador
-                int[] destiny = new int[manyFigthers];
-                for (int i = 0; i < manyFigthers; i++)
+                // Calcula el daño de los jugadores con base en los resultados. Destiny almacena el daño de cada jugador
+                int[] destiny = new int[manyFighters];
+                for (int i = 0; i < manyFighters; i++)
                 {
                     // Inicia el daño en 0, luego empieza a revisar sus rivales
                     destiny[i] = 0;
-                    for (int j = 0; j < manyFigthers; j++)
+                    for (int j = 0; j < manyFighters; j++)
                     {
-                        // Si hay daño, lo resta
-                        int result = (int)results[i, j] - 1;
+                        int result = (int)results[i][j] - 1;
                         destiny[i] += result;
                     }
 
-                    // print(destiny[i]);
-                    // Le suma el daño. Como es negativo, le disminuye efectivamente. Si no necesita daño, se le suma 0
-                    figthers[i].addPlayerLive(destiny[i]);
+                    // Le aplica el resultado del combate al jugador
+                    _fighters[i].addPlayerLive(destiny[i]);
                 }
 
                 // Actualiza el contador y el estado actual del juego
@@ -379,53 +361,51 @@ public class Combatjudge : MonoBehaviour
             // Loop: resetea los componentes para la siguiente ronda
             case SetMoments.Loop:
                 // Calcula el turno actual
-                figtherTurn = (figtherTurn + 1) % manyFigthers;
+                fighterTurn = (fighterTurn + 1) % manyFighters;
 
-                // Rellena y lanza las cartas de todos los jugadores
-                for (int i = 0; i < manyFigthers; i++)
+                // Rellena la mano y descarta las cartas de la ronda anterior para todos
+                for (int i = 0; i < manyFighters; i++)
                 {
-                    figthers[i].RefillHand();
-                    figthers[i].ThrowCard();
+                    _fighters[i].RefillHand();
+                    _fighters[i].ThrowCard();
                 }
 
                 // Establece el turno actual y el estado del juego
-                playersFigthing = 0;
-                actualAction = figtherTurn == 0 ? SetMoments.Round : SetMoments.PickDice;
+                _playersFighting = 0;
+                actualAction = fighterTurn == 0 ? SetMoments.Round : SetMoments.PickDice;
                 break;
-            // Round: inicia la ronda
+            // Round: inicia la nueva ronda
             case SetMoments.Round:
-                // Incrementa el número de ronda
-                round++;
+                Round++;
 
-                // Acciona la nueva ronda con Roundanimation y establece el siguiente estado
+                // Acciona la nueva ronda con RoundAnimation y establece el siguiente estado
                 // TODO: Cambia esta parte para no usar FindFirstObjectByType cada vez
-                // TODO: Corrige el nombre de esta clase
+                // TODO: Corrige el nombre de esta clase en el archivo RoundAnimation
                 FindFirstObjectByType<Roundanimation>().startRound();
                 actualAction = SetMoments.Rounded;
                 break;
-            // End: termina el juego
             case SetMoments.End:
                 break;
         }
     }
-    
+
     /// <summary>
-    /// Calcula los pares de cartas en la batalla, quien gana y lo que pasa
+    /// Determina el resultado de un combate individual entre dos cartas
     /// </summary>
     /// <param name="one">Carta uno</param>
     /// <param name="two">Carta dos</param>
-    /// <returns>Resultado del duelo: ganar, perder o empatar</returns>
-    private Results IndividualCombat(Card one, Card two)
+    /// <returns>Resultado para la carta uno: ganar, perder o empatar</returns>
+    Results IndividualCombat(Card one, Card two)
     {
         // Si alguna de las cartas no existe, es empate
         if (one == null || two == null) return Results.Draw;
 
-        // Si el tipo de combate no es "Full" (es decir, es un tipo de elemento específico) y los elementos de las cartas son diferentes
+        // Si el tipo de combate es de un elemento y los elementos de las cartas son diferentes
         // El resultado se determina por si el elemento de la primera carta coincide con el tipo de combate.
-        if (combatType != CombatType.Full && one.GetElement() != two.GetElement())
-            return (int)one.GetElement() == (int)combatType ? Results.Win : Results.Lose;
+        if (CombatType != CombatType.Full && one.GetElement() != two.GetElement())
+            return (int)one.GetElement() == (int)CombatType ? Results.Win : Results.Lose;
 
-        // Cantidad de elementos, su mitad y la diferencia de elementos
+        // Cantidad de elementos, su mitad y la diferencia de elementos. Necesarios para calcular el resultado
         int countElements = Enum.GetValues(typeof(Element)).Length;
         int halfElements = countElements / 2;
         int elementDiff = (one.GetElement() - two.GetElement() + countElements) % countElements;
@@ -433,7 +413,7 @@ public class Combatjudge : MonoBehaviour
         // Si la cantidad de elementos es par
         if (countElements % 2 == 0)
         {
-            // Si los elementos no son ni diferentes in opuestos, evalúa quien gana usando la diferencia de elementos
+            // Si los elementos no son ni diferentes in opuestos, evalúa quien gana usando la diferencia
             if (elementDiff != 0 && elementDiff != halfElements)
                 return elementDiff > halfElements ? Results.Win : Results.Lose;
 
@@ -455,32 +435,36 @@ public class Combatjudge : MonoBehaviour
     }
 
     /// <summary> 
-    /// Obtiene el estado actual del juego
+    /// Obtiene el estado actual del juego, del enum SetMoments
     /// </summary>
-    /// <returns>Estado actual del juego, del enum SetMoments</returns>
     public SetMoments GetSetMoments()
     {
         return actualAction;
     }
 
     /// <summary>
-    /// Mueve el personaje hacia la roca
+    /// Configura el juego para cuando un jugador terminó de moverse a la roca que eligió, sea elegir elemento o solo carta
     /// </summary>
     public void ArriveAtRock()
     {
-        RockBehavior rocky = figthers[figtherTurn].playerToken.rocky;
+        RockBehavior rocky = _fighters[fighterTurn].playerToken.rocky;
+        
+        // Si hay más de un jugador en la misma roca, averigua cuáles son y los almacena para una batalla cuerpo a cuerpo
+        // Si solo hay uno, entonces es una batalla de todos contra todos
         if (rocky.manyOn())
         {
-            playersFigthing = rocky.GetPlayersOn();
+            _playersFighting = rocky.GetPlayersOn();
             rocky.ManyPlayerOn();
         }
         else
         {
-            playersFigthing = (int)Mathf.Pow(2, manyFigthers) - 1;
+            _playersFighting = (int)Mathf.Pow(2, manyFighters) - 1;
         }
 
+        // Si la roca de destino permite elegir elemento, nos pone a elegir elemento y carta, si no, solo carta
         if (rocky.inscription == Inscription.pick)
         {
+            // Solo podemos elegir en nuestro turno
             if (Turn() == 0)
             {
                 actualAction = SetMoments.SelectCombat;
@@ -488,41 +472,42 @@ public class Combatjudge : MonoBehaviour
             else
             {
                 actualAction = SetMoments.PickCard;
-                combatType = (CombatType)UnityEngine.Random.Range(0, 4);
+                CombatType = (CombatType)UnityEngine.Random.Range(0, 4);
             }
         }
         else
         {
             actualAction = SetMoments.PickCard;
-            print(rocky.inscription);
-            combatType = (CombatType)(int)rocky.inscription;
+            
+            // El ataque será el asignado a la roca
+            CombatType = (CombatType)(int)rocky.inscription;
+            print($"Ataque elegido: {rocky.inscription}");
         }
     }
 
     /// <summary>
-    /// Mueve al jugador a la roca elegida, y establece el estado del juego
+    /// Mueve al jugador a la roca elegida, y establece el estado del juego en MoveToRock
     /// </summary>
     /// <param name="rocker"></param>
     public void MoveToRock(RockBehavior rocker)
     {
-        figthers[figtherTurn].playerToken.rocky = rocker;
+        _fighters[fighterTurn].playerToken.rocky = rocker;
         actualAction = SetMoments.MoveToRock;
     }
 
     /// <summary>
-    /// Determina cuando elegir un elemento (en las rocas que lo permiten) y lo hace
+    /// Elige el elemento en las rocas que lo permiten (en las rocas que lo permiten)
     /// </summary>
     /// <param name="element">Elemento a elegir</param>
     /// <returns>True si elegimos el elemento, false si no es así</returns>
     public bool PickElement(Element element)
     {
-        // Si no estamos en combate, devuelve falso
-        if (SetMoments.SelectCombat != actualAction) return false;
+        if (actualAction != SetMoments.SelectCombat) return false;
 
-        // Intenta escoger el elemento. Si marca error, lo indica y devuelve falso
+        // Intenta escoger el elemento. Si marca error, lo indica y devuelve falso. Si no, marca verdadero
         try
         {
-            combatType = (CombatType)(int)element;
+            CombatType = (CombatType)(int)element;
             actualAction = SetMoments.PickCard;
         }
         catch (Exception e)
@@ -531,27 +516,23 @@ public class Combatjudge : MonoBehaviour
             return false;
         }
 
-        // Si funciona, devuelve verdadero
         return true;
     }
 
     /// <summary>
-    /// Obtiene la cantidad de jugadores en juego 
+    /// Obtiene los jugadores en juego en forma de máscara de bits
     /// </summary>
-    /// <returns>Cantidad de jugadores activos</returns>
     public int GetPlayersFighting()
     {
-        return playersFigthing;
+        return _playersFighting;
     }
-    
-    
+
     /// <summary>
-    /// Obtiene si el turno actual coincide con el jugador activo
+    /// Obtiene si es nuestro turno
     /// </summary>
-    /// <returns>True si estamos en nuestro turno</returns>
     public bool FocusOnTurn()
     {
-        return figthers[figtherTurn].visualFigther == 1;
+        return _fighters[fighterTurn].visualFigther == 1;
     }
 
     /// <summary>
@@ -579,36 +560,34 @@ public class Combatjudge : MonoBehaviour
     }
 
     /// <summary>
-    /// Resalta las rocas a moverse
+    /// Resalta las rocas disponibles para moverse, según el valor del dado
     /// </summary>
-    /// <param name="value"></param>
-    private void SetGlowing(int value)
+    /// <param name="value">Cantidad de casillas a moverse, escogido por el dado</param>
+    void SetGlowing(int value)
     {
-        RockBehavior lander = figthers[figtherTurn].playerToken.rocky;
+        RockBehavior lander = _fighters[fighterTurn].playerToken.rocky;
         RockBehavior[] rocker = lander.getNeighbor(value);
         rocker[0].shiny = true;
         rocker[1].shiny = true;
         actualAction = SetMoments.GlowRock;
 
-        if (figtherTurn != 0) figthers[figtherTurn].transform.GetComponent<BotPlayer>().PickRock(rocker);
+        if (fighterTurn != 0) _fighters[fighterTurn].transform.GetComponent<BotPlayer>().PickRock(rocker);
     }
 
     /// <summary>
     /// Obtiene el turno actual
     /// </summary>
-    /// <returns>El turno actual</returns>
     public int Turn()
     {
-        return figtherTurn;
+        return fighterTurn;
     }
 
     /// <summary>
-    /// Determina si un jugador recibió daño
+    /// Indica si un jugador no recibió daño
     /// </summary>
-    /// <returns>True si el jugador recibió daño</returns>
     public bool HurtPlayer()
     {
-        return figthers[0].noHurt;
+        return _fighters[0].noHurt;
     }
 
     /// <summary>

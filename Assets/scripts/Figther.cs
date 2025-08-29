@@ -70,7 +70,7 @@ public class Figther : MonoBehaviour
             transform.GetChild(visualFigther).gameObject.SetActive(true);
             lastVisualPlayer = visualFigther;
         }
-        if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickCard && IsFigthing())
+        if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickCard && IsFigthing())
         {
             if (avalaibleCard == 0)
             {
@@ -149,9 +149,9 @@ public class Figther : MonoBehaviour
         noHurt = pL >= 0;
 
         figtherLive += pL;
-        if (figtherLive > Combatjudge.combatjudge.initialLives)
+        if (figtherLive > CombatJudge.CombatJudgeInstance.initialLives)
         {
-            figtherLive = Combatjudge.combatjudge.initialLives;
+            figtherLive = CombatJudge.CombatJudgeInstance.initialLives;
         }
         if (figtherLive < 0)
         {
@@ -217,7 +217,7 @@ public class Figther : MonoBehaviour
     }
     public bool IsFigthing()
     {
-        int figthers = Combatjudge.combatjudge.GetPlayersFighting();
+        int figthers = CombatJudge.CombatJudgeInstance.GetPlayersFighting();
         int a = 0;
 
         while (figthers > 0)

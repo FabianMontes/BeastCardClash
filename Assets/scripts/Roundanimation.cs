@@ -70,7 +70,7 @@ public class Roundanimation : MonoBehaviour
                 transform.localScale = vector3;
                 round = false;
                 transform.parent.GetComponent<Image>().enabled = false;
-                Combatjudge.combatjudge.EndRounded();
+                CombatJudge.CombatJudgeInstance.EndRounded();
             }
 
         }
@@ -86,6 +86,6 @@ public class Roundanimation : MonoBehaviour
         round = true;
         showing = true ;
         transform.parent.GetComponent<Image>().enabled = true;
-        text.text = $"Ronda {Combatjudge.combatjudge.round}";
+        text.text = $"Ronda {CombatJudge.CombatJudgeInstance.Round}";
     }
 }
