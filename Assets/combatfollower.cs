@@ -15,6 +15,6 @@ public class combatfollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        image.sprite = types[(int)CombatJudge.CombatJudgeInstance.CombatType];
+        image.sprite = types[(int)CombatJudge.Instance.CombatType];
     }
 }

@@ -6,14 +6,13 @@ using UnityEngine.AI;
 using UnityEngine.Playables;
 
 [DefaultExecutionOrder(-4)]
-
 public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] int handPos;
     [SerializeField] Card card;
     [SerializeField] bool playable = true;
     [SerializeField] public bool picker = false;
-    Figther player;
+    Fighter player;
     Button button;
 
     SetMoments prevSetMoment;
@@ -21,7 +20,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GetComponentInParent<Figther>();
+        player = GetComponentInParent<Fighter>();
         prevSetMoment = SetMoments.PickDice;
         button = transform.GetComponent<Button>();
         if (playable)
@@ -37,27 +36,25 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         SetCard(card);
 
         transform.GetChild(1).gameObject.SetActive(picker);
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
+        SetMoments momo = CombatJudge.Instance.GetSetMoments();
         if (!picker)
         {
             if (momo != prevSetMoment)
             {
                 if (momo == SetMoments.PickCard && player.IsFigthing())
                 {
-                    if (CombatJudge.CombatJudgeInstance.CombatType == CombatType.Full || (int)CombatJudge.CombatJudgeInstance.CombatType == (int)card.GetElement())
+                    if (CombatJudge.Instance.CombatType == CombatType.Full || (int)CombatJudge.Instance.CombatType == (int)card.GetElement())
                     {
                         clickable(true);
-                        player.avalaibleCard++;
+                        player.availableCard++;
                     }
                     else
                     {
-
                     }
                 }
                 if (momo != SetMoments.PickCard)
@@ -67,7 +64,7 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
                 prevSetMoment = momo;
             }
-            if (player.getPicked() != null) clickable(false);
+            if (player.GetPicked() != null) clickable(false);
             return;
         }
 
@@ -87,18 +84,13 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 halfVisible(false);
                 Visib(true);
             }
-
-
         }
-
-
     }
 
     private void Visib(bool isVisible)
     {
         //transform.GetChild(0).gameObject.SetActive(isVisible);
         transform.GetChild(1).gameObject.SetActive(isVisible);
-
     }
 
     public void ForceReveal()
@@ -113,12 +105,10 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
-
     }
 
     public void SetCard(Card card)
     {
-
         this.card = card;
 
         if (card == null || (!playable && !picker))
@@ -135,8 +125,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 Visib(true);
             }
-
-
         }
     }
 
@@ -165,7 +153,6 @@ public class HandCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             transform.GetChild(1).GetChild(0).GetComponent<Image>().color = Color.gray;
             transform.GetChild(1).GetChild(1).GetComponent<Image>().color = Color.gray;
             transform.GetChild(1).GetChild(2).GetComponent<Image>().color = Color.gray;
-
         }
     }
 

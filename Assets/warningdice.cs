@@ -4,21 +4,21 @@ using UnityEngine.UI;
 public class warningdice : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    Figther figther;
+    Fighter figther;
     Image image;
     void Start()
     {
-        figther = GetComponentInParent<Figther>();
+        figther = GetComponentInParent<Fighter>();
         image = GetComponent<Image>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
-        if(momo == SetMoments.PickDice || momo == SetMoments.RollDice)
+        SetMoments momo = CombatJudge.Instance.GetSetMoments();
+        if (momo == SetMoments.PickDice || momo == SetMoments.RollDice)
         {
-            if(CombatJudge.CombatJudgeInstance.Turn() == figther.indexFigther)
+            if (CombatJudge.Instance.Turn() == figther.indexFighter)
             {
                 image.enabled = true;
                 return;

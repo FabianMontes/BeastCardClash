@@ -19,7 +19,7 @@ public class SkinSelector : MonoBehaviour
     // Selecciona la skin al presionarla en el selector
     void OnMouseDown()
     {
-        GameState.singleton.SetSkin(skinIndex);
+        GameState.Singleton.SetSkin(skinIndex);
     }
 
     // Activa el Outlne cuando el mouse está encima

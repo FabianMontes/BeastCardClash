@@ -8,7 +8,7 @@ public class SkinSelecter : MonoBehaviour
     [Header("Skins")]
     [SerializeField] private List<Sprite> Skins; // Lista de skins disponibles
     private Renderer objRenderer; // Componente del Renderer
-    Figther figther; // Componente del jugador en batalla
+    Fighter figther; // Componente del jugador en batalla
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public class SkinSelecter : MonoBehaviour
     {
         // Actualiza la skin desde GameState
         figther = GetComponentInParent<PlayerToken>().player;
-        SetSkin(figther.skin);
+        SetSkin(figther.Skin);
     }
 
     // Actualiza un parámetro del Animator. Detecta el tipo de parámetro y lo asigna desde un string.

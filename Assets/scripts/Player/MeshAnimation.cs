@@ -19,7 +19,7 @@ public class MeshAnimation : MonoBehaviour
     void Update()
     {
         // Actualiza la skin desde GameState
-        SetSkin(GameState.singleton.skin);
+        SetSkin(GameState.Singleton.Skin);
     }
 
     // Actualiza un parámetro del Animator. Detecta el tipo de parámetro y lo asigna desde un string.

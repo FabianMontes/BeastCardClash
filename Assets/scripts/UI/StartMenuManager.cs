@@ -45,7 +45,7 @@ public class StartMenuManager : MonoBehaviour
 
         // Actualizamos el texto según el idioma
         // Español
-        if (language == Languages.spanish)
+        if (language == Languages.Spanish)
         {
             startButtonText.text = menuTexts.startButton_es;
             creditsButtonText.text = menuTexts.creditsButton_es;

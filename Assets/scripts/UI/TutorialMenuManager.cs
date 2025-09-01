@@ -44,7 +44,7 @@ public class TutorialMenuManager : MonoBehaviour
     void InitializePanels()
     {
         // Espaañol: desactiva lo del inglés
-        if (gameState.CurrentLanguage == Languages.spanish)
+        if (gameState.CurrentLanguage == Languages.Spanish)
         {
             // Activa el panel español y desactiva el inglés
             esPanels.gameObject.SetActive(true);
@@ -56,7 +56,7 @@ public class TutorialMenuManager : MonoBehaviour
             panel3Es.gameObject.SetActive(false);
         }
         // Inglés: desactiva lo del español
-        else if (gameState.CurrentLanguage == Languages.english)
+        else if (gameState.CurrentLanguage == Languages.English)
         {
             // Activa el panel inglés y desactiva el español
             enPanels.gameObject.SetActive(true);
@@ -75,7 +75,7 @@ public class TutorialMenuManager : MonoBehaviour
     public void ShowPanel1()
     {
         // Español
-        if (gameState.CurrentLanguage == Languages.spanish)
+        if (gameState.CurrentLanguage == Languages.Spanish)
         {
             panel1Es.gameObject.SetActive(true);
             panel2Es.gameObject.SetActive(false);
@@ -96,7 +96,7 @@ public class TutorialMenuManager : MonoBehaviour
     public void ShowPanel2()
     {
         // Español
-        if (gameState.CurrentLanguage == Languages.spanish)
+        if (gameState.CurrentLanguage == Languages.Spanish)
         {
             panel1Es.gameObject.SetActive(false);
             panel2Es.gameObject.SetActive(true);
@@ -117,7 +117,7 @@ public class TutorialMenuManager : MonoBehaviour
     public void ShowPanel3()
     {
         // Español
-        if (gameState.CurrentLanguage == Languages.spanish)
+        if (gameState.CurrentLanguage == Languages.Spanish)
         {
             panel1Es.gameObject.SetActive(false);
             panel2Es.gameObject.SetActive(false);

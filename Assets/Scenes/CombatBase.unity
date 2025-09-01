@@ -1960,15 +1960,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc88d21afac0bf4495322c8a91de401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manyFigthers: 3
   player: {fileID: 8697360924836537486, guid: 3fd4b4f799390584b96e80ef92308c0f, type: 3}
-  Bots: {fileID: 8697360924836537486, guid: bfa15f1edbee12141b8d58af61a487af, type: 3}
-  figtherTurn: 0
+  bots: {fileID: 0}
+  manyFighters: 0
   actualAction: 0
-  maxDice: 6
   initialLives: 5
-  damageDealt: 0
-  damageHeal: 0
+  maxDice: 6
+  fighterTurn: 0
 --- !u!4 &1161862716
 Transform:
   m_ObjectHideFlags: 0
@@ -2013,16 +2011,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3f1a10df827ab54d94619b403de8c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DialogFileContent:
+  gameState: 0
+  language: 0
+  spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
+  englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
+  dialogFileContent:
     BeginDialogs: []
     PreGameDialogs: []
     WinDialogs: []
     LoseDialogs: []
     RepeatDialogs: []
-  gameState: 0
-  language: 0
-  spanishFile: {fileID: 0}
-  englishFile: {fileID: 0}
 --- !u!4 &1393383500
 Transform:
   m_ObjectHideFlags: 0

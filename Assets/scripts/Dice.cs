@@ -9,7 +9,7 @@ public class Dice : MonoBehaviour
 
     void Start()
     {
-        _maxValue = CombatJudge.CombatJudgeInstance.maxDice;
+        _maxValue = CombatJudge.Instance.maxDice;
         _rolling = false;
     }
 
@@ -17,11 +17,11 @@ public class Dice : MonoBehaviour
     {
         // Si no se lanza el dado, no hace nada
         if (!_rolling) return;
-        
+
         // Inicia a rotar el dado con un valor aleatorio
-        CombatJudge.CombatJudgeInstance.StartRolling();
+        CombatJudge.Instance.StartRolling();
         Value = Random.Range(1, _maxValue + 1);
-        
+
         // Rota el dado en cada frame
         Vector3 vector3 = new Vector3(0, 45, 0);
         switch (Value)
@@ -45,50 +45,40 @@ public class Dice : MonoBehaviour
                 vector3.z = -90;
                 break;
         }
-        
+
         transform.rotation = Quaternion.Euler(vector3);
     }
 
-    /// <summary>
-    /// Cuando el mouse presiona el dado, lo lanza llamando a Roll
-    /// </summary>
+    /// <summary>Cuando el mouse presiona el dado, lo lanza llamando a Roll</summary>
     void OnMouseDown()
     {
-        if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Roll();
+        if (CombatJudge.Instance.FocusOnTurn()) Roll();
     }
 
-    /// <summary>
-    /// Indica que va a empezar el lanzamiento del dado
-    /// </summary>
+    /// <summary>Indica que va a empezar el lanzamiento del dado</summary>
     public void Roll()
     {
-        if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickDice) _rolling = true;
+        if (CombatJudge.Instance.GetSetMoments() == SetMoments.PickDice) _rolling = true;
     }
 
-    /// <summary>
-    /// Cuando el mouse deja de apuntar al collider del dado, termina el lanzamiento llamando a Unroll
-    /// </summary>
+    /// <summary>Cuando el mouse deja de apuntar al collider del dado, termina el lanzamiento llamando a Unroll</summary>
     void OnMouseExit()
     {
-        if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Unroll();
+        if (CombatJudge.Instance.FocusOnTurn()) Unroll();
     }
-    
-    /// <summary>
-    /// Termina el lanzamiento y lo indica
-    /// </summary>
+
+    /// <summary>Termina el lanzamiento y lo indica</summary>
     public void Unroll()
     {
         if (!_rolling) return;
-        
+
         _rolling = false;
-        CombatJudge.CombatJudgeInstance.Rolled();
+        CombatJudge.Instance.Rolled();
     }
 
-    /// <summary>
-    /// Cuando se suelta el botón del mouse, termina el lanzamiento llamando a Unroll
-    /// </summary>
+    /// <summary>Cuando se suelta el botón del mouse, termina el lanzamiento llamando a Unroll</summary>
     void OnMouseUp()
     {
-        if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Unroll();
+        if (CombatJudge.Instance.FocusOnTurn()) Unroll();
     }
 }

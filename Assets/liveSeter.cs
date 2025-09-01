@@ -6,22 +6,22 @@ public class liveSeter : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    Figther figther;
+    Fighter figther;
     Slider slider;
     TextMeshProUGUI texter;
 
     void Start()
     {
-        figther = GetComponentInParent<Figther>();
+        figther = GetComponentInParent<Fighter>();
         slider = GetComponentInChildren<Slider>();
         texter = GetComponentInChildren<TextMeshProUGUI>();
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        slider.value = (float)figther.GetPlayerLive() / CombatJudge.CombatJudgeInstance.initialLives;
+        slider.value = (float)figther.GetPlayerLive() / CombatJudge.Instance.initialLives;
         texter.text = figther.GetPlayerLive().ToString();
     }
 }

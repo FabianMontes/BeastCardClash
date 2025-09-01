@@ -42,13 +42,13 @@ public class RockBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (CombatJudge.CombatJudgeInstance.GetSetMoments() != SetMoments.GlowRock) shiny = false;
+        if (CombatJudge.Instance.GetSetMoments() != SetMoments.GlowRock) shiny = false;
         shyn.gameObject.SetActive(shiny);
     }
 
     private void OnMouseDown()
     {
-        if (shiny && CombatJudge.CombatJudgeInstance.FocusOnTurn()) FindFirstObjectByType<CombatJudge>().MoveToRock(this);
+        if (shiny && CombatJudge.Instance.FocusOnTurn()) FindFirstObjectByType<CombatJudge>().MoveToRock(this);
     }
 
     public RockBehavior[] getNeighbor(int al)
@@ -119,7 +119,7 @@ public class RockBehavior : MonoBehaviour
         int many = 0;
         foreach (PlayerToken p in playersOn)
         {
-            many += (int)Mathf.Pow(2,p.player.indexFigther);
+            many += (int)Mathf.Pow(2,p.player.indexFighter);
         }
 
         return many;

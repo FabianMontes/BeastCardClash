@@ -16,6 +16,6 @@ public class changenamee : MonoBehaviour
 
     public void named(string name)
     {
-        GameState.singleton.SetPlayer(name);
+        GameState.Singleton.SetPlayer(name);
     }
 }

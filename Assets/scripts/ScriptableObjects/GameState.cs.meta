@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: f3f1a10df827ab54d94619b403de8c25
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - spanishFile: {fileID: 4900000, guid: d759bf739016b0d478ae28c6f80334bd, type: 3}
+  - englishFile: {fileID: 4900000, guid: f15486fc9d0e18a4b8b57ba7c8cddcb1, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

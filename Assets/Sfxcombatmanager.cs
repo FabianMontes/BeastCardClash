@@ -14,7 +14,7 @@ public class Sfxcombatmanager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch (CombatJudge.CombatJudgeInstance.GetSetMoments())
+        switch (CombatJudge.Instance.GetSetMoments())
         {
             case SetMoments.PickDice:
                 
@@ -39,7 +39,7 @@ public class Sfxcombatmanager : MonoBehaviour
                 changeSource(2, true, false);
                 break;
             case SetMoments.Result:
-                changeSource(CombatJudge.CombatJudgeInstance.HurtPlayer()? 3:4, true, false);
+                changeSource(CombatJudge.Instance.HurtPlayer()? 3:4, true, false);
                 break;
             case SetMoments.End:
                 break;

@@ -3,19 +3,19 @@ using UnityEngine.UI;
 
 public class SelectType : MonoBehaviour
 {
-    Figther figther;
+    Fighter figther;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        figther = GetComponentInParent<Figther>();
+        figther = GetComponentInParent<Fighter>();
         Visib(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
-        if (momo == SetMoments.SelectCombat && CombatJudge.CombatJudgeInstance.FocusOnTurn() && figther.indexFigther == 0)
+        SetMoments momo = CombatJudge.Instance.GetSetMoments();
+        if (momo == SetMoments.SelectCombat && CombatJudge.Instance.FocusOnTurn() && figther.indexFighter == 0)
         {
             Visib(true);
         }
@@ -28,6 +28,6 @@ public class SelectType : MonoBehaviour
 
     public void PickElement(int element)
     {
-        if (CombatJudge.CombatJudgeInstance.PickElement((Element)element)) Visib(false);
+        if (CombatJudge.Instance.PickElement((Element)element)) Visib(false);
     }
 }

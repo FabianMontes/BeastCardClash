@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class PlayerToken : MonoBehaviour
 {
     public RockBehavior rocky;
-    public Figther player;
+    public Fighter player;
 
 
     public RockBehavior lastRock;
@@ -18,26 +18,26 @@ public class PlayerToken : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        
+
         if (rocky != null)
         {
             transform.position = rocky.transform.position;
             lastRock = rocky;
             rocky.AddPlayer(this);
-            Vector3 rot = Vector3.Scale(Vector3.up,  rocky.transform.rotation.eulerAngles);
+            Vector3 rot = Vector3.Scale(Vector3.up, rocky.transform.rotation.eulerAngles);
             transform.rotation = Quaternion.Euler(rot);
             destiny = rocky.transform.position;
         }
-        
-        
-        
-        
+
+
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (rocky != null && player.indexFigther == CombatJudge.CombatJudgeInstance.Turn())
+        if (rocky != null && player.indexFighter == CombatJudge.Instance.Turn())
         {
             if (rocky.transform.position != destiny)
             {
@@ -53,7 +53,7 @@ public class PlayerToken : MonoBehaviour
                 //rocky.transform.position = des;
                 direction = destiny - transform.position;
                 direction.y = 0;
-                direction= direction.normalized;
+                direction = direction.normalized;
                 rocky.AddPlayer(this);
                 lastRock = rocky;
                 float angulo = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
@@ -61,24 +61,24 @@ public class PlayerToken : MonoBehaviour
                 transform.rotation = rotacion;
                 return;
             }
-            if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.MoveToRock)
+            if (CombatJudge.Instance.GetSetMoments() == SetMoments.MoveToRock)
             {
                 characterController.Move(direction * Time.deltaTime * 50);
                 Vector3 dir = destiny - transform.position;
                 dir.y = 0;
                 dir = dir.normalized;
-                if (dir != direction && CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.MoveToRock)
+                if (dir != direction && CombatJudge.Instance.GetSetMoments() == SetMoments.MoveToRock)
                 {
                     transform.position = destiny;
-                    CombatJudge.CombatJudgeInstance.ArriveAtRock();
+                    CombatJudge.Instance.ArriveAtRock();
                     characterController.Move(Vector3.zero);
                 }
             }
-            
+
         }
     }
     public float Speed()
     {
-        return characterController.velocity.magnitude/50f;
+        return characterController.velocity.magnitude / 50f;
     }
 }

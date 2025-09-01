@@ -75,23 +75,23 @@ public class DialogManager : MonoBehaviour
     Dialogs[] GetDialogsForState()
     {
         // Carga el contenido del archivo de diálogos. Si no hay, devuelve un array vacío
-        DialogFile dialogFileContent = GameState.singleton.dialogFileContent;
-        if (dialogFileContent == null) dialogFileContent = GameState.singleton.dialogFileContent;
+        DialogFile dialogFileContent = GameState.Singleton.dialogFileContent;
+        if (dialogFileContent == null) dialogFileContent = GameState.Singleton.dialogFileContent;
         if (dialogFileContent == null) return new Dialogs[0];
 
         // Devuelve los diálogos correspondientes al estado actual del juego
-        switch (GameState.singleton.CurrentGameState)
+        switch (GameState.Singleton.CurrentGameState)
         {
-            case GameStates.begin:
+            case GameStates.Begin:
                 return dialogFileContent.BeginDialogs;
-            case GameStates.preGame:
+            case GameStates.PreGame:
                 return dialogFileContent.PreGameDialogs;
-            case GameStates.win:
+            case GameStates.Win:
                 return dialogFileContent.WinDialogs;
-            case GameStates.lose:
+            case GameStates.Lose:
                 return dialogFileContent.LoseDialogs;
 
-            case GameStates.repeat:
+            case GameStates.Repeat:
                 return dialogFileContent.RepeatDialogs;
 
             default:
@@ -129,6 +129,6 @@ public class DialogManager : MonoBehaviour
         currentDialogIndex = 0;
 
         // Pasa al siguiente estado del juego
-        GameState.singleton.NextGameState(GameState.singleton.CurrentGameState);
+        GameState.Singleton.NextGameState(GameState.Singleton.CurrentGameState);
     }
 }

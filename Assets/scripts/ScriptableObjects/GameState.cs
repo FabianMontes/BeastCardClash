@@ -2,21 +2,22 @@ using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
-// Idiomas disponibles en el juego
+/// <summary>Idiomas disponibles en el juego</summary>
 [Serializable]
 public enum Languages
 {
-    spanish, english
+    Spanish, English
 }
 
-// Estados del juego
+
+/// <summary>Estados del juego: Inicio, Previo a la batalla, Ganar, Perder y Repetir</summary>
 [Serializable]
 public enum GameStates
 {
-    begin, preGame, win, lose, repeat
+    Begin, PreGame, Win, Lose, Repeat
 }
 
-// Contenido del archivo de diálogos
+/// <summary>Contenido del archivo de diálogos, Una sección por cada etapa de la demo</summary>
 [Serializable]
 public class DialogFile
 {
@@ -27,38 +28,41 @@ public class DialogFile
     public Dialogs[] RepeatDialogs;
 }
 
-// Componente de diálogo
+/// <summary>Componente de diálogo: nombre del personaje y el diálogo que dice<summary>
 [Serializable]
 public class Dialogs
 {
     public string character;
     public string text;
 }
+
+/// <summary>Almacena y gestiona los estados del juego, el jugador, los diálogos e idiomas</summary>
 public class GameState : MonoBehaviour
 {
     // Propiedades
+    public static GameState Singleton; // Instancia única del GameState
     public GameStates CurrentGameState { get; private set; } // Getter público para el estado actual del juego
     public Languages CurrentLanguage => language; // Getter público para el idioma
-    public static GameState singleton; // Instancia única del GameState
-    public string playerName { get; private set; } // Getter público para el nombre del jugador
-    public int skin { get; private set; } // Getter público para la skin
-    public Team team { get; private set; } // Getter público para el equipo
+    public string PlayerName { get; private set; } // Getter público para el nombre del jugador
+    public int Skin { get; private set; } // Getter público para la skin
+    public Team Team { get; private set; } // Getter público para el equipo
 
     // Variables
     [Header("GameState, languages and files")]
-    [SerializeField] private GameStates gameState = GameStates.begin; // Estado actual del juego (para probar en el editor)
+    [SerializeField] private GameStates gameState = GameStates.Begin; // Estado actual del juego (para probar en el editor)
     [SerializeField] private Languages language; // Idioma actual (por defecto español)
     [SerializeField] private TextAsset spanishFile; // Archivo de diálogos en español
     [SerializeField] private TextAsset englishFile; // Archivo de diálogos en inglés
-    private TextAsset selectedFile; // Archivo de diálogos seleccionado
+    private TextAsset _selectedFile; // Archivo de diálogos seleccionado
     public DialogFile dialogFileContent; // Contenido del archivo de diálogos
 
+    /// <summary>Cuando está activo el GameState</summary>
     private void OnEnable()
     {
         // Mantiene la instancia única del GameState
-        if (singleton == null)
+        if (Singleton == null)
         {
-            singleton = this;
+            Singleton = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -67,27 +71,26 @@ public class GameState : MonoBehaviour
         }
 
         // Establece el equipo (por defecto: Ingeniosos)
-        team = Team.ingeniosos;
+        Team = Team.Ingeniosos;
 
         // Carga el archivo de diálogos
         LoadDialogFile();
 
         // Establece el estado actual del juego
         CurrentGameState = gameState;
-        language = Languages.spanish;
+        language = Languages.Spanish;
     }
 
-    // Carga el archivo de diálogos basado en el idioma seleccionado
+    /// <summary>Carga el archivo de diálogos basado en el idioma seleccionado</summary>
     private void LoadDialogFile()
     {
         // Carga el idioma elegido
-        selectedFile = (language == Languages.spanish) ? spanishFile : englishFile;
+        _selectedFile = language == Languages.Spanish ? spanishFile : englishFile;
 
-        // Intenta cargar el archivo de diálogos correspondiente
-        // Si no hay, alerta del error en consola y establece el contenido en null
-        if (selectedFile != null)
+        // Intenta cargar el archivo de diálogos correspondiente. Si no hay, alerta del error en consola y establece el contenido en null
+        if (_selectedFile != null)
         {
-            dialogFileContent = JsonUtility.FromJson<DialogFile>(selectedFile.text);
+            dialogFileContent = JsonUtility.FromJson<DialogFile>(_selectedFile.text);
         }
         else
         {
@@ -96,40 +99,40 @@ public class GameState : MonoBehaviour
         }
     }
 
-    // Cambia el estado del juego desde otros scripts y actúa en consecuencia
+    /// <summary>Cambia el estado del juego desde otros scripts y actúa en consecuencia</summary>
+    /// <param name="newState">Nuevo estado</param>
     public void NextGameState(GameStates newState)
     {
         switch (newState)
         {
             // begin: pasa a preGame
-            case GameStates.begin:
-                CurrentGameState = GameStates.preGame;
+            case GameStates.Begin:
+                CurrentGameState = GameStates.PreGame;
                 break;
             // preGame: salta a la escena de batalla
-            case GameStates.preGame:
+            case GameStates.PreGame:
                 SceneManager.LoadScene(3);
                 break;
-            // Win: pasa a la escena del mundo y establece el estado en repeat
-            case GameStates.win:
+            // Win y Lose: pasa a la escena del mundo y establece el estado en repeat
+            case GameStates.Win:
+            case GameStates.Lose:
                 SceneManager.LoadScene(2);
-                CurrentGameState = GameStates.repeat;
-                break;
-            // Lose: pasa a la escena de mundo y establece el estado en repeat
-            case GameStates.lose:
-                SceneManager.LoadScene(2);
-                CurrentGameState = GameStates.repeat;
+                CurrentGameState = GameStates.Repeat;
                 break;
             // repeat: vuelve a la escena de batalla
-            case GameStates.repeat:
+            case GameStates.Repeat:
                 SceneManager.LoadScene(3);
                 break;
-            // Por defecto: no hace nada
+            // Por defecto (error hipotético): carga la escena de mundo y pasa a repeat
             default:
+                SceneManager.LoadScene(2);
+                CurrentGameState = GameStates.Repeat;
                 break;
         }
     }
 
-    // Cambia el idioma desde afuera
+    /// <summary>Cambia el idioma desde afuera</summary>
+    /// <param name="newLanguage">Nuevo idioma</param>
     public void SetLanguage(Languages newLanguage)
     {
         language = newLanguage;
@@ -138,21 +141,24 @@ public class GameState : MonoBehaviour
         LoadDialogFile();
     }
 
-    // Establece la skin
+    /// <summary>Establece la skin</summary>
+    /// <param name="newSkin">Nueva skin</param>
     public void SetSkin(int newSkin)
     {
-        skin = newSkin;
+        Skin = newSkin;
     }
 
-    // Establece el equipo
+    /// <summary>Establece el equipo </summary>
+    /// <param name="team">Nuevo equipo</param>
     public void SetTeam(Team team)
     {
-        this.team = team;
+        this.Team = team;
     }
 
-    // Establece el nombre del jugador
-    public void SetPlayer(string name)
+    /// <summary>Establece el nombre del jugador</summary>
+    /// <param name="newName">Nuevo nombre</param>
+    public void SetPlayer(string newName)
     {
-        this.playerName = name;
+        this.PlayerName = newName;
     }
 }

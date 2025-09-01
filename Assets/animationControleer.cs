@@ -5,7 +5,7 @@ using UnityEngine;
 public class animationControleer : MonoBehaviour
 {
     Animator animato;
-    Figther figther;
+    Fighter figther;
     PlayerToken player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,19 +13,19 @@ public class animationControleer : MonoBehaviour
     {
         player = GetComponent<PlayerToken>();
         figther = player.player;
-        print(figther.indexFigther);
-        setModel(figther.indexFigther);
-        animato = transform.GetChild(figther.indexFigther).GetComponentInChildren<Animator>();
-        animato.SetBool("isFigthing",true);
+        print(figther.indexFighter);
+        setModel(figther.indexFighter);
+        animato = transform.GetChild(figther.indexFighter).GetComponentInChildren<Animator>();
+        animato.SetBool("isFigthing", true);
     }
 
     // Update is called once per frame
     void Update()
     {
         animato.SetFloat("Speed", player.Speed());
-        animato.SetBool("EndTurn", CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.Result);
-        animato.SetBool("didWin", figther.noHurt);
-        animato.SetInteger("ElementHurt", (int) CombatJudge.CombatJudgeInstance.CombatType);
+        animato.SetBool("EndTurn", CombatJudge.Instance.GetSetMoments() == SetMoments.Result);
+        animato.SetBool("didWin", figther.NoHurt);
+        animato.SetInteger("ElementHurt", (int)CombatJudge.Instance.CombatType);
     }
 
     void setModel(int index)

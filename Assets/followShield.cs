@@ -6,18 +6,18 @@ public class followShield : MonoBehaviour
     [SerializeField] Sprite[] shields;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    Figther figther;
+    Fighter figther;
     Image image;
     void Start()
     {
-        figther = GetComponentInParent<Figther>();
+        figther = GetComponentInParent<Fighter>();
         image = GetComponentInChildren<Image>();
-        image.sprite = shields[(int) figther.GetTeam()];
+        image.sprite = shields[(int)figther.GetTeam()];
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -17,12 +17,12 @@ public class teamselect : MonoBehaviour
     {
         if (Follow)
         {
-            image.sprite = teams[(int)GameState.singleton.team];
+            image.sprite = teams[(int)GameState.Singleton.Team];
         }
     }
 
     public void selectTeam(int team)
     {
-        GameState.singleton.SetTeam((Team)team);
+        GameState.Singleton.SetTeam((Team)team);
     }
 }

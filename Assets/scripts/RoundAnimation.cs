@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Roundanimation : MonoBehaviour
+public class RoundAnimation : MonoBehaviour
 {
 
     public static bool round { get; private set; }
@@ -70,7 +70,7 @@ public class Roundanimation : MonoBehaviour
                 transform.localScale = vector3;
                 round = false;
                 transform.parent.GetComponent<Image>().enabled = false;
-                CombatJudge.CombatJudgeInstance.EndRounded();
+                CombatJudge.Instance.EndRounded();
             }
 
         }
@@ -86,6 +86,6 @@ public class Roundanimation : MonoBehaviour
         round = true;
         showing = true ;
         transform.parent.GetComponent<Image>().enabled = true;
-        text.text = $"Ronda {CombatJudge.CombatJudgeInstance.Round}";
+        text.text = $"Ronda {CombatJudge.Instance.Round}";
     }
 }
