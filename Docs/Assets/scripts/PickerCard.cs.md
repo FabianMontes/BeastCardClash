@@ -1,36 +1,55 @@
-# `PickerCard.cs`
+# PickerCard
+`PickerCard` es un script de Unity que se encarga de gestionar la representación visual de una carta "seleccionada" (o "pickeada") dentro de la interfaz de usuario del juego **Beast Card Clash**. Su función principal es mostrar de forma dinámica la carta que un jugador (o entidad `Figther`) tiene actualmente seleccionada, actuando como un componente de UI que reacciona a los cambios en el estado del jugador.
 
-## 1. Propósito General
-Este script gestiona la visualización de la carta que un jugador ha "seleccionado" (o "picado") durante las diferentes fases del combate. Su rol principal es mostrar u ocultar la representación visual de esta carta en la interfaz de usuario, actualizando su texto con la identificación de la carta actual. Interactúa directamente con el estado del `Figther` (jugador) al que pertenece y con el sistema global de fases de combate (`Combatjudge`).
+Este componente se espera que esté adjunto a un GameObject que sirva como contenedor para la UI de una carta seleccionada. Su funcionamiento se basa en la interacción con otros dos componentes clave:
+1.  **`HandCard`**: Un componente hijo que es responsable de la lógica y la visualización específica de una carta individual en la UI. `PickerCard` le pasa la información de la carta a mostrar.
+2.  **`Figther`**: Un componente padre que representa al jugador o entidad que está "seleccionando" la carta. `PickerCard` consulta a este componente para saber qué carta debe mostrar.
 
-## 2. Componentes Clave
+En resumen, `PickerCard` actúa como un "observador" del estado de la carta seleccionada de un `Figther`, actualizando la `HandCard` visual asociada solo cuando es necesario, lo que contribuye a una interfaz de usuario reactiva y eficiente en el contexto de un juego de cartas por turnos como **Beast Card Clash**.
 
-### PickerCard
-- **Descripción:** La clase `PickerCard` es un componente de `MonoBehaviour` que controla la visibilidad y el contenido de una carta en la interfaz de usuario, representando la carta actualmente seleccionada por un jugador (`Figther`). Se espera que este script esté adjunto a un objeto UI que visualiza la carta seleccionada.
-- **Variables Públicas / Serializadas:**
-    - `TextMeshProUGUI textMeshPro`: Una referencia al componente TextMeshProUGUI que se utiliza para mostrar el ID de la carta seleccionada. Se obtiene automáticamente de los hijos del GameObject al inicio.
-    - `Figther player`: Una referencia al componente `Figther` del jugador propietario. Se obtiene automáticamente del componente padre del GameObject al inicio. Este `Figther` es quien "posee" la carta seleccionada que se muestra.
-    - `[SerializeField] HolderPlay holderPlay`: Una referencia a un componente `HolderPlay`. Aunque está serializado para ser asignado desde el Inspector de Unity, actualmente no se utiliza en la lógica proporcionada en este script.
-- **Métodos Principales:**
-    - `void Start()`: Este método se ejecuta una vez al inicio, antes del primer `Update`.
-        - Inicializa `textMeshPro` buscando un componente `TextMeshProUGUI` entre los hijos del GameObject.
-        - Inicializa `player` buscando un componente `Figther` en los padres del GameObject.
-        - Llama a `Visib(false)` para asegurar que la carta esté oculta al inicio del juego.
-    - `void Update()`: Este método se ejecuta en cada frame.
-        - Obtiene el momento (fase) actual del combate del sistema `Combatjudge`.
-        - Basándose en la fase actual del combate (`SetMoments`), decide si la carta debe ser visible:
-            - Se hace visible si la fase es `SetMoments.PickCard` y el jugador (`player`) está activamente en combate (`player.IsFigthing()`).
-            - Se oculta si la fase es `SetMoments.Loop` o `SetMoments.End`.
-        - Actualiza el texto de `textMeshPro` con el ID de la carta que el jugador tiene "picada" (`player.getPicked()`). Si no hay carta picada, el texto se establece en vacío.
-    - `private void Visib(bool isVisible)`: Un método auxiliar privado que controla la visibilidad de los elementos visuales de la carta.
-        - Desactiva/activa el primer hijo del GameObject (`transform.GetChild(0).gameObject`) y el componente `Image` adjunto al GameObject principal. El primer hijo probablemente contiene los detalles visuales de la carta, mientras que el `Image` podría ser el fondo o el contenedor de la carta.
-- **Lógica Clave:**
-    La lógica central de `PickerCard` reside en su método `Update`, donde de manera continua:
-    1.  Consulta la fase actual del combate (`Combatjudge.GetSetMoments()`).
-    2.  Ajusta la visibilidad de la carta en la UI (`Visib()`) dependiendo de si es la fase de selección de carta (`PickCard`) y si el jugador está activo, o si el combate ha terminado (`Loop`, `End`).
-    3.  Obtiene la carta actualmente "picada" por el jugador (`player.getPicked()`) y actualiza el texto de la UI para reflejar su ID.
+# Métodos
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que el GameObject al que está adjunto tenga un componente `Image` y que uno de sus hijos tenga un componente `TextMeshProUGUI` para la correcta visualización. También depende de un componente `Figther` en su jerarquía padre.
-- **Eventos (Entrada):** Este script no se suscribe explícitamente a eventos de UI (como `onClick`) ni a `UnityEvent` o `Action`s. Su comportamiento se basa en la lectura del estado actual del sistema `Combatjudge` (`Combatjudge.combatjudge.GetSetMoments()`) y del `Figther` padre (`player.IsFigthing()`, `player.getPicked()`).
-- **Eventos (Salida):** Este script no invoca ningún evento (`UnityEvent`, `Action`) para notificar a otros sistemas sobre cambios o acciones. Su rol es puramente de visualización y reacción al estado del juego.
+## Métodos de Unity
+
+### Start
+Este método se ejecuta una vez al inicio del ciclo de vida del script, justo antes de la primera actualización (Update). Su propósito es inicializar las referencias a otros componentes con los que `PickerCard` necesita interactuar.
+
+```csharp
+void Start()
+{
+    card = GetComponentInChildren<HandCard>();
+    player = GetComponentInParent<Figther>();
+    card.SetCard(null);
+}
+```
+
+*   **`card = GetComponentInChildren<HandCard>();`**: Busca y asigna una referencia al componente `HandCard` que se encuentre en alguno de los GameObjects hijos de este `PickerCard`. Esto asume que el `PickerCard` es un contenedor que tiene la representación visual de la carta como un hijo.
+*   **`player = GetComponentInParent<Figther>();`**: Busca y asigna una referencia al componente `Figther` que se encuentre en alguno de los GameObjects padres de este `PickerCard`. Esto establece el vínculo entre la UI de la carta seleccionada y el jugador (o `Figther`) al que pertenece.
+*   **`card.SetCard(null);`**: Inicializa la `HandCard` para que no muestre ninguna carta al comienzo. Esto asegura que la interfaz de la carta seleccionada esté limpia hasta que el `Figther` realmente "seleccione" una carta.
+
+### Update
+Este método se llama una vez por cada frame del juego. Su función es verificar continuamente si la carta que el jugador tiene "seleccionada" ha cambiado y, si es así, actualizar la visualización de la `HandCard`.
+
+```csharp
+void Update()
+{
+    if(isPlaying != (player.getPicked() != null))
+    {
+        isPlaying = player.getPicked() != null;
+        card.SetCard(player.getPicked());
+    }
+}
+```
+
+*   **`if(isPlaying != (player.getPicked() != null))`**: Esta es la lógica central de optimización del `Update`.
+    *   `player.getPicked() != null`: Consulta al `Figther` asociado para saber si actualmente tiene alguna carta seleccionada.
+    *   `isPlaying`: Es una variable de estado interna que almacena si, en el último ciclo, se estaba mostrando una carta.
+    *   La condición `isPlaying != (player.getPicked() != null)` evalúa si el estado actual de la carta seleccionada por el jugador (hay una carta o no) es diferente del estado que `PickerCard` estaba mostrando previamente. Esto evita actualizar la `HandCard` en cada frame si no hay un cambio real en la selección de la carta, mejorando el rendimiento.
+*   **`isPlaying = player.getPicked() != null;`**: Si se detecta un cambio, esta línea actualiza la variable `isPlaying` para reflejar el nuevo estado de la carta seleccionada.
+*   **`card.SetCard(player.getPicked());`**: Si hay un cambio de estado, se llama al método `SetCard` de la `HandCard` para que muestre la carta que el `Figther` tiene seleccionada. Si `player.getPicked()` devuelve `null`, la `HandCard` se configurará para no mostrar ninguna carta.
+
+## Otros métodos
+Este script no define métodos públicos o privados adicionales fuera de los métodos de ciclo de vida de Unity (`Start`, `Update`). Todas sus operaciones se realizan dentro de estos dos métodos.
+
+## Getters y Setters
+Este script no define métodos que actúen como *getters* o *setters* para su estado interno o para exponer datos a otros componentes. Su rol es principalmente reactivo, utilizando *getters* de otros componentes (`player.getPicked()`) para actualizar su propia UI.

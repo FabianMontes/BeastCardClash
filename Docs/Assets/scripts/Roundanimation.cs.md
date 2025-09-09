@@ -1,33 +1,130 @@
-# `Roundanimation.cs`
+# Roundanimation
+Este script `Roundanimation` es responsable de gestionar y controlar la animación visual que se muestra al inicio de cada nueva ronda en el juego. Su función principal es hacer que un elemento de la interfaz de usuario (UI), que probablemente contiene el texto de la ronda, aparezca de forma animada, permanezca visible durante un tiempo y luego desaparezca, indicando así el progreso del juego entre rondas.
 
-## 1. Propósito General
-Este script `Roundanimation` gestiona la animación visual de un indicador de "ronda" en el juego. Su función principal es controlar el escalado de un elemento UI (asociado a este `GameObject`) para mostrarlo, mantenerlo visible por un tiempo y luego ocultarlo, comunicando el estado general de la ronda a través de una propiedad estática.
+El script funciona escalando horizontalmente un objeto de UI desde una escala de cero (invisible) hasta su tamaño completo (visible), manteniéndolo en pantalla, y luego volviendo a escalarlo a cero. Durante este proceso, también actualiza el texto para mostrar el número de la ronda actual y coordina con el sistema de juicio de combate para notificar cuándo la animación ha terminado.
 
-## 2. Componentes Clave
+El objetivo de esta animación es proporcionar una señal visual clara a los jugadores sobre el inicio de una nueva fase de combate, mejorando la experiencia de usuario y la comprensión del flujo del juego.
 
-### `Roundanimation`
--   **Descripción:** Esta clase, que hereda de `MonoBehaviour`, controla la secuencia de animación de un elemento visual, típicamente una imagen de UI, para indicar el inicio o la progresión de una ronda. Maneja las fases de aparición (escalado ascendente), mantenimiento y desaparición (escalado descendente) del elemento.
--   **Variables Públicas / Serializadas:**
-    -   `public static bool round { get; private set; }`: Propiedad estática que indica si una ronda está actualmente "activa" o en proceso de animación. Su `private set` asegura que solo este script pueda modificar su valor, mientras que otras clases pueden leerlo.
-    -   `[SerializeField] float timedelay = 2;`: Define la duración en segundos que el elemento animado permanece completamente visible (escalado al 100%) antes de comenzar a desaparecer.
-    -   `[SerializeField] float movescaletime = 0.5f;`: Determina la velocidad de la animación de escalado. Un valor más pequeño resultará en una animación más rápida.
--   **Métodos Principales:**
-    -   `void Start()`: Este método se ejecuta una vez al inicio cuando el script se habilita por primera vez. Inicializa la propiedad `round` y la variable `showing` a `false`. También asegura que el `GameObject` se inicialice con un escalado horizontal de 0 (`transform.localScale.x = 0`), dejándolo invisible al comienzo.
-    -   `void Update()`: Este método se llama en cada frame y contiene la lógica principal de la máquina de estados de la animación:
-        -   **Fase de aparición (Scaling Up):** Si `showing` es `true` y `estado` es `false`, el script incrementa progresivamente el escalado `x` del `GameObject` (`transform.localScale.x`) hasta que alcanza 1. Una vez que llega a 1, `estado` se establece en `true` y `timetytime` registra el momento actual (`Time.time`).
-        -   **Fase de mantenimiento (Holding):** Si `showing` es `true` y `estado` es `true`, el script espera hasta que haya transcurrido el tiempo definido por `timedelay` desde que el elemento alcanzó su tamaño completo (`timetytime`). Al finalizar este retraso, `showing` se establece en `false`, lo que indica el inicio de la fase de desaparición.
-        -   **Fase de desaparición (Scaling Down):** Si `showing` es `false` y `estado` es `true`, el script reduce progresivamente el escalado `x` del `GameObject` hasta que alcanza 0. Durante esta fase, la propiedad `round` se establece en `false` y el componente `Image` del padre del `GameObject` se deshabilita, lo que oculta completamente el indicador visual. Al llegar a 0, `estado` se restablece a `true` (esto podría ser una lógica para evitar re-entradas inmediatas o una señal de "completo", pero notifica que el ciclo completo ha terminado y el estado interno finalizado).
-    -   `public void startRound()`: Este método público es el punto de entrada para iniciar la animación de la ronda. Primero verifica si `round` ya es `true` para evitar activaciones redundantes. Si no está activa, establece `round` a `true`, `showing` a `true` (para iniciar la fase de escalado ascendente) y habilita el componente `Image` del padre, haciendo visible el contenedor del indicador de ronda.
+# Métodos
 
--   **Lógica Clave:**
-    La animación se gestiona mediante una máquina de estados implícita dentro del método `Update`, controlada por las variables booleanas `showing` y `estado`, y el temporizador `timetytime`.
-    -   `showing`: Indica si la animación está en curso (apareciendo o manteniéndose).
-    -   `estado`: Se utiliza para distinguir entre la fase de "escalado ascendente" (`false`) y la fase de "mantenimiento/escalado descendente" (`true`) una vez que el elemento ha alcanzado su tamaño completo.
-    La animación sigue un flujo lineal: `Oculto` -> `Escalado Arriba` -> `Mantenimiento` -> `Escalado Abajo` -> `Oculto`.
+## Métodos de Unity
 
-    **Observación Importante sobre Reusabilidad:** El script está diseñado para que la animación se dispare llamando a `startRound()`. Sin embargo, la variable `estado` solo se inicializa a `false` en `Start()`. Una vez que la animación de "desaparición" se completa (`transform.localScale.x <= 0`), `estado` se establece a `true` y no se vuelve a poner a `false` dentro del ciclo de `Update`. Esto significa que, tal como está implementado, una vez que la animación ha completado un ciclo completo de aparición y desaparición, la llamada subsiguiente a `startRound()` no permitirá que la animación de "escalado ascendente" se ejecute de nuevo porque `estado` permanecerá `true`. Para que la animación pueda ser repetida sin recargar la escena, la variable `estado` necesitaría ser explícitamente reseteada a `false` al inicio de `startRound()` o al final completo de la animación de desaparición.
+### Awake
+El método `Awake` no está implementado directamente en este script.
 
-## 3. Dependencias y Eventos
--   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que su `GameObject` padre tenga un componente `UnityEngine.UI.Image`, ya que el script intenta habilitar/deshabilitar este componente durante la animación (`transform.parent.GetComponent<Image>().enabled = true/false;`).
--   **Eventos (Entrada):** Este script no se suscribe a ningún evento de Unity o de componentes externos. Es controlado externamente a través de llamadas directas a su método público `startRound()`.
--   **Eventos (Salida):** Este script no invoca ningún `UnityEvent` o `Action` personalizado para notificar a otros sistemas sobre el progreso o la finalización de la animación. Su principal "salida" de información es la propiedad estática `Roundanimation.round`.
+### Start
+Este método se invoca una vez al inicio del ciclo de vida del script, antes de la primera actualización de `Update`. Se utiliza para inicializar el estado del objeto de UI al que está adjunto.
+
+```csharp
+void Start()
+{
+    round = false;
+    showing = false;
+    Vector3 vector3 = transform.localScale;
+    vector3.x = 0;
+    transform.localScale = vector3;
+    text = GetComponentInChildren<TextMeshProUGUI>();
+}
+```
+
+-   `round = false;`: Inicializa la propiedad estática `round` a `false`, indicando que ninguna animación de ronda está activa al principio.
+-   `showing = false;`: Inicializa la variable `showing` a `false`, lo que significa que la animación no se está ejecutando inicialmente.
+-   `Vector3 vector3 = transform.localScale; vector3.x = 0; transform.localScale = vector3;`: Establece la escala horizontal (`x`) del objeto a `0`. Esto hace que el elemento de la UI sea invisible al inicio, preparándolo para la animación de "aparición".
+-   `text = GetComponentInChildren<TextMeshProUGUI>();`: Obtiene una referencia al componente `TextMeshProUGUI` que se encuentra como hijo del objeto actual. Este componente será utilizado para mostrar el texto de la ronda.
+
+### Update
+El método `Update` se llama una vez por cada frame y contiene la lógica principal para la animación de la ronda. Se encarga de gestionar el escalado del objeto, el tiempo de permanencia en pantalla y la transición entre las diferentes fases de la animación (escalado hacia arriba, mantenimiento y escalado hacia abajo).
+
+La lógica en `Update` se divide en tres bloques condicionales que representan los estados de la animación:
+
+1.  **Escalado hacia arriba (Aparición):**
+    ```csharp
+    if(showing && estado == false)
+    {
+        if (transform.localScale.x >= 1)
+        {
+            // ... (código para fijar escala y cambiar estado)
+        }
+        else
+        {
+            Vector3 vector3 = transform.localScale;
+            vector3.x =  vector3.x + Time.deltaTime /  movescaletime;
+            transform.localScale = vector3;
+        }
+    }
+    ```
+    Este bloque se ejecuta cuando la animación ha sido iniciada (`showing` es `true`) y el objeto aún no ha alcanzado su escala máxima (`estado` es `false`).
+    -   Si la escala horizontal (`transform.localScale.x`) es mayor o igual a `1`, significa que el objeto ha terminado de aparecer. Se fija la escala a `1` para evitar sobrepasarla, se establece `estado` a `true` (indicando que ahora está en la fase de "mantenimiento" o visibilidad completa) y se registra `Time.time` en `timetytime` para iniciar el conteo del tiempo de retraso.
+    -   Si no ha alcanzado la escala máxima, el objeto se escala incrementalmente hacia arriba sumando `Time.deltaTime` dividido por `movescaletime` a su escala horizontal. Esto crea un efecto de aparición suave.
+
+2.  **Mantenimiento en pantalla (Retraso):**
+    ```csharp
+    if(showing && estado == true)
+    {
+        if(Time.time - timetytime >= timedelay)
+        {
+            showing = false;
+        }
+    }
+    ```
+    Este bloque se activa cuando el objeto ha aparecido completamente (`showing` es `true` y `estado` es `true`).
+    -   Comprueba si el tiempo transcurrido desde que se registró `timetytime` (es decir, desde que el objeto alcanzó su tamaño completo) es mayor o igual al `timedelay` especificado.
+    -   Si el tiempo de retraso ha pasado, se establece `showing` a `false`, lo que desencadena la siguiente fase de la animación (escalado hacia abajo).
+
+3.  **Escalado hacia abajo (Desaparición):**
+    ```csharp
+    if(showing == false && estado == true)
+    {
+        if (transform.localScale.x <= 0)
+        {
+            // ... (código para fijar escala y cambiar estado)
+        }
+        else
+        {
+            Vector3 vector3 = transform.localScale;
+            vector3.x = vector3.x - Time.deltaTime / movescaletime;
+            transform.localScale = vector3;
+            round = false;
+            transform.parent.GetComponent<Image>().enabled = false;
+            CombatJudge.CombatJudgeInstance.EndRounded();
+        }
+    }
+    ```
+    Este bloque se ejecuta cuando el objeto ha terminado de aparecer y el tiempo de retraso ha expirado (`showing` es `false` y `estado` es `true`).
+    -   Si la escala horizontal (`transform.localScale.x`) es menor o igual a `0`, significa que el objeto ha terminado de desaparecer. Se fija la escala a `0`, se establece `estado` a `false` (indicando que la animación ha concluido) y se registra `Time.time` en `timetytime`.
+    -   Si no ha alcanzado la escala mínima, el objeto se escala incrementalmente hacia abajo restando `Time.deltaTime` dividido por `movescaletime` a su escala horizontal, creando un efecto de desaparición suave.
+    -   Durante este proceso de desaparición, también se realizan acciones importantes:
+        -   `round = false;`: Se actualiza la propiedad estática `round` a `false`, señalando que la animación de ronda ha finalizado.
+        -   `transform.parent.GetComponent<Image>().enabled = false;`: Deshabilita el componente `Image` del objeto padre. Esto sugiere que el padre es un panel o fondo visual que debe ocultarse una vez que la animación de texto de la ronda ha terminado.
+        -   `CombatJudge.CombatJudgeInstance.EndRounded();`: Llama a un método en la instancia estática de `CombatJudge`. Esto notifica al sistema de juicio de combate que la animación de fin de ronda ha concluido, permitiéndole continuar con la lógica del juego.
+
+## Otros métodos
+
+### startRound() : void
+Este método público es el punto de entrada para iniciar la animación de una nueva ronda.
+
+```csharp
+public void startRound()
+{
+    if(round == true)
+    {
+        return;
+    }
+    timetytime = Time.time;
+    round = true;
+    showing = true ;
+    transform.parent.GetComponent<Image>().enabled = true;
+    text.text = $"Ronda {CombatJudge.CombatJudgeInstance.Round}";
+}
+```
+
+-   `if(round == true) { return; }`: Una comprobación para evitar iniciar la animación si ya está en curso, garantizando que no se superpongan múltiples animaciones de ronda.
+-   `timetytime = Time.time;`: Actualiza `timetytime` con el tiempo actual para iniciar el conteo de la animación desde cero.
+-   `round = true;`: Establece la propiedad estática `round` a `true`, indicando que una animación de ronda está activa.
+-   `showing = true;`: Pone en marcha la lógica de animación dentro del método `Update`.
+-   `transform.parent.GetComponent<Image>().enabled = true;`: Habilita el componente `Image` del objeto padre, presumiblemente para mostrar un fondo o panel junto con el texto de la ronda.
+-   `text.text = $"Ronda {CombatJudge.CombatJudgeInstance.Round}";`: Actualiza el texto en el `TextMeshProUGUI` para mostrar la ronda actual. El número de ronda se obtiene de la propiedad `Round` de la instancia estática de `CombatJudge`.
+
+## Getters y Setters
+
+1.  `public static bool round { get; private set; }`: Este es un _property_ estático de tipo booleano. `get` permite que cualquier script del proyecto lea su valor, mientras que `private set` restringe la modificación de este valor al propio script `Roundanimation`. Indica si la animación de una ronda está actualmente activa (`true`) o no (`false`).

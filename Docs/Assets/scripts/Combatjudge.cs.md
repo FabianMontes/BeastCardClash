@@ -1,78 +1,161 @@
-# `Combatjudge.cs`
+# CombatJudge
+El script `CombatJudge` es el pilar central del sistema de gestión de partidas en Beast Card Clash. Implementado como un Singleton y ejecutándose con alta prioridad (`DefaultExecutionOrder(-1)`), se encarga de orquestar el flujo completo del juego, desde la inicialización de los jugadores y el entorno de batalla hasta la resolución de turnos, combates de cartas y la determinación de las condiciones de victoria o derrota. Su diseño se enfoca en proporcionar una estructura clara para el avance de la partida a través de una máquina de estados (`SetMoments`), permitiendo una gestión robusta de las interacciones entre jugadores (humanos y bots), las cartas, las rocas de la arena y los resultados de los enfrentamientos.
 
-## 1. Propósito General
-Este script actúa como el director principal de la lógica de combate y el flujo de turnos en "Beast Card Clash". Gestiona el estado general del juego en cada ronda, desde la selección de cartas hasta la resolución de combates y la asignación de resultados, interactuando directamente con los personajes (`Figther`) y los elementos del tablero (`RockBehavior`, `PlayZone`).
+En esencia, `CombatJudge` inicializa el número de combatientes (generando bots y configurando el jugador humano), distribuye a estos en el área de juego, gestiona el avance de las rondas y turnos, coordina el lanzamiento de dados y el movimiento entre rocas, y lo más importante, procesa la lógica de combate entre cartas, incluyendo la aplicación de daño y curación. También maneja la eliminación de jugadores y el final de la partida.
 
-## 2. Componentes Clave
+La máquina de estados de `CombatJudge` es fundamental para el desarrollo de la partida:
+```csharp
+public enum SetMoments
+{
+    PickDice,     // Elegir dado
+    RollDice,     // Tirar dado
+    RevealDice,   // Revelar valor del dado
+    GlowRock,     // Resaltar las rocas disponibles
+    MoveToRock,   // Moverse a la roca elegida
+    SelectCombat, // Seleccionar tipo de combate
+    PickCard,     // Elegir carta
+    Reveal,       // Revelar carta
+    Result,       // Mostrar resultados
+    End,          // Finalizar partida
+    Loop,         // Reiniciar para la siguiente ronda
+    Round,        // Muestra la ronda
+    Rounded       // Fin de ronda
+}
+```
+Estos estados dictan el comportamiento del juego en el método `Update()`, asegurando una progresión lógica y controlada de cada fase de la ronda.
 
-El archivo define varias enumeraciones que son fundamentales para la lógica del juego, y la clase `Combatjudge` que orquesta la experiencia.
+# Métodos
 
-### `Element`
-Esta enumeración simple define los cuatro tipos elementales principales presentes en el juego: `fire` (fuego), `earth` (tierra), `water` (agua) y `air` (aire). Es utilizada para categorizar las cartas y determinar las ventajas elementales en combate.
+## Métodos de Unity
 
-### `SetMoments`
-Es una enumeración crucial que representa los distintos estados o fases por los que transita una ronda de juego, actuando como una máquina de estados para la lógica principal. Estos momentos incluyen `PickDice` (selección de dado), `RollDice` (lanzamiento de dado), `RevealDice` (revelación de dado), `GlowRock` (rocas brillan), `MoveToRock` (movimiento a una roca), `SelecCombat` (selección de tipo de combate), `PickCard` (selección de carta), `Reveal` (revelación de cartas), `Result` (resolución de resultados), `End` (fin de la ronda) y `Loop` (inicio de una nueva ronda).
+### Start
+El método `Start()` es crucial para la inicialización de la partida y se ejecuta una vez al inicio del ciclo de vida del script. Su función principal es preparar el `CombatJudge` y configurar el estado inicial del juego, incluyendo a los jugadores, la arena y las reglas básicas.
 
-### `Results`
-Una enumeración que especifica los posibles desenlaces de un combate individual entre dos cartas: `lose` (derrota), `draw` (empate) y `win` (victoria).
+1.  **Configuración del Singleton:** Establece la instancia de `CombatJudgeInstance` si es la primera vez que se carga el script. Si ya existe una instancia, se destruye el `GameObject` actual para asegurar que solo haya un `CombatJudge` activo en la escena.
+    ```csharp
+    if (CombatJudgeInstance == null)
+    {
+        CombatJudgeInstance = this;
+    }
+    else
+    {
+        Destroy(gameObject);
+    }
+    ```
+2.  **Inicialización de Variables de Juego:** Asigna valores iniciales a variables clave como `manyFighters` (cantidad de jugadores, entre 2 y 4 de forma aleatoria), `actualAction` (establecido en `SetMoments.Loop` para iniciar la primera ronda), `fighterTurn` (iniciado en -1 para forzar que el primer turno sea para el jugador humano), y `Round` (iniciado en 0).
+3.  **Gestión de Jugadores Existentes:**
+    *   Busca todos los componentes `Figther` en la escena.
+    *   Ordena estos `Figther` extrayendo un dígito inicial de su nombre (`int.Parse(players[a].name[0].ToString())`) para garantizar un orden específico (e.g., "0_Player", "1_Bot").
+    *   Destruye cualquier `Figther` adicional si `manyFighters` es menor que el número de `Figther` encontrados, ajustando la partida al número de jugadores deseado.
+4.  **Referencias a la Escena:** Obtiene referencias a componentes clave de la UI y la arena, como `PlayZone` (el círculo de rocas) y `Canvas`.
+5.  **Creación e Configuración de `_fighters`:**
+    *   Crea el array `_fighters` con el tamaño determinado por `manyFighters`.
+    *   Itera para poblar el array:
+        *   Si `i == 0`, se asigna el prefab `player` (el humano). De lo contrario, se asigna el prefab `bots`.
+        *   Se reutilizan `Figther` existentes si `i` es menor que `players.Length`. De lo contrario, se instancia un nuevo `Figther` (ya sea el jugador o un bot), se le asigna una especie aleatoria con `randomSpecie()` y se le establece como hijo del `Canvas`.
+        *   **Asignación de Equipo y Skin:** Para el jugador humano (`i == 0`), se utilizan los datos almacenados en `GameState.singleton` (`team` y `skin`). Para los bots, se asignan equipos de forma estratégica (usando `setNoTeam` para evitar equipos duplicados con el humano o con otros bots, o `FreeTeam` para una asignación aleatoria) y una skin aleatoria (`setRSkin`).
+        *   **Configuración Inicial del Jugador:** Cada `Figther` recibe su `initialLives`, un `visualFigther` (para UI), un `indexFigther` (su posición en el array), y un `figtherName` (del `GameState` para el humano, o un identificador genérico para bots).
+        *   **Asignación de Roca Inicial:** Se calcula la roca inicial (`initialStone`) para cada jugador basándose en el espaciado en la `PlayZone`, asegurando una distribución equitativa.
 
-### `CombatType`
-Esta enumeración define los posibles modos de combate. Puede ser de un tipo elemental específico (`fire`, `earth`, `water`, `air`) donde solo las cartas de ese elemento son relevantes, o `full`, donde todos los elementos y sus interacciones son considerados.
+### Update
+El método `Update()` gestiona el avance de la partida a través de una máquina de estados controlada por la variable `actualAction` del enum `SetMoments`. Se ejecuta cada frame y reacciona al estado actual del juego.
 
-### `Combatjudge`
-Esta clase es un `MonoBehaviour` y es el cerebro central del sistema de juego. Está diseñada como un **singleton**, lo que significa que solo puede haber una instancia de ella en la escena, asegurando que toda la lógica de juego se centralice.
+*   **`SetMoments.PickDice`**: No realiza acciones directamente; es un estado de espera a que el jugador elija un dado.
+*   **`SetMoments.RollDice`**: Registra el tiempo actual en `_time`. Esto se usa para temporizar eventos posteriores, como la revelación del dado.
+*   **`SetMoments.RevealDice`**: Después de un breve retraso (0.5 segundos), llama a `SetGlowing()` para resaltar las rocas disponibles a las que el jugador puede moverse, basándose en el valor del dado.
+*   **`SetMoments.GlowRock`**: Si el turno actual es de un bot (`fighterTurn != 0`), el bot recibe la instrucción de elegir una roca llamando a `ThinkingRocks()`.
+*   **`SetMoments.MoveToRock`**, **`SetMoments.SelectCombat`**: No realizan acciones directamente; son estados de transición.
+*   **`SetMoments.PickCard`**: Comprueba si todos los jugadores en la batalla han elegido sus cartas.
+    *   Itera sobre `_fighters`. Si un jugador tiene una carta seleccionada (`getPicked() != null`) o no está en la batalla (`!fighter.IsFigthing()`), se ignora. Si falta alguna carta, `_allPlayersChose` permanece `false`.
+    *   Si `_allPlayersChose` es `true`, el estado cambia a `SetMoments.Reveal`.
+*   **`SetMoments.SetMoments.Reveal`**: Procesa los combates de cartas una vez que todos los jugadores han elegido sus cartas.
+    *   Recopila las cartas elegidas por todos los jugadores.
+    *   Calcula los resultados de combate individuales (`Results[][]`) para cada par de jugadores usando el método `IndividualCombat()`.
+    *   Determina el daño total (`destiny[]`) para cada jugador y aplica los cambios de vida usando `addPlayerLive()`.
+    *   Registra el tiempo actual y cambia el estado a `SetMoments.Result`.
+*   **`SetMoments.Result`**: Muestra los resultados de la ronda y maneja las consecuencias.
+    *   Después de 5 segundos, verifica si el jugador humano (`_fighters[0]`) ha perdido. Si es así, finaliza el juego (`EndGamer(false)`) y cambia el estado a `SetMoments.End`.
+    *   Si el humano no ha perdido, itera sobre los bots y elimina a aquellos cuya vida (`GetPlayerLive()`) ha llegado a cero. Actualiza el array `_fighters` y `manyFighters`.
+    *   Reindexa los `indexFigther` de los jugadores restantes.
+    *   Comprueba si solo queda un jugador. Si es así, el juego termina con una victoria (`EndGamer(true)`) y el estado pasa a `SetMoments.End`.
+    *   De lo contrario, el estado pasa a `SetMoments.Loop` para iniciar una nueva ronda.
+*   **`SetMoments.Loop`**: Prepara el juego para la siguiente ronda.
+    *   Avanza `fighterTurn` al siguiente jugador en el ciclo.
+    *   Llama a `RefillHand()` y `ThrowCard()` para todos los jugadores para preparar sus manos para la nueva ronda.
+    *   Reinicia la máscara de bits `_playersFighting`.
+    *   Transiciona al estado `SetMoments.Round` si es el turno del jugador humano (index 0) o `SetMoments.PickDice` si es el turno de un bot.
+*   **`SetMoments.Round`**: Inicia visualmente una nueva ronda.
+    *   Incrementa el contador `Round`.
+    *   Invoca `startRound()` en el componente `Roundanimation` (se nota un TODO en el código sobre la refactorización de `FindFirstObjectByType` y el nombre de la clase).
+    *   Cambia el estado a `SetMoments.Rounded`.
+*   **`SetMoments.End`**: No realiza acciones directamente; es el estado final de la partida.
 
-**Variables Públicas / Serializadas:**
-La clase expone varias variables configurables a través del Inspector de Unity, y otras internas para el manejo del estado:
-*   `manyPlayers`: Un entero que define la cantidad total de jugadores en la partida. Es utilizado para la inicialización y el manejo de turnos.
-*   `player`: Un `GameObject` que se espera sea un prefab del personaje `Figther`. Se utiliza para instanciar nuevos jugadores si no hay suficientes presentes en la escena al inicio.
-*   `players`: Un array de objetos `Figther` que mantiene la referencia a todos los personajes participantes en el juego.
-*   `playerTurn`: Un entero que indica el índice del jugador que tiene el turno actual.
-*   `setMoments`: Una variable de tipo `SetMoments` que almacena el estado actual de la ronda de juego, controlando el flujo mediante una máquina de estados.
-*   `maxDice`: Un entero que define el valor máximo que puede tener un dado, influyendo en las reglas del juego (aunque la lógica de tirada de dado no está directamente en este script).
-*   `initialLives`: Un entero que especifica la cantidad de vida inicial para cada jugador al comienzo del juego.
-*   `combatType`: Una variable de tipo `CombatType` que define el tipo de combate activo en la ronda actual (ej. combate solo de fuego, o combate general).
-*   `combatjudge` (static): Esta es la referencia estática a la única instancia de `Combatjudge`, implementando el patrón singleton.
+## Otros métodos
 
-**Métodos Principales:**
+### Results IndividualCombat(Card one, Card two)
+Este método calcula el resultado de un combate uno a uno entre dos cartas (`one` y `two`). La lógica tiene en cuenta el `CombatType` actual, los elementos de las cartas y sus valores.
 
-*   `void Start()`: Este es un método del ciclo de vida de Unity. Se ejecuta una vez al inicio del juego. Su función principal es asegurar que `Combatjudge` sea un singleton (destruyendo cualquier instancia duplicada). Inicializa el estado `setMoments` a `Loop` para comenzar el ciclo de juego. Luego, identifica o instancia los objetos `Figther` para todos los jugadores, asignándoles vidas iniciales, propiedades visuales (como `visualFigther` e `indexFigther`) y su roca inicial (`initialStone`) en el tablero.
+*   **Casos Base:** Si alguna de las cartas es `null`, el combate resulta en un `Results.Draw`.
+*   **Combate Elemental Específico:** Si el `CombatType` no es `Full` (es decir, es un elemento fijo) y los elementos de las cartas `one` y `two` son diferentes, la victoria o derrota se determina directamente por si el elemento de la carta `one` coincide con el `CombatType` establecido.
+*   **Lógica de Elementos y Valores:**
+    *   Calcula `elementDiff`, la diferencia cíclica entre los elementos de las cartas, teniendo en cuenta la cantidad total de elementos (`countElements`) y la mitad de ellos (`halfElements`).
+    *   **Para un número par de elementos:** Si la `elementDiff` no es 0 (mismo elemento) ni `halfElements` (elementos opuestos), se determina el ganador por si `elementDiff` es mayor que `halfElements`. Si los elementos son los mismos o directamente opuestos, se compara el `GetValue()` de las cartas: la de mayor valor gana, la de menor valor pierde, y si son iguales, es un empate.
+    *   **Para un número impar de elementos:** Si los elementos son diferentes (`elementDiff != 0`), se determina el ganador comparando `elementDiff` con `halfElements`. Si los elementos son iguales, se comparan los `GetValue()`: la de mayor valor gana, la de menor valor pierde, y si son iguales, es un empate.
 
-*   `void Update()`: Este es otro método del ciclo de vida de Unity, ejecutado una vez por frame. Contiene la lógica principal de la máquina de estados del juego.
-    *   Incluye una sección de depuración que permite asignar números a los jugadores presionando las teclas numéricas, utilizando el método `AsignarNumeros`.
-    *   La parte central es una estructura `switch` que, según el valor de `setMoments`, ejecuta la lógica correspondiente a la fase actual de la ronda:
-        *   En `PickCard`, verifica si todos los jugadores activos han seleccionado su carta, y si es así, transiciona a `Reveal`.
-        *   `Reveal` simplemente transiciona a `Result`.
-        *   `Result` es donde ocurre la lógica de combate: recopila las cartas elegidas por cada jugador, ejecuta `IndvCombat` para cada par de jugadores para determinar los resultados individuales, y luego calcula el impacto en la vida de cada jugador basándose en estos resultados. Finalmente, transiciona de nuevo a `Loop` para la siguiente ronda.
-        *   `Loop` se encarga de preparar la siguiente ronda: avanza el `playerTurn` al siguiente jugador, indica a todos los jugadores que repongan sus manos y "lancen" una carta, y luego transiciona a `PickDice`.
+### void ArriveAtRock()
+Este método se invoca cuando el jugador en turno ha completado su movimiento a una roca. Su propósito es configurar el siguiente paso en la secuencia de juego: determinar si hay un combate multijugador y establecer el tipo de combate o permitir su selección.
 
-*   `Results IndvCombat(Card one, Card two)`: Este método es fundamental para la resolución de combates individuales. Recibe dos objetos `Card` y, basándose en el `combatType` actual, determina el resultado (`win`, `lose`, `draw`) del enfrentamiento. La lógica considera si el combate es de un tipo elemental específico (donde solo la coincidencia elemental es clave) o `full`. Implementa una comparación circular de elementos para determinar ventajas y, en caso de empate elemental o combate `full`, compara los valores de las cartas para decidir el ganador.
+*   **Identificación de Jugadores en Roca:** Obtiene la `RockBehavior` actual del jugador en turno.
+*   **Alcance del Combate:**
+    *   Si `rocky.manyOn()` devuelve `true`, significa que hay varios jugadores en la misma roca. En este caso, `_playersFighting` se actualiza con una máscara de bits (`rocky.GetPlayersOn()`) que representa solo a los jugadores en esa roca específica, indicando un combate localizado.
+    *   Si no hay más de un jugador, `_playersFighting` se establece para incluir a todos los jugadores activos `((int)Mathf.Pow(2, manyFighters) - 1)`, lo que implica un combate general contra todos.
+*   **Tipo de Combate en la Roca:**
+    *   **Si la roca permite elegir elemento (`rocky.inscription == Inscription.pick`):**
+        *   Si es el turno del jugador humano (`Turn() == 0`), el estado del juego cambia a `SetMoments.SelectCombat`, permitiendo al jugador elegir un elemento.
+        *   Si es el turno de un bot, se selecciona un `CombatType` aleatorio y el estado cambia directamente a `SetMoments.PickCard`.
+    *   **Si la roca tiene un elemento predefinido (`rocky.inscription` es un elemento específico):** El `CombatType` se establece directamente al elemento de la roca y el estado del juego cambia a `SetMoments.PickCard`.
 
-*   `void Roled(int value)`: Se espera que este método sea invocado externamente (por ejemplo, después de una tirada de dado). Obtiene los vecinos de la roca actual del jugador en turno basándose en el `value` del dado y los marca para que "brillen" (`shiny = true`), luego transiciona el estado a `GlowRock`.
+### void MoveToRock(RockBehavior rocker)
+Este método simplemente actualiza la roca actual del `playerToken` del jugador en turno a la `rocker` proporcionada y luego cambia el `actualAction` a `SetMoments.MoveToRock`. Esto indica que el jugador está en proceso de movimiento.
 
-*   `void ArriveAtRock()`: Este método es invocado cuando un jugador ha llegado a una `RockBehavior`. Determina qué jugadores están involucrados en el combate (`playersFigthing`, `manyplayersFigthing`) según si hay varios jugadores en la misma roca. Dependiendo de la `inscription` (inscripción) de la roca, transiciona el estado a `SelecCombat` (si la roca permite elegir tipo de combate) o directamente a `PickCard`, asignando el `combatType` basado en la inscripción de la roca.
+### bool PickElement(Element element)
+Este método permite al jugador humano seleccionar el tipo de elemento de combate en rocas que lo permiten (`Inscription.pick`).
 
-*   `void MoveToRock(RockBehavior rocker)`: Actualiza la `rocky` (roca actual) del `playerToken` del jugador en turno a la `rocker` proporcionada y establece el estado `setMoments` a `MoveToRock`, indicando un movimiento en curso.
+*   Verifica que el estado actual del juego sea `SetMoments.SelectCombat`. Si no lo es, devuelve `false`.
+*   Intenta convertir el `element` elegido al `CombatType` y lo asigna a `CombatType`.
+*   Si la asignación es exitosa, el estado del juego cambia a `SetMoments.PickCard` y el método devuelve `true`.
+*   En caso de error durante la conversión (aunque poco probable con los enums), imprime la excepción y devuelve `false`.
 
-*   `bool pickElement(Element element)`: Permite al jugador en turno seleccionar el tipo de combate elemental si el juego está en el estado `SelecCombat`. Si la selección es exitosa, actualiza `combatType` y transiciona a `PickCard`.
+### void EndRounded()
+Este método se invoca para finalizar el estado de "ronda terminada". Si el estado actual es `SetMoments.Rounded`, lo cambia a `SetMoments.PickDice`, preparando el juego para que los jugadores elijan su dado para la siguiente acción.
 
-*   `SetMoments GetSetMoments()`: Un simple método getter para obtener el estado actual del juego (`setMoments`).
+### void StartRolling()
+Este método inicia la fase de lanzamiento de dado. Simplemente cambia el estado `actualAction` a `SetMoments.RollDice`.
 
-*   `int GetPlayersFigthing()`: Un simple método getter para obtener el valor de `playersFigthing`, que indica el estado de los jugadores que están actualmente involucrados en un combate.
+### void Rolled()
+Este método se invoca después de que el dado ha sido lanzado. Si el estado actual es `SetMoments.RollDice`, lo cambia a `SetMoments.RevealDice`, indicando que el valor del dado está listo para ser mostrado.
 
-*   `bool FocusONTurn()`: Devuelve `true` si el `visualFigther` del jugador en turno es 1, lo que podría indicar que este jugador es el "enfocado" o el principal en la UI para el turno actual.
+### void SetGlowing(int value)
+Este método es responsable de resaltar las rocas a las que el jugador actual puede moverse después de lanzar el dado.
 
-**Lógica Clave:**
-La lógica central de `Combatjudge` se basa en su **máquina de estados** impulsada por la enumeración `SetMoments` en el método `Update`. Este sistema secuencial asegura que las fases del juego (desde la preparación de la mano hasta el resultado del combate) se ejecuten en el orden correcto. El método `IndvCombat` encapsula el **algoritmo de resolución de combate**, que maneja tanto las reglas de ventaja elemental (utilizando aritmética modular para comparaciones circulares entre elementos) como la comparación de valores de cartas. La **inicialización dinámica de jugadores** en `Start` permite que el juego se adapte a jugadores preexistentes en la escena o cree nuevos según la configuración.
+*   Obtiene la roca actual (`lander`) del jugador en turno.
+*   Usa `lander.getNeighbor(value)` para obtener las dos rocas vecinas a las que el jugador puede moverse según el valor `value` del dado.
+*   Establece la propiedad `shiny` a `true` para ambas rocas, haciendo que se destaquen visualmente.
+*   Cambia el estado del juego a `SetMoments.GlowRock`.
+*   Si el turno no es del jugador humano (`fighterTurn != 0`), instruye al `BotPlayer` del bot actual a `PickRock(rocker)`, es decir, a elegir una de las rocas resaltadas.
 
-## 3. Dependencias y Eventos
+### void Surrender()
+Este método permite al jugador humano rendirse en la partida. Establece el estado del juego a `SetMoments.End` y llama a `EndGamer(false)` en el componente `EndGame` para finalizar la partida, registrándola como una derrota.
 
-*   **Componentes Requeridos:**
-    Este script no utiliza el atributo `[RequireComponent]`, por lo que no impone la presencia de otros componentes en el mismo `GameObject` en el editor de Unity.
+## Getters y Setters
 
-*   **Eventos (Entrada):**
-    *   Este script responde a la entrada de teclado (`Input.GetKeyDown`) para el método `AsignarNumeros`, lo cual parece ser una funcionalidad de depuración o desarrollo.
-    *   Depende de llamadas externas a sus métodos públicos como `Roled()`, `ArriveAtRock()`, `MoveToRock()` y `pickElement()`. Estas llamadas probablemente provienen de otros scripts (ej. lógica de dado, scripts de interacción con el tablero, o controladores de UI) que notifican al `Combatjudge` sobre acciones del jugador o eventos del juego.
-
-*   **Eventos (Salida):**
-    `Combatjudge` no emite eventos explícitos de `UnityEvent` o `Action` para notificar a otros sistemas. En su lugar, gestiona el flujo de juego internamente a través de cambios en su variable de estado `setMoments`, y realiza **llamadas directas a métodos** de otros objetos, principalmente `Figther` (ej. `player.setPlayerLive()`, `player.RefillHand()`, `player.ThrowCard()`) y `RockBehavior` (ej. `rocker.shiny = true`), actuando como un controlador central que dicta las acciones de otros componentes. Otros sistemas necesitarían consultar el estado actual a través de `GetSetMoments()` o reaccionar a las manipulaciones directas de `Combatjudge` sobre ellos.
+1.  **Round:** `int` (read-only). Proporciona el número de la ronda actual.
+2.  **CombatType:** `CombatType` (read-only). Indica el tipo de elemento (Fire, Earth, Water, Air, Full) que está activo para el combate en la roca actual.
+3.  **CombatJudgeInstance:** `CombatJudge` (estático, read-only). Es la instancia Singleton de la clase `CombatJudge`, permitiendo acceso global a sus funcionalidades.
+4.  **GetSetMoments:** `SetMoments`. Retorna el estado actual de la máquina de estados del juego (`actualAction`).
+5.  **GetPlayersFighting:** `int`. Retorna una máscara de bits que representa a los jugadores que están participando en el combate actual.
+6.  **FocusOnTurn:** `bool`. Indica si el turno actual pertenece al jugador humano (`_fighters[0]`).
+7.  **Turn:** `int`. Retorna el índice del jugador cuyo turno es actualmente (`fighterTurn`).
+8.  **HurtPlayer:** `bool`. Retorna el valor de la propiedad `noHurt` del jugador humano (`_fighters[0]`), indicando si el jugador no ha recibido daño.
+9.  **MoveToRock:** Establece la roca de destino para el jugador en turno, iniciando el movimiento.
+10. **PickElement:** Intenta establecer el `CombatType` según el elemento seleccionado por el jugador.

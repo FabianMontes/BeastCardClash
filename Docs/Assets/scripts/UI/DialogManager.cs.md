@@ -1,87 +1,174 @@
-# `DialogManager.cs`
+# DialogManager
+El script `DialogManager` es el componente central para la gestión y visualización de diálogos en el proyecto `Beast Card Clash`. Su función principal es controlar la interfaz de usuario de los diálogos, determinar cuándo deben activarse basándose en la proximidad del jugador y la interacción, y gestionar el flujo de las líneas de diálogo en función del estado actual del juego.
 
-## 1. Propósito General
-Este script es responsable de gestionar y mostrar los diálogos interactivos en el juego. Controla la visibilidad del panel de diálogo, la navegación a través de las líneas de texto, y la selección del conjunto de diálogos apropiado según el estado actual del juego. Interactúa con la UI para presentar el texto y los nombres de los personajes, y con el sistema de movimiento del jugador para pausarlo durante los diálogos.
+Este componente es crucial para la narrativa del juego, permitiendo la presentación de historias, información o interacciones con los personajes (animales autóctonos/facultades) que enriquecen la experiencia del jugador. Durante un diálogo, el script se encarga de pausar temporalmente el movimiento o la interacción del jugador para asegurar una inmersión completa en la conversación. Su diseño prioriza una implementación directa y fácil de mantener para los desarrolladores, alineándose con el enfoque del proyecto en una buena experiencia de desarrollo.
 
-## 2. Componentes Clave
+La interacción con otros componentes se realiza principalmente con:
+*   **Elementos de UI**: Gestiona los `GameObject` y `TextMeshProUGUI` configurados para mostrar el panel de diálogo, el nombre del personaje y el texto del diálogo.
+*   **Componente `Target`**: Requiere una referencia al `Transform` del "target" (presumiblemente el jugador o una entidad interactuable) para calcular distancias y su script asociado (`Target`) para habilitar o deshabilitar su funcionalidad (como el movimiento).
+*   **Singleton `GameState`**: Depende del patrón Singleton `GameState` para acceder al archivo de diálogos (`DialogFile`) y determinar el estado actual del juego (`GameStates`), lo que permite cargar los diálogos pertinentes para cada momento de la partida. También notifica al `GameState` el final de un diálogo para una posible transición de estado.
 
-### `GameStates`
-- **Descripción:** Un `enum` que define los diferentes estados o contextos posibles del juego que influyen en qué conjunto de diálogos debe mostrarse.
-- **Valores:**
-    - `normal`: El estado predeterminado del juego.
-    - `preGame`: Indica el momento antes de que el juego comience formalmente, típicamente para diálogos introductorios.
-    - `win`: El estado cuando el jugador ha ganado.
-    - `lose`: El estado cuando el jugador ha perdido.
+# Métodos
 
-### `DialogFile`
-- **Descripción:** Una clase serializable (`[System.Serializable]`) utilizada para estructurar y cargar el contenido de los archivos JSON que contienen todos los diálogos del juego. Actúa como el contenedor principal para diferentes secuencias de diálogos basadas en el estado del juego.
-- **Variables Públicas / Serializadas:**
-    - `Dialogs[] Dialogs`: Un array de objetos `Dialogs` que contiene la secuencia de diálogos para el estado `normal`.
-    - `Dialogs[] PreGameDialogs`: Un array para los diálogos del estado `preGame`.
-    - `Dialogs[] WinDialogs`: Un array para los diálogos del estado `win`.
-    - `Dialogs[] LoseDialogs`: Un array para los diálogos del estado `lose`.
+## Métodos de Unity
 
-### `Dialogs`
-- **Descripción:** Una clase serializable (`[System.Serializable]`) que representa una única entrada de diálogo. Contiene la información de un personaje específico y el texto que pronuncia.
-- **Variables Públicas / Serializadas:**
-    - `string character`: El nombre del personaje que habla la línea de diálogo.
-    - `string text`: El contenido del texto del diálogo.
+### Awake, Start, Update
 
-### `DialogManager`
-- **Descripción:** El componente principal que gestiona la lógica de los diálogos. Hereda de `MonoBehaviour`, lo que permite que sea adjuntado a un GameObject en la escena de Unity y que utilice los métodos del ciclo de vida de Unity.
-- **Variables Públicas / Serializadas:**
-    - `GameObject dialogPanel`: Referencia al objeto UI (`GameObject`) que actúa como el contenedor visual de todos los elementos del diálogo. Se activa o desactiva para mostrar u ocultar el diálogo.
-    - `TextMeshProUGUI namePanel`: Referencia al componente de texto de TextMeshPro que muestra el nombre del personaje que está hablando.
-    - `TextMeshProUGUI textPanel`: Referencia al componente de texto de TextMeshPro que muestra el contenido del diálogo.
-    - `string characterName`: Una variable de cadena para un nombre de personaje, aunque en la implementación actual los nombres son extraídos del archivo JSON. Podría ser un valor predeterminado o un identificador para el propio objeto que contiene este `DialogManager`.
-    - `Transform target`: Referencia al `Transform` del jugador o del objeto con el que este `DialogManager` interactuará para iniciar diálogos.
-    - `float maxDistance`: La distancia máxima entre este GameObject y el `target` para que se pueda iniciar un diálogo.
-    - `GameStates gameState`: El estado actual del juego, que determina qué conjunto de diálogos se mostrará.
-    - `TextAsset dialogFile`: El archivo de texto (JSON) que contiene todos los datos de los diálogos. Se debe arrastrar desde el Editor de Unity.
+### Start()
+Este método se invoca una vez al inicio del ciclo de vida del script, antes de la primera actualización de frame. Su propósito es inicializar las referencias y el estado inicial del `DialogManager`.
 
-- **Métodos Principales:**
-    - `void Start()`: Este método del ciclo de vida de Unity se ejecuta una vez al inicio.
-        - Inicializa la referencia al script `Target` del objeto `target`.
-        - Desactiva el `dialogPanel` para que no sea visible al inicio.
-        - Carga y deserializa el contenido del `dialogFile` (JSON) en el objeto `dialogFileContent` utilizando `JsonUtility.FromJson`.
-    - `void Update()`: Este método del ciclo de vida de Unity se ejecuta una vez por frame.
-        - Calcula la distancia entre el `DialogManager` y el `target`.
-        - Verifica si el `target` está dentro del `maxDistance` y si el jugador presiona la tecla `Z` mientras no hay un diálogo activo. Si ambas condiciones se cumplen, llama a `ShowDialogPanel()`.
-        - Si un diálogo está activo (`inDialog` es `true`):
-            - Si el jugador presiona `Z`, avanza al siguiente diálogo llamando a `DisplayDialog()`.
-            - Si el jugador presiona `C`, finaliza el diálogo inmediatamente llamando a `EndDialog()`.
-    - `void ShowDialogPanel()`: Inicia la secuencia de diálogo.
-        - Establece `inDialog` a `true` para indicar que un diálogo está activo.
-        - Deshabilita el script `Target` del jugador (`targetScript.enabled = false`) para evitar el movimiento durante el diálogo.
-        - Activa el `dialogPanel` para hacerlo visible.
-        - Reinicia el `currentDialogIndex` a `0` y llama a `DisplayDialog()` para mostrar la primera línea del diálogo.
-    - `Dialogs[] GetDialogsForState()`: Un método auxiliar que devuelve el array de diálogos adecuado basándose en el valor actual de `gameState`. Utiliza un `switch` para seleccionar entre `Dialogs`, `PreGameDialogs`, `WinDialogs`, o `LoseDialogs` de `dialogFileContent`.
-    - `void DisplayDialog()`: Muestra la línea de diálogo actual en la UI.
-        - Obtiene el array de diálogos relevante para el `gameState` actual.
-        - Si `currentDialogIndex` es menor que la longitud del array de diálogos, actualiza `namePanel.text` y `textPanel.text` con la información del diálogo correspondiente.
-        - Si no hay más diálogos en la secuencia (es decir, `currentDialogIndex` ha superado la longitud del array), llama a `EndDialog()`.
-    - `void EndDialog()`: Finaliza la secuencia de diálogo.
-        - Establece `inDialog` a `false`.
-        - Desactiva el `dialogPanel`.
-        - Habilita el script `Target` del jugador (`targetScript.enabled = true`) para permitir el movimiento nuevamente.
-        - Reinicia `currentDialogIndex` a `0` para que el próximo diálogo comience desde el principio.
-    - `public void SetGameState(GameStates newState)`: Un método público que permite a otros scripts cambiar el estado del juego, lo que a su vez afectará qué secuencias de diálogo se reproducen.
+*   **Inicialización de `targetScript`**: Obtiene una referencia al componente `Target` del `GameObject` asignado a la variable `target`. Este componente es esencial para controlar el movimiento o las interacciones del jugador durante los diálogos.
+*   **Desactivación del panel de diálogo**: Asegura que el `dialogPanel` se encuentre oculto al inicio del juego, proporcionando una interfaz limpia hasta que se active un diálogo.
 
-- **Lógica Clave:**
-    La lógica de este script se centra en una máquina de estados implícita para la gestión de diálogos:
-    1.  **Activación:** El diálogo se inicia cuando el `target` está dentro de un rango (`maxDistance`) y el jugador presiona la tecla `Z`, siempre y cuando no haya ya un diálogo activo.
-    2.  **Interacción:** Durante un diálogo activo (`inDialog` es `true`), el movimiento del jugador se desactiva.
-        *   Presionar `Z` avanza a la siguiente línea de diálogo.
-        *   Presionar `C` salta y finaliza el diálogo inmediatamente.
-    3.  **Finalización:** Un diálogo termina automáticamente cuando se han mostrado todas sus líneas o cuando el jugador lo salta. Al finalizar, el panel de diálogo se oculta y el movimiento del jugador se restaura.
-    4.  **Contexto:** La selección de los diálogos a mostrar depende del `GameStates` actual, lo que permite diferentes narrativas para el pre-juego, el juego normal, la victoria o la derrota.
+```csharp
+void Start()
+{
+    targetScript = target.GetComponent<Target>();
+    dialogPanel?.SetActive(false);
+}
+```
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    - Este script no utiliza `[RequireComponent]`, pero asume que el `target` (Transform) tiene un componente llamado `Target` que maneja su movimiento, y que el `dialogPanel`, `namePanel`, y `textPanel` existen y están configurados correctamente en la UI.
-- **Eventos (Entrada):**
-    - Escucha la entrada del teclado directamente a través de `Input.GetKeyDown(KeyCode.Z)` para iniciar/avanzar diálogos.
-    - Escucha `Input.GetKeyDown(KeyCode.C)` para saltar/terminar diálogos.
-- **Eventos (Salida):**
-    - Este script no invoca eventos de `UnityEvent` o `Action` para notificar a otros sistemas. Su interacción con el script `Target` es directa al habilitar/deshabilitar su componente.
-    - El método `public void SetGameState(GameStates newState)` actúa como un punto de entrada público para que otros sistemas modifiquen el comportamiento de los diálogos.
+### Update()
+Este método se invoca una vez por frame y contiene la lógica principal para la detección de interacciones y el manejo del flujo de los diálogos.
+
+*   **Detección de proximidad y activación de diálogo**:
+    *   Calcula la distancia euclidiana entre la posición del `DialogManager` (donde probablemente se encuentre el trigger del diálogo) y la posición del `target`.
+    *   Determina si el `target` se encuentra dentro del `maxDistance` configurado.
+    *   Si el juego no está en un diálogo (`!inDialog`), el `target` está en rango (`targetInRange`) y el jugador presiona la tecla `Z`, se llama al método `ShowDialogPanel()` para iniciar un nuevo diálogo.
+
+*   **Avance y finalización de diálogo**:
+    *   Si ya se encuentra en un diálogo (`inDialog` es `true`):
+        *   Detecta la pulsación de la tecla `Z` para avanzar al siguiente segmento del diálogo, incrementando `currentDialogIndex` y llamando a `DisplayNextDialog()`.
+        *   Detecta la pulsación de la tecla `C` para terminar el diálogo de forma anticipada, llamando a `EndDialog()`.
+
+    > [!NOTE] Importante
+    > La estructura `if (!inDialog && ...)` seguido de `else if (inDialog)` es una elección deliberada para evitar el "bug del segundo panel". Esta lógica asegura que una única pulsación de la tecla `Z` solo inicie un diálogo o avance uno existente, pero no ambas cosas en el mismo frame, mejorando la experiencia de interacción del jugador.
+
+```csharp
+void Update()
+{
+    float distance = Vector3.Distance(transform.position, target.position);
+    bool targetInRange = distance <= maxDistance;
+
+    if (!inDialog && targetInRange && Input.GetKeyDown(KeyCode.Z))
+    {
+        ShowDialogPanel();
+    }
+    else if (inDialog)
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            currentDialogIndex++;
+            DisplayNextDialog();
+        }
+        if (Input.GetKeyDown(KeyCode.C)) EndDialog();
+    }
+}
+```
+
+## Otros métodos
+
+### ShowDialogPanel() : void
+Este método se encarga de iniciar el proceso de un nuevo diálogo.
+
+*   **Control de reentrada**: Primero verifica si ya hay un diálogo activo (`inDialog`). Si es así, el método retorna inmediatamente para evitar la superposición o reinicio accidental de diálogos.
+*   **Activación de diálogo**: Establece `inDialog` a `true` e inmediatamente activa el `dialogPanel` para hacerlo visible al jugador.
+*   **Control del jugador**: Deshabilita el script `targetScript` (probablemente responsable del movimiento o interacción del jugador) para pausar la acción y enfocar la atención en el diálogo.
+*   **Inicio del flujo**: Reinicia el `currentDialogIndex` a `0` para comenzar desde la primera línea de diálogo y llama a `DisplayNextDialog()` para mostrar el primer texto.
+
+```csharp
+void ShowDialogPanel()
+{
+    if (inDialog) return;
+
+    inDialog = true;
+    dialogPanel.SetActive(true);
+    targetScript.enabled = false;
+
+    currentDialogIndex = 0;
+    DisplayNextDialog();
+}
+```
+
+### GetDialogsForState() : Dialogs[]
+Este método es responsable de obtener el conjunto de diálogos apropiado para el estado actual del juego.
+
+*   **Carga de contenido**: Intenta cargar el `dialogFileContent` desde el singleton `GameState`. Incluye verificaciones de nulidad para asegurar la robustez en caso de que el archivo de diálogos no esté asignado.
+*   **Selección de diálogos**: Utiliza una sentencia `switch` para evaluar el `CurrentGameState` del `GameState.singleton`. Dependiendo del estado (ej. `begin`, `preGame`, `win`, `lose`, `repeat`), devuelve el array de `Dialogs` correspondiente desde el `dialogFileContent`.
+*   **Manejo por defecto**: Si el estado actual no coincide con ninguno de los casos definidos o si no se puede cargar el archivo de diálogos, devuelve un array vacío de `Dialogs` para evitar errores.
+
+```csharp
+Dialogs[] GetDialogsForState()
+{
+    DialogFile dialogFileContent = GameState.singleton.dialogFileContent;
+    // La doble verificación de nulidad puede ser redundante pero asegura la referencia.
+    if (dialogFileContent == null) dialogFileContent = GameState.singleton.dialogFileContent;
+    if (dialogFileContent == null) return new Dialogs[0];
+
+    switch (GameState.singleton.CurrentGameState)
+    {
+        case GameStates.begin:
+            return dialogFileContent.BeginDialogs;
+        case GameStates.preGame:
+            return dialogFileContent.PreGameDialogs;
+        case GameStates.win:
+            return dialogFileContent.WinDialogs;
+        case GameStates.lose:
+            return dialogFileContent.LoseDialogs;
+        case GameStates.repeat:
+            return dialogFileContent.RepeatDialogs;
+        default:
+            return new Dialogs[0];
+    }
+}
+```
+
+### DisplayNextDialog() : void
+Este método se encarga de actualizar la interfaz de usuario con la siguiente línea de diálogo.
+
+*   **Obtención de diálogos**: Llama a `GetDialogsForState()` para obtener el array de diálogos relevante para el estado actual del juego.
+*   **Avance de línea**:
+    *   Verifica si el `currentDialogIndex` es menor que la longitud total del array de diálogos.
+    *   Si hay más diálogos disponibles, actualiza el `namePanel.text` con el nombre del personaje (`character`) y el `textPanel.text` con el contenido de la línea de diálogo (`text`) en la posición actual del índice.
+    *   Si el `currentDialogIndex` es igual o mayor que la longitud del array, significa que no hay más líneas de diálogo en la secuencia actual, por lo que llama a `EndDialog()` para finalizar la conversación.
+
+```csharp
+void DisplayNextDialog()
+{
+    var dialogs = GetDialogsForState();
+
+    if (currentDialogIndex < dialogs.Length)
+    {
+        namePanel.text = dialogs[currentDialogIndex].character;
+        textPanel.text = dialogs[currentDialogIndex].text;
+    }
+    else
+    {
+        EndDialog();
+    }
+}
+```
+
+### EndDialog() : void
+Este método se encarga de finalizar un diálogo activo y restaurar el estado normal del juego.
+
+*   **Desactivación de diálogo**: Establece `inDialog` a `false` y desactiva el `dialogPanel`, ocultándolo de la vista del jugador.
+*   **Restauración del jugador**: Habilita el `targetScript` (probablemente el script de movimiento del jugador) para que el jugador pueda reanudar sus acciones.
+*   **Reinicio de índice**: Reinicia el `currentDialogIndex` a `0`, preparando el sistema para la próxima interacción de diálogo.
+*   **Transición de estado**: Notifica al `GameState.singleton` para que avance al siguiente estado de juego, pasando el estado actual como referencia. Esto permite que el sistema de juego reaccione a la finalización del diálogo, lo cual es fundamental para la progresión narrativa de `Beast Card Clash`.
+
+```csharp
+void EndDialog()
+{
+    inDialog = false;
+    dialogPanel.SetActive(false);
+    targetScript.enabled = true;
+
+    currentDialogIndex = 0;
+
+    GameState.singleton.NextGameState(GameState.singleton.CurrentGameState);
+}
+```
+
+## Getters y Setters
+En el script `DialogManager`, no se han definido métodos públicos explícitos que funcionen como *getters* o *setters* en el sentido tradicional (ej. `public int GetCurrentIndex()` o `public void SetCurrentIndex(int value)`). La gestión del estado interno, como `currentDialogIndex` o `inDialog`, se realiza a través de las lógicas internas de los métodos privados y los métodos de Unity (`Start`, `Update`). Todas las variables relevantes para la configuración externa (`dialogPanel`, `namePanel`, `textPanel`, `target`, `maxDistance`) son variables serializadas que se configuran directamente desde el editor de Unity.

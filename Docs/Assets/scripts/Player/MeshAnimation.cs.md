@@ -1,76 +1,105 @@
-# `MeshAnimation.cs`
+# MeshAnimation
+El script `MeshAnimation` es un componente fundamental para la gestión visual y de animaciones de los personajes o entidades en el proyecto **Beast Card Clash**. Su principal responsabilidad es coordinar la **apariencia (skin)** y el **estado de animación** de un objeto `GameObject` al que está adjunto.
 
-## 1. Propósito General
-Este script gestiona las animaciones y la apariencia visual (skins) de un personaje o un objeto en el juego. Actúa como un controlador central para interactuar con los componentes `Animator` y `Renderer`, permitiendo cambiar el estado de las animaciones y la textura principal del modelo.
+Permite a los desarrolladores:
+1.  **Gestionar múltiples "skins" o texturas** para un mismo objeto, cargándolas desde una lista de `Sprites` definida en el editor de Unity.
+2.  **Controlar dinámicamente los parámetros de un `Animator`** adjunto, lo que facilita la activación de diferentes estados de animación.
 
-## 2. Componentes Clave
+Este componente se actualiza continuamente en función del estado global del juego (a través de `GameState.singleton.skin`), asegurando que la apariencia del personaje siempre refleje la selección actual del jugador. Está diseñado para ser flexible, permitiendo la manipulación de animaciones y skins desde otras partes del código del juego de manera desacoplada.
 
-### `MeshAnimation`
-- **Descripción:** La clase `MeshAnimation` es un `MonoBehaviour` que se adjunta a un GameObject en la escena de Unity. Su función principal es facilitar la manipulación de los parámetros de un `Animator` asociado y la textura de un `Renderer` hijo, permitiendo al objeto cambiar dinámicamente sus animaciones y su "skin" visual.
+# Métodos
 
-- **Variables Públicas / Serializadas:**
-    - `Skins (List<Sprite>)`: Una lista de objetos `Sprite` que se puede configurar directamente desde el Inspector de Unity. Cada `Sprite` en esta lista representa una posible "skin" o apariencia visual para el modelo, ya que su textura se usará para el material del renderizador.
+## Métodos de Unity
 
-- **Métodos Principales:**
-    - `void Awake()`:
-        Este método es parte del ciclo de vida de Unity y se ejecuta cuando la instancia del script se está cargando. Su propósito es inicializar las referencias internas:
-        - Obtiene una referencia al componente `Animator` que se encuentra en el mismo GameObject al que está adjunto este script.
-        - Obtiene una referencia al primer componente `Renderer` que encuentre entre los hijos del GameObject. Esto es crucial para poder modificar la textura del modelo.
+### Awake
+Este método se ejecuta una única vez cuando el script se carga. Su propósito es inicializar las referencias a los componentes necesarios para el funcionamiento de `MeshAnimation`.
 
-    - `public void UpdateAnimation(string variableName, string value)`:
-        Este método permite actualizar de forma programática un parámetro dentro del controlador del `Animator`. Recibe el nombre del parámetro (`variableName`) y el valor deseado como una cadena de texto (`value`).
-        La lógica interna detecta automáticamente el tipo de parámetro (`Bool`, `Float`, `Int`, `Trigger`) del `Animator` y luego intenta convertir el `value` de cadena al tipo correcto antes de asignarlo al parámetro correspondiente en el `Animator`. Si el parámetro no se encuentra en el `Animator`, se registra una advertencia.
+```csharp
+private void Awake()
+{
+    // Inicializa los componentes
+    animator = GetComponent<Animator>();
+    objRenderer = GetComponentInChildren<Renderer>();
+}
+```
 
-        ```csharp
-        public void UpdateAnimation(string variableName, string value)
+*   `animator`: Busca y obtiene una referencia al componente `Animator` que debe estar adjunto al mismo `GameObject` que este script. Si no se encuentra un `Animator`, las operaciones relacionadas con animaciones no tendrán efecto.
+*   `objRenderer`: Busca y obtiene una referencia al componente `Renderer` (por ejemplo, `SpriteRenderer` o `MeshRenderer`) que debe estar adjunto a uno de los `GameObject` hijos de donde está este script. Este componente es esencial para aplicar las diferentes "skins" o texturas.
+
+### Update
+Este método se ejecuta en cada frame del juego. Su función es asegurar que la "skin" visual del objeto esté siempre sincronizada con el estado global del juego.
+
+```csharp
+void Update()
+{
+    // Actualiza la skin desde GameState
+    SetSkin(GameState.singleton.skin);
+}
+```
+
+Cada frame, `Update` llama al método `SetSkin` pasándole el valor de `GameState.singleton.skin`. Esto implica que hay un sistema de `GameState` global (implementado como un Singleton) que mantiene un registro de la `skin` actual seleccionada, permitiendo que los cambios en esta variable se reflejen instantáneamente en la apariencia del objeto.
+
+## Otros métodos
+
+### public void UpdateAnimation(string variableName, string value)
+Este método proporciona una interfaz flexible para controlar los parámetros del componente `Animator` adjunto al `GameObject`. Permite modificar los estados de animación pasando los nombres de las variables y sus valores como cadenas de texto.
+
+```csharp
+public void UpdateAnimation(string variableName, string value)
+{
+    if (animator == null) return;
+
+    foreach (AnimatorControllerParameter param in animator.parameters)
+    {
+        if (param.name == variableName)
         {
-            // ... (comprobaciones de nulo)
-            foreach (AnimatorControllerParameter param in animator.parameters)
+            switch (param.type)
             {
-                if (param.name == variableName)
-                {
-                    switch (param.type)
-                    {
-                        // ... (manejo de tipos Bool, Float, Int, Trigger)
-                    }
-                    return;
-                }
+                case AnimatorControllerParameterType.Bool:
+                    if (bool.TryParse(value, out bool boolValue)) animator.SetBool(variableName, boolValue);
+                    break;
+                // ... otros tipos ...
+                case AnimatorControllerParameterType.Trigger:
+                    animator.SetTrigger(variableName);
+                    break;
             }
-            Debug.LogWarning($"No se encontró el parámetro '{variableName}' en el Animator.");
+            return;
         }
-        ```
+    }
+    Debug.LogWarning($"No se encontró el parámetro '{variableName}' en el Animator.");
+}
+```
 
-    - `public void SetSkin(int index)`:
-        Este método se utiliza para cambiar la apariencia visual del modelo. Toma un `index` como entrada, que corresponde a la posición de un `Sprite` dentro de la lista `Skins`. El método recupera la textura de ese `Sprite` y la asigna como la `mainTexture` del material del `objRenderer`. Incluye comprobaciones para asegurarse de que el índice sea válido y que las referencias no sean nulas, mostrando advertencias si hay problemas.
+*   **Detección de tipo:** El método itera a través de todos los parámetros definidos en el `AnimatorController`. Cuando encuentra una coincidencia con `variableName`, determina automáticamente el tipo de parámetro (`Bool`, `Float`, `Int`, `Trigger`).
+*   **Conversión y asignación:** Intenta convertir la cadena `value` al tipo de dato correspondiente (booleano, flotante, entero) y luego asigna ese valor al parámetro del `Animator`. Para los `Trigger`s, simplemente activa el disparador.
+*   **Manejo de errores:** Si no se encuentra un `Animator` o si el parámetro especificado no existe, se emitirá una advertencia en la consola de Unity para facilitar la depuración.
+*   **Utilidad:** Este enfoque permite a otros sistemas del juego (como la UI, la lógica de combate o controladores de entrada) activar y modificar animaciones sin necesidad de conocer los tipos de parámetros exactos del `Animator` o acceder directamente a su API.
 
-        ```csharp
-        public void SetSkin(int index)
-        {
-            if (Skins == null || index < 0 || index >= Skins.Count)
-            {
-                Debug.LogWarning("Índice de skin inválido.");
-                return;
-            }
+### public void SetSkin(int index)
+Este método es responsable de cambiar la textura visible del objeto, aplicando una de las "skins" precargadas en la lista `Skins`.
 
-            if (objRenderer != null && Skins[index] != null)
-            {
-                Texture2D texture = Skins[index].texture;
-                objRenderer.material.mainTexture = texture;
-            }
-        }
-        ```
+```csharp
+public void SetSkin(int index)
+{
+    if (Skins == null || index < 0 || index >= Skins.Count)
+    {
+        Debug.LogWarning("Índice de skin inválido.");
+        return;
+    }
 
-- **Lógica Clave:**
-    La lógica principal de `UpdateAnimation` reside en su capacidad de inferir el tipo de parámetro del `Animator` a partir de su definición y luego intentar convertir un valor de cadena al tipo apropiado para establecerlo. Esto proporciona una interfaz flexible para controlar animaciones. Por otro lado, `SetSkin` gestiona el cambio visual del objeto extrayendo la textura de un `Sprite` de su lista serializada y aplicándola al material del renderizador, lo que permite alternar fácilmente entre diferentes apariencias.
+    if (objRenderer != null && Skins[index] != null)
+    {
+        Texture2D texture = Skins[index].texture;
+        objRenderer.material.mainTexture = texture;
+    }
+}
+```
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    - Este script asume la presencia de un componente `Animator` en el mismo GameObject (obtenido a través de `GetComponent<Animator>()`).
-    - También requiere que un componente `Renderer` (por ejemplo, `MeshRenderer` o `SpriteRenderer`) esté presente en uno de los GameObjects hijos para poder cambiar la textura.
-    - No utiliza el atributo `[RequireComponent]`, por lo que estas dependencias no son forzadas por Unity en el editor, sino que son implícitas por el código.
+*   **Validación:** Antes de intentar cambiar la skin, el método valida si la lista `Skins` está inicializada y si el `index` proporcionado está dentro de los límites válidos de la lista. Si no es así, se registra una advertencia.
+*   **Aplicación de textura:** Si el índice es válido y las referencias existen, se extrae la `Texture2D` del `Sprite` ubicado en `Skins[index]`. Luego, esta textura se asigna a `objRenderer.material.mainTexture`, lo que actualiza la apariencia visual del objeto.
+*   **`Skins`:** La lista `Skins` es una colección de `Sprite` que debe ser configurada manualmente en el Inspector de Unity. Cada `Sprite` en esta lista representa una posible "skin" que el objeto puede adoptar.
 
-- **Eventos (Entrada):**
-    - Este script no se suscribe explícitamente a eventos de interfaz de usuario de Unity (como `Button.onClick`) ni a eventos personalizados (`UnityEvent`, `Action`). Sus métodos públicos están diseñados para ser invocados directamente por otros scripts.
+## Getters y Setters
 
-- **Eventos (Salida):**
-    - Este script no invoca ningún evento (`UnityEvent` o `Action`) para notificar a otros sistemas sobre cambios o estados. Toda su interacción es a través de sus métodos públicos.
+1.  `public void UpdateAnimation(string variableName, string value)`: Establece el valor de un parámetro específico (`Bool`, `Float`, `Int` o `Trigger`) en el componente `Animator` del objeto.
+2.  `public void SetSkin(int index)`: Establece la textura principal del `Renderer` del objeto, seleccionando un `Sprite` de la lista `Skins` mediante el `index` proporcionado.

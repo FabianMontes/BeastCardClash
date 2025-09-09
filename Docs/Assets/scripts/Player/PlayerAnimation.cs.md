@@ -1,60 +1,91 @@
-# `PlayerAnimation.cs`
+# PlayerAnimation
+El script `PlayerAnimation` es un componente de Unity (`MonoBehaviour`) encargado de gestionar la representación visual del personaje del jugador y sus animaciones básicas en el juego **Beast Card Clash**. Su función principal es permitir al jugador adoptar diferentes formas de animales, representadas por prefabs específicos, y animar estas formas según el movimiento del personaje.
 
-## 1. Propósito General
-Este script gestiona la representación visual y las animaciones del personaje animal del jugador en "Beast Card Clash". Su rol principal es instanciar el modelo 3D correcto según la especie seleccionada y sincronizar sus animaciones con el movimiento del personaje, interactuando con Unity's `NavMeshAgent` y un componente de animación personalizado `MeshAnimation`.
+Este script define un enumerado llamado `SpieceEnum` que lista las especies de animales disponibles en el juego: `bear`, `frog`, `condor`, `chamaleon`. Este enumerado se utiliza para seleccionar qué prefab de animal debe ser instanciado y mostrado.
 
-## 2. Componentes Clave
+En su funcionamiento, `PlayerAnimation` realiza las siguientes tareas:
+-   **Inicialización:** Al inicio del juego, instancia el prefab del animal seleccionado (definido en el Inspector) como un objeto hijo del jugador. Configura su escala, posición y obtiene una referencia al componente `MeshAnimation` del prefab para controlar sus animaciones.
+-   **Actualización de Animación:** Continuamente, en cada fotograma, calcula la relación de velocidad del jugador utilizando el componente `NavMeshAgent` adjunto. Esta relación se usa para actualizar la animación del animal, permitiendo transiciones suaves entre estados como "idle" y "correr".
+-   **Cambio de Especie:** Proporciona un método público para cambiar dinámicamente la especie del animal del jugador durante el juego. Al cambiar de especie, instancia un nuevo prefab del animal elegido y reemplaza la referencia al `MeshAnimation` para el nuevo modelo.
 
-### `SpieceEnum`
-- **Descripción:** Un tipo `enum` que define las diferentes especies de animales disponibles para los personajes en el juego. Cada miembro de este `enum` corresponde a un índice numérico, que se utiliza para seleccionar el prefab de modelo 3D adecuado de una lista.
+Este script interactúa directamente con los componentes `NavMeshAgent` (para obtener datos de movimiento) y `MeshAnimation` (para controlar la apariencia y animaciones del modelo 3D). También depende de una lista de `Prefabs` que deben ser asignados en el Inspector, donde cada prefab corresponde a una especie específica del `SpieceEnum`.
 
-### `PlayerAnimation`
-- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, es la encargada de controlar la apariencia y el comportamiento de animación del modelo 3D de un personaje animal. Se ocupa de la instanciación inicial del modelo, de asegurar que se muestre la especie correcta y de actualizar las animaciones de movimiento basándose en la velocidad del personaje, para lo cual se apoya en un `NavMeshAgent` y un script auxiliar `MeshAnimation`.
-- **Variables Públicas / Serializadas:**
-    - `Prefabs` (`List<GameObject>`): Esta es una lista de prefabs de `GameObject` que representan los distintos modelos 3D de animales. El índice de cada prefab en esta lista se corresponde con un valor en el `SpieceEnum`, permitiendo al script instanciar el modelo adecuado para la especie configurada.
-    - `SpieceEnum` (`SpieceEnum`): Una variable que define cuál de las especies de animales configuradas en el `enum` debe ser representada por esta instancia de `PlayerAnimation`. Se utiliza para determinar qué prefab de `Prefabs` instanciar.
-    - `Agent` (`NavMeshAgent`): Una referencia al componente `NavMeshAgent` asociado al personaje. El script utiliza este `Agent` para obtener la velocidad actual del personaje, lo cual es fundamental para controlar la velocidad de las animaciones de movimiento del animal.
-- **Métodos Principales:**
-    - `void Start()`: Este método es parte del ciclo de vida de Unity y se ejecuta una única vez cuando el `MonoBehaviour` es habilitado por primera vez. Su objetivo es preparar el modelo del animal:
-        1.  Instancia el prefab del animal inicial, seleccionado según el `SpieceEnum` establecido en el Inspector de Unity.
-        2.  Ajusta la escala (`MeshScale`) y la posición local (`MeshPosition`) del modelo instanciado para que se adapte correctamente como hijo del `GameObject` al que está adherido este script.
-        3.  Obtiene una referencia al componente `MeshAnimation` del modelo instanciado, que será el encargado de manejar las animaciones y la "skin" (apariencia visual) del modelo.
-        4.  Inicializa la "skin" del modelo a la primera variante disponible (`SetSkin(0)`).
-        5.  Inicializa la lista interna `SpieceList` con valores predeterminados (cuatro ceros), lo que sugiere que cada especie comienza con su "skin" predeterminada de índice 0.
-        ```csharp
-        GameObject Children = Instantiate(Prefabs[(int)SpieceEnum], transform.position, transform.rotation);
-        Children.transform.localScale = MeshScale;
-        Children.transform.parent = transform;
-        // ...
-        ```
-    - `void Update()`: Este método también es parte del ciclo de vida de Unity y se ejecuta en cada fotograma del juego. Su función principal es mantener las animaciones del animal sincronizadas con su movimiento:
-        1.  Primero, verifica si la referencia `MeshAnimate` es nula para evitar errores.
-        2.  Calcula una `SpeedRatio` dividiendo la magnitud de la velocidad actual del `NavMeshAgent` por su velocidad máxima configurada. Esta relación indica qué tan rápido se está moviendo el animal en comparación con su velocidad máxima.
-        3.  Usa esta `SpeedRatio` para actualizar el parámetro "Speed" en el componente `MeshAnimation`, lo que controla la velocidad de las animaciones de movimiento del animal (por ejemplo, caminar más rápido o más lento).
-        ```csharp
-        if (MeshAnimate == null) return;
-        string SpeedRatio = (Agent.velocity.magnitude / Agent.speed).ToString();
-        MeshAnimate.UpdateAnimation("Speed", SpeedRatio);
-        ```
-    - `void UpdateSpiece(SpieceEnum Spiece)`: Este método público permite cambiar la especie del animal que el `PlayerAnimation` está representando en tiempo de ejecución.
-        1.  Verifica si la nueva `Spiece` es la misma que la actual; si es así, no hace nada para evitar trabajo innecesario.
-        2.  Actualiza la variable `SpieceEnum` del script a la nueva especie.
-        3.  Instancia un *nuevo* modelo 3D de animal correspondiente a la `Spiece` recién seleccionada.
-        4.  Establece el nuevo modelo instanciado como hijo del `GameObject` actual.
-        5.  Obtiene y actualiza la referencia al componente `MeshAnimation` del modelo recién instanciado.
-        6.  Configura la "skin" del nuevo modelo utilizando un índice almacenado en la lista `SpieceList` que corresponde a la especie seleccionada, permitiendo que diferentes especies puedan tener diferentes apariencias iniciales o por defecto.
-        ```csharp
-        if (Spiece == SpieceEnum) return;
-        SpieceEnum = Spiece;
-        GameObject Children = Instantiate(Prefabs[(int)SpieceEnum], transform.position, transform.rotation);
-        // ...
-        ```
-- **Lógica Clave:**
-    La lógica central de `PlayerAnimation` gira en torno a la gestión dinámica del modelo 3D de un personaje animal. Se encarga de instanciar el modelo adecuado basado en una enumeración de especies (`SpieceEnum`) y, fundamentalmente, de conectar el movimiento del personaje (detectado por un `NavMeshAgent`) con las animaciones de su modelo 3D a través de un componente `MeshAnimation`. El método `UpdateSpiece` es crucial para la jugabilidad, ya que permite cambiar la especie del animal en cualquier momento, lo que implica instanciar un nuevo modelo y configurar su aspecto. Es importante notar que la implementación actual de `UpdateSpiece` instancia un nuevo modelo sin destruir explícitamente el anterior, lo que podría requerir una gestión externa para evitar la acumulación de objetos no deseados en la escena.
+# Métodos
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, pero su funcionamiento correcto depende fundamentalmente de la presencia de un componente `NavMeshAgent` en el mismo `GameObject` o en un `GameObject` accesible para que pueda obtener los datos de velocidad necesarios para las animaciones. Además, espera que los prefabs de modelos 3D asignados en la lista `Prefabs` contengan el componente `MeshAnimation` para poder controlar sus apariencias y animaciones.
-- **Eventos (Entrada):**
-    - El script `PlayerAnimation` no se suscribe directamente a eventos de Unity (`UnityEvent`) ni a delegados (`Action`) de otros scripts para recibir notificaciones. Sin embargo, su método público `UpdateSpiece` está diseñado para ser invocado externamente por otros sistemas del juego (por ejemplo, un sistema de selección de personaje o un evento de transformación) para cambiar la especie del animal en tiempo real.
-- **Eventos (Salida):**
-    - Este script no expone ni invoca ningún evento propio (`UnityEvent` o `Action`) para notificar a otros sistemas sobre cambios en su estado o acciones realizadas. Toda su interacción se limita a leer datos de su `NavMeshAgent` y manipular las propiedades y métodos de su `MeshAnimation` asociado.
+## Métodos de Unity
+
+### Start
+**Explicación completa del funcionamiento del método:**
+El método `Start` se ejecuta una única vez cuando el script se inicializa. Su propósito es configurar la apariencia inicial del personaje del jugador.
+
+1.  **Instanciación del Prefab:** Utiliza la variable `SpieceEnum` (configurada en el Inspector de Unity) para determinar qué prefab de animal de la lista `Prefabs` debe instanciarse. La conversión `(int)SpieceEnum` asume que el orden de los prefabs en la lista coincide con el orden de los valores en el enumerado `SpieceEnum`. El nuevo `GameObject` se instancia en la posición y rotación del objeto al que está adjunto `PlayerAnimation`.
+    ```csharp
+    GameObject Children = Instantiate(Prefabs[(int)SpieceEnum], transform.position, transform.rotation);
+    ```
+2.  **Configuración del Modelo:**
+    *   Establece la escala local del nuevo modelo a `MeshScale` (`new Vector3(0.5f, 0.5f, 0.5f)`), reduciendo su tamaño a la mitad.
+    *   Asigna el objeto actual (`this.transform`) como padre del nuevo modelo (`Children.transform.parent = transform;`), convirtiéndolo en un objeto hijo.
+    *   Ajusta la posición local del modelo a `MeshPosition` (`new Vector3(0, -1, 0)`), moviéndolo hacia abajo para que quede a nivel del suelo o para ajustarse al pivote del modelo.
+    ```csharp
+    Children.transform.localScale = MeshScale;
+    Children.transform.parent = transform;
+    Children.transform.localPosition = MeshPosition;
+    ```
+3.  **Obtención y Configuración de Animación:**
+    *   Recupera el componente `MeshAnimation` del modelo hijo recién instanciado y lo almacena en la variable privada `MeshAnimate`. Este componente se espera que maneje las animaciones específicas del modelo 3D.
+    *   Llama al método `SetSkin(0)` del `MeshAnimation` para inicializar el modelo con su primera 'skin' o variación visual, sugiriendo que `MeshAnimation` puede manejar múltiples texturas o materiales para un mismo modelo.
+    ```csharp
+    MeshAnimate = Children.GetComponent<MeshAnimation>();
+    MeshAnimate.SetSkin(0);
+    ```
+
+### Update
+**Explicación completa del funcionamiento del método:**
+El método `Update` se ejecuta en cada fotograma del juego. Su responsabilidad es mantener la animación del animal sincronizada con el movimiento del personaje.
+
+1.  **Verificación de Nulidad:** Primero, comprueba si la referencia a `MeshAnimate` es nula. Esto es una medida de seguridad para evitar errores si, por alguna razón, el componente `MeshAnimation` no se encontró en el prefab o el prefab no se cargó correctamente. Si `MeshAnimate` es nulo, el método retorna, deteniendo la ejecución posterior en este fotograma.
+    ```csharp
+    if (MeshAnimate == null) return;
+    ```
+2.  **Cálculo de Relación de Velocidad:**
+    *   Calcula una `SpeedRatio` (relación de velocidad) dividiendo la magnitud de la velocidad actual del `NavMeshAgent` (`Agent.velocity.magnitude`) por su velocidad máxima configurada (`Agent.speed`). Este valor normalizado (típicamente entre 0 y 1) indica qué tan rápido se está moviendo el `NavMeshAgent` en relación con su velocidad máxima potencial.
+    *   Convierte este valor flotante a una cadena de texto para pasarlo al sistema de animación.
+    ```csharp
+    string SpeedRatio = (Agent.velocity.magnitude / Agent.speed).ToString();
+    ```
+3.  **Actualización de Animación:** Llama al método `UpdateAnimation` del componente `MeshAnimate`, pasándole la clave `"Speed"` y la `SpeedRatio` calculada como una cadena. Esto indica que el componente `MeshAnimation` utiliza un sistema de animación basado en parámetros de cadena, donde `"Speed"` probablemente controla la transición entre animaciones como "Idle" (cuando la velocidad es baja) y "Run" (cuando la velocidad es alta).
+    ```csharp
+    MeshAnimate.UpdateAnimation("Speed", SpeedRatio);
+    ```
+
+## Otros métodos
+
+### UpdateSpiece(SpieceEnum Spiece)
+**Tipado:** `void UpdateSpiece(SpieceEnum Spiece)`
+**Explicación completa del funcionamiento del método:**
+Este método permite cambiar la especie del animal del jugador de forma dinámica durante la ejecución del juego, por ejemplo, como parte de una habilidad activada por una carta o una mecánica de juego que requiere la transformación del personaje.
+
+1.  **Verificación de Especie Actual:** Comprueba si la especie (`Spiece`) que se intenta establecer ya es la especie actual (`SpieceEnum`). Si son iguales, el método retorna para evitar recrear el mismo modelo y realizar operaciones innecesarias, optimizando el rendimiento.
+    ```csharp
+    if (Spiece == SpieceEnum) return;
+    ```
+2.  **Actualización de Especie e Instanciación:**
+    *   Actualiza la variable privada `SpieceEnum` a la nueva especie proporcionada.
+    *   Instancia un **nuevo** prefab del animal correspondiente a la nueva `SpieceEnum` de la lista `Prefabs`, de manera similar a cómo se hace en el método `Start`. Este nuevo objeto aparecerá en la posición y rotación del objeto `PlayerAnimation`.
+    *   Asigna el objeto `PlayerAnimation` como padre del nuevo modelo (`Children.transform.parent = transform;`).
+    ```csharp
+    SpieceEnum = Spiece;
+    GameObject Children = Instantiate(Prefabs[(int)SpieceEnum], transform.position, transform.rotation);
+    Children.transform.parent = transform;
+    ```
+3.  **Actualización de Componente de Animación:**
+    *   Recupera el componente `MeshAnimation` del **nuevo** modelo hijo instanciado y actualiza la referencia `MeshAnimate` para que apunte a este nuevo componente. Esto asegura que las actualizaciones de animación futuras (realizadas en `Update`) se apliquen al modelo de la nueva especie.
+    ```csharp
+    MeshAnimate = Children.GetComponent<MeshAnimation>();
+    ```
+<br>
+> [!NOTE]
+> Es importante notar que este método **no destruye explícitamente el prefab del animal previamente instanciado**. Esto implica que el sistema que invoca a `UpdateSpiece` (o el propio componente `MeshAnimation`) debería encargarse de la limpieza del modelo antiguo para evitar la acumulación de objetos en la escena, o bien, esta es una simplificación aceptada para agilizar el desarrollo, en línea con la filosofía de desarrollo del proyecto enfocada en la experiencia de desarrollo rápida.
+
+## Getters y Setters
+No hay getters o setters explícitos (propiedades) definidos en este script. La modificación de la especie se realiza a través del método `UpdateSpiece`.

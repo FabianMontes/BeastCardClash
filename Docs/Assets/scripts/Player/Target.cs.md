@@ -1,60 +1,77 @@
-# `Target.cs`
+# Target
+Este script `Target.cs` es un componente de MonoBehaviour diseñado para controlar la posición de un GameObject en la escena de Unity, sirviendo como un "selector" o "marcador" que el jugador puede manipular. Ofrece dos modos de interacción distintos para el movimiento del objeto, seleccionables a través de una variable booleana, permitiendo adaptarse a diferentes contextos de juego:
 
-## 1. Propósito General
-Este script `Target` es un componente de `MonoBehaviour` que controla el movimiento de un objeto en el entorno 3D del juego. Su función principal es permitir al jugador mover el objeto utilizando dos esquemas de control distintos: ya sea mediante el teclado (WASD o flechas) relativo a la cámara, o teletransportándolo instantáneamente a la posición de un clic del ratón en el mundo.
+1.  **Movimiento por Teclado (WASD/Flechas):** El objeto se mueve continuamente en el plano horizontal según la dirección de las teclas de entrada (WASD o flechas), tomando como referencia la orientación de una cámara designada. La velocidad de movimiento es ajustable.
+2.  **Movimiento por Clic de Ratón:** El objeto se posiciona instantáneamente en el punto del mundo detectado por un raycast lanzado desde la cámara principal hacia la posición del clic izquierdo del ratón. Esto es útil para la selección precisa de puntos en el entorno.
 
-## 2. Componentes Clave
+La flexibilidad en los modos de control sugiere que este componente podría utilizarse para diversas funciones dentro de *Beast Card Clash*, como la selección de casillas en un tablero, el marcado de un objetivo para una habilidad de carta, o el control de un cursor interactivo en un entorno 3D. El diseño prioriza la experiencia del desarrollador al permitir una fácil configuración de las opciones de control directamente desde el Inspector de Unity.
 
-### `Target`
-- **Descripción:** La clase `Target` es un script que se adjunta a un `GameObject` en Unity y le otorga la capacidad de ser controlado por el usuario. Implementa lógica para procesar la entrada del jugador, ya sea de teclado o ratón, y traduce esa entrada en movimientos para el objeto.
-- **Variables Públicas / Serializadas:**
-    Este script expone varias variables serializadas que permiten configurar su comportamiento directamente desde el Inspector de Unity:
-    *   `[SerializeField] Transform playerCamera;`: Una referencia al `Transform` de la cámara del jugador. Esta es crucial para el modo de movimiento por teclado, ya que permite que el movimiento del objeto sea relativo a la orientación actual de la cámara (por ejemplo, "adelante" para el objeto significará "adelante" desde la perspectiva de la cámara). Se evita el nombre "Camera" para prevenir conflictos.
-    *   `[SerializeField] float speed = 10f;`: Un valor flotante que determina la velocidad de movimiento del objeto cuando se utiliza el modo de control por teclado. Un valor más alto resultará en un movimiento más rápido.
-    *   `[SerializeField] bool useArrows = true;`: Una bandera booleana que define el modo de control activo. Si es `true`, el objeto se moverá mediante las entradas del teclado (flechas o WASD). Si se establece en `false`, el objeto se moverá al punto donde el jugador haga clic con el ratón en el entorno.
+# Métodos
 
-- **Métodos Principales:**
-    *   `void Start()`: Este método es parte del ciclo de vida de Unity y se invoca una vez al inicio del script, antes de la primera actualización de frame. Actualmente, no contiene ninguna lógica, lo que indica que no hay inicializaciones específicas o configuraciones únicas requeridas al inicio para este componente.
+## Métodos de Unity
 
-    *   `void Update()`: Este es el método central que se ejecuta en cada frame del juego y contiene la lógica principal para el movimiento del objeto. Decide qué tipo de movimiento aplicar basándose en el valor de la variable `useArrows`.
-        ```csharp
-        void Update()
-        {
-            if (useArrows)
-            {
-                // Lógica de movimiento por teclado/WASD
-            }
-            else
-            {
-                // Lógica de movimiento por clic de ratón
-            }
-        }
-        ```
-        Si `useArrows` es `true`, calcula la dirección de entrada del teclado utilizando el método `GetInputDirection()` y actualiza la posición del `Transform` del objeto sumándole este vector de dirección, multiplicado por la `speed` y `Time.deltaTime` para asegurar un movimiento suave e independiente de la tasa de frames.
-        Si `useArrows` es `false`, el script espera un clic izquierdo del ratón (`Input.GetMouseButtonDown(0)`). Al detectar un clic, lanza un rayo (`Ray`) desde la posición del cursor en la pantalla hasta el mundo 3D (`Camera.main.ScreenPointToRay`). Si este rayo colisiona con algún `Collider` en la escena (`Physics.Raycast`), el objeto `Target` se teletransporta instantáneamente a la posición del punto de impacto de esa colisión.
+### Update
+El método `Update` se ejecuta una vez por cada frame del juego y es el encargado de gestionar la lógica de movimiento del GameObject al que está adjunto el script, según el modo de entrada configurado.
 
-    *   `Vector3 GetInputDirection()`: Este es un método auxiliar privado que se encarga de procesar las entradas del teclado para determinar la dirección de movimiento deseada. Devuelve un vector `Vector3` que representa la dirección.
-        ```csharp
-        Vector3 GetInputDirection()
-        {
-            Vector3 dir = Vector3.zero;
-            // Comprobaciones de teclas (UpArrow/W, LeftArrow/A, DownArrow/S, RightArrow/D)
-            // ...
-            dir.y = 0; // Se fija en horizontal
-            return dir.normalized; // Se normaliza
-        }
-        ```
-        Inicializa un vector de dirección a cero y luego lo modifica sumando vectores basados en las teclas de flecha o WASD presionadas. Estas direcciones se calculan relativas a la dirección `forward` y `right` de la `playerCamera`. Un aspecto importante de este método es que fuerza el componente `y` del vector de dirección a cero, lo que garantiza que el movimiento siempre se produzca en el plano horizontal (XY, asumiendo Y es arriba) y evita el movimiento vertical. Finalmente, normaliza el vector de dirección para asegurar que la magnitud del vector sea 1, lo cual es crucial para mantener una velocidad constante independientemente de si se presionan una o varias teclas simultáneamente.
+```csharp
+void Update()
+{
+    // Cambiar el modo de movimiento segun el modo elegido
+    // true = flechas o WASD, false = mouse
+    if (useArrows)
+    {
+        // ... lógica de movimiento por teclado ...
+    }
+    else
+    {
+        // ... lógica de movimiento por ratón ...
+    }
+}
+```
 
-- **Lógica Clave:** La lógica principal del script se bifurca en el método `Update` según el valor de `useArrows`, implementando dos modos de control de movimiento distintos. El modo de teclado (`useArrows = true`) calcula la dirección deseada utilizando `GetInputDirection()`, que ajusta el movimiento a la perspectiva de la cámara y lo normaliza para una velocidad consistente. El modo de ratón (`useArrows = false`) utiliza raycasting para determinar el punto de impacto de un clic en el mundo y reubica el objeto a esa posición, permitiendo una forma de teletransporte.
+La lógica principal dentro de `Update` es un condicional que evalúa el valor de la variable booleana `useArrows`:
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]` para forzar la presencia de otros componentes en el mismo `GameObject`. Sin embargo, para su correcto funcionamiento:
-    *   En el modo de movimiento por teclado, la variable `playerCamera` debe estar asignada a un `Transform` válido de una cámara en la escena para que el movimiento sea relativo a la perspectiva de esta.
-    *   En el modo de movimiento por ratón, es necesario que exista una `Camera` con la etiqueta "MainCamera" en la escena para que `Camera.main` pueda obtener la cámara de juego. Además, para que el raycast detecte colisiones y permita el teletransporte, los objetos en el entorno con los que se pretende interactuar deben tener componentes `Collider` adjuntos.
-- **Eventos (Entrada):**
-    El script escucha las entradas del usuario a través de la clase `Input` de Unity. Esto incluye:
-    *   Presiones de teclas (flechas y WASD) mediante `Input.GetKey()` para controlar el movimiento direccional.
-    *   Clics del botón izquierdo del ratón mediante `Input.GetMouseButtonDown(0)` para activar la teletransportación por clic.
-- **Eventos (Salida):**
-    Este script no invoca explícitamente ningún `UnityEvent` o `Action` personalizado para notificar a otros sistemas del juego sobre su estado o acciones. Su efecto principal es modificar directamente la posición del `GameObject` al que está adjunto.
+*   **Si `useArrows` es `true` (Movimiento por Teclado):**
+    *   El script llama al método `GetInputDirection()` para obtener un vector de dirección basado en las teclas presionadas por el jugador.
+    *   Este vector se multiplica por la variable `speed` (velocidad de movimiento) y `Time.deltaTime` (para asegurar un movimiento fluido e independiente del framerate).
+    *   El resultado se añade a la posición actual del `transform` del GameObject (`transform.position += ...`), provocando que se mueva continuamente.
+
+*   **Si `useArrows` es `false` (Movimiento por Clic de Ratón):**
+    *   El script detecta si se ha presionado el botón izquierdo del ratón (`Input.GetMouseButtonDown(0)`).
+    *   Si se ha hecho clic, se crea un rayo (`Ray`) desde la cámara principal del juego (`Camera.main`) hacia la posición actual del ratón en la pantalla (`Input.mousePosition`).
+    *   Se realiza una detección de colisiones (`Physics.Raycast`) con este rayo. Si el rayo impacta con cualquier objeto en la escena, la posición del GameObject se actualiza instantáneamente para coincidir con el punto exacto del impacto (`hit.point`). Esto permite al jugador "teletransportar" el objeto a la ubicación deseada con un simple clic.
+
+## Otros métodos
+
+### Vector3 GetInputDirection()
+Este método es responsable de procesar la entrada del teclado y calcular la dirección de movimiento para el GameObject cuando el modo `useArrows` está activado.
+
+```csharp
+Vector3 GetInputDirection()
+{
+    Vector3 dir = Vector3.zero;
+
+    if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) dir += playerCamera.forward;
+    if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) dir -= playerCamera.right;
+    if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) dir -= playerCamera.forward;
+    if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) dir += playerCamera.right;
+
+    dir.y = 0;
+    return dir.normalized;
+}
+```
+
+El funcionamiento detallado es el siguiente:
+
+1.  **Inicialización:** Se declara un vector `dir` inicializado a `Vector3.zero`. Este vector acumulará la dirección total de la entrada del jugador.
+2.  **Detección de Teclas:** Se verifica si se están presionando las teclas de flecha (Arriba, Abajo, Izquierda, Derecha) o sus equivalentes WASD.
+    *   `Input.GetKey()` se utiliza en lugar de un `switch` para permitir que múltiples teclas se presionen simultáneamente (por ejemplo, "W" y "A" para movimiento diagonal), lo cual es una elección común para una experiencia de movimiento fluida.
+    *   Las direcciones de movimiento (`playerCamera.forward` y `playerCamera.right`) se toman de la `playerCamera` asignada en el Inspector. Esto asegura que el movimiento sea relativo a la orientación de la cámara, es decir, "adelante" siempre será la dirección a la que apunta la cámara, "izquierda" su izquierda, y así sucesivamente. Esta flexibilidad es útil para sistemas de cámara dinámicos.
+3.  **Restricción Vertical:** La componente `y` del vector `dir` se establece a `0` (`dir.y = 0;`). Esto asegura que el movimiento del GameObject sea puramente horizontal en el plano XZ, evitando cualquier elevación o descenso vertical no deseado.
+4.  **Normalización:** Finalmente, el vector `dir` se normaliza (`return dir.normalized;`). Normalizar el vector garantiza que la magnitud de la dirección sea siempre 1, lo que significa que la velocidad del GameObject será consistente, independientemente de si se presiona una o varias teclas (evitando un aumento de velocidad al moverse en diagonal, por ejemplo).
+
+## Getters y Setters
+
+1.  `Transform playerCamera`: Establece una referencia a un componente `Transform` que representa la cámara del jugador. Esta cámara se utiliza para determinar las direcciones "adelante" y "derecha" relativas para el movimiento por teclado y para generar los rayos de detección de clics. La nota "No puede llamarse Camera por solapamiento" es una consideración importante para los desarrolladores, indicando un posible conflicto de nombres si se intentara usar un nombre genérico.
+2.  `float speed`: Establece la velocidad a la que el GameObject se mueve cuando está activo el modo de control por teclado (WASD/Flechas). Este valor es un multiplicador aplicado a la dirección de entrada.
+3.  `bool useArrows`: Controla el modo de entrada que el script utilizará para mover el GameObject. Si es `true`, el movimiento se gestionará mediante las teclas WASD o las flechas del teclado. Si es `false`, el movimiento se realizará mediante clics de ratón, teletransportando el objeto al punto de impacto del raycast.

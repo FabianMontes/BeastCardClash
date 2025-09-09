@@ -1,62 +1,121 @@
-# `dice.cs`
+# Dice
+Este script, `Dice`, gestiona el comportamiento de un dado virtual en el juego. Su función principal es simular el lanzamiento de un dado, asignarle un valor aleatorio, y controlar su visualización mediante rotaciones. Actúa como un componente interactivo que los jugadores pueden "lanzar" haciendo clic, y se integra estrechamente con el sistema de combate principal del juego, `CombatJudge`, para determinar cuándo se puede lanzar el dado y notificar el resultado.
 
-## 1. Propósito General
-El script `dice.cs` gestiona el comportamiento y la representación visual de un dado interactivo en el juego. Su función principal es permitir al jugador "lanzar" un dado digital, mostrar su valor actual y comunicar el resultado final del lanzamiento al sistema de juicio de combate (`Combatjudge`).
+Durante su estado de "lanzamiento", el dado actualiza constantemente su valor y rotación en cada frame, creando una animación de giro hasta que se detiene, momento en el que su valor final queda establecido y es comunicado al sistema de combate. Este diseño permite una experiencia de interacción fluida donde el dado responde a las acciones del jugador dentro del contexto del turno de combate.
 
-## 2. Componentes Clave
+# Métodos
 
-### `dice`
-- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, controla la lógica y la interfaz de usuario de un dado individual dentro del entorno de Unity. Se encarga de la visualización del valor del dado, la simulación de su "lanzamiento" (mediante un cambio rápido de valores) y la interacción del usuario a través del ratón.
+## Métodos de Unity
 
-- **Variables Internas Clave:**
-    - `int value`: Almacena el valor numérico actual que muestra el dado. Este valor se actualiza constantemente mientras el dado está "rodando" y representa el resultado final una vez que se detiene.
-    - `int maxValue`: Define el valor máximo posible que este dado puede alcanzar en un lanzamiento. Se inicializa al inicio del juego a partir de la configuración global de los dados del sistema de combate.
-    - `TextMeshPro texter`: Una referencia al componente `TextMeshPro` que se encuentra como hijo del GameObject del dado. Este componente es utilizado para mostrar visualmente el `value` actual del dado.
-    - `bool roling`: Un indicador booleano que determina si el dado está actualmente en estado de "lanzamiento". Cuando es `true`, el dado cambia rápidamente su `value` a números aleatorios, simulando un rodar.
+### Awake, Start, Update
+El script no implementa `Awake`.
 
-- **Métodos Principales:**
-    - `void Start()`: Se llama una vez al inicio, justo antes de la primera actualización del frame. Este método inicializa `maxValue` obteniendo el valor máximo de los dados del `Combatjudge.combatjudge`, establece el estado `roling` en `false` (el dado no está rodando inicialmente) y obtiene la referencia al componente `TextMeshPro` para la visualización.
-        ```csharp
-        void Start()
-        {
-            maxValue = Combatjudge.combatjudge.maxDice;
-            roling = false;
-            texter = GetComponentInChildren<TextMeshPro>();
-        }
-        ```
-    - `void Update()`: Se invoca en cada frame del juego. Si `roling` es `true`, actualiza continuamente `value` a un número aleatorio entre 1 y `maxValue`. Independientemente del estado de `roling`, este método siempre actualiza el texto del componente `TextMeshPro` para mostrar el `value` actual.
-        ```csharp
-        void Update()
-        {
-            if (roling)
-            {
-                value = Random.Range(1, maxValue + 1);
-            }
-            texter.text = value.ToString();
-        }
-        ```
-    - `void OnMouseDown()`: Un método de callback de Unity que se dispara cuando el botón del ratón se presiona mientras el puntero está sobre el collider del GameObject al que está adjunto este script. Si las condiciones actuales del juego (determinadas por `Combatjudge.combatjudge`) permiten seleccionar un dado para el lanzamiento y el turno está enfocado correctamente, este método establece `roling` a `true`, iniciando el proceso de "lanzamiento" visual del dado.
-        ```csharp
-        private void OnMouseDown()
-        {
-            if (Combatjudge.combatjudge.GetSetMoments() == SetMoments.PickDice && Combatjudge.combatjudge.FocusONTurn())
-            {
-                roling = true;
-            }
-        }
-        ```
-    - `void OnMouseExit()`: Otro método de callback de Unity que se invoca cuando el puntero del ratón sale del collider del GameObject. Si el dado estaba actualmente "rodando" (`roling` es `true`), este método detiene el lanzamiento (`roling = false`) y notifica al sistema de combate (`Combatjudge.combatjudge`) del valor final del dado.
-    - `void OnMouseUp()`: Similar a `OnMouseExit()`, este callback de Unity se dispara cuando el botón del ratón se suelta mientras el puntero está sobre el collider del GameObject. Si el dado estaba "rodando", detiene el lanzamiento y comunica el valor final al sistema de combate. Esto asegura que el lanzamiento se finalice tanto si el ratón se arrastra fuera del dado como si se suelta directamente sobre él.
+### Start
+Este método se ejecuta una única vez cuando el script se inicializa, al cargar el GameObject al que está adjunto. Su propósito es configurar los valores iniciales del dado:
 
-- **Lógica Clave:**
-    La lógica central del dado se basa en una máquina de estados simple controlada por la variable `roling`. Cuando `roling` es `true` (activado por `OnMouseDown` bajo condiciones específicas del juego), el método `Update` simula un lanzamiento continuo cambiando el valor mostrado rápidamente. El lanzamiento se detiene (`roling` se establece en `false`) y el valor final se comunica al sistema de combate (`Combatjudge`) cuando el ratón sale del collider del dado (`OnMouseExit`) o cuando el botón del ratón se suelta (`OnMouseUp`). Este diseño permite una interacción intuitiva donde el usuario puede arrastrar el ratón para "lanzar" el dado y el valor se "fija" al soltar el clic o arrastrar fuera.
+-   **`_maxValue`**: Se asigna el valor máximo posible que el dado puede obtener, recuperándolo del singleton `CombatJudge.CombatJudgeInstance.maxDice`. Esto asegura que el dado se configure según las reglas del combate definidas centralmente.
+-   **`_rolling`**: Se inicializa a `false`, indicando que el dado no está en proceso de lanzamiento al inicio del juego.
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    Este script requiere la presencia de un componente `Collider` (como un `BoxCollider` o `SphereCollider`) en el mismo GameObject para detectar las interacciones del ratón (`OnMouseDown`, `OnMouseExit`, `OnMouseUp`). También espera encontrar un componente `TextMeshPro` como hijo de su GameObject para la visualización del número.
+```csharp
+void Start()
+{
+    _maxValue = CombatJudge.CombatJudgeInstance.maxDice;
+    _rolling = false;
+}
+```
 
-- **Eventos (Entrada):**
-    El script `dice` se suscribe implícitamente a los eventos de entrada del ratón de Unity (`OnMouseDown`, `OnMouseExit`, `OnMouseUp`) para gestionar la interacción del usuario con el dado.
+### Update
+Se llama una vez por frame. Este método es el responsable de la lógica de "lanzamiento" visual y la asignación constante de valores aleatorios mientras el dado está en estado de giro (`_rolling` es `true`).
 
-- **Eventos (Salida):**
-    Este script no invoca explícitamente eventos (`UnityEvent`, `Action`) definidos dentro de sí mismo. Sin embargo, actúa como un emisor de información al interactuar directamente con el singleton `Combatjudge.combatjudge`, llamando al método `Roled(value)` para notificar el resultado de un lanzamiento de dado. Esta interacción es crucial para que el sistema de combate procese los resultados del lanzamiento.
+1.  **Verificación de estado**: Si `_rolling` es `false`, el método retorna inmediatamente, ahorrando recursos al no realizar cálculos innecesarios.
+2.  **Notificación de inicio de lanzamiento**: Llama a `CombatJudge.CombatJudgeInstance.StartRolling()`. Esto informa al sistema de combate que el dado está actualmente en proceso de giro, lo que podría usarse para actualizar la UI o el estado del juego global.
+3.  **Asignación de valor aleatorio**: `Value` se establece en un número entero aleatorio entre 1 y `_maxValue` (inclusive). **Importante**: esta asignación ocurre en cada frame mientras el dado gira, lo que contribuye al efecto visual de un dado girando rápidamente por diferentes caras.
+4.  **Rotación visual del dado**: Se ajusta la rotación del GameObject (`transform.rotation`) para mostrar la cara correspondiente al valor actual de `Value`. Se utiliza una rotación base `(0, 45, 0)` y luego se modifican los ángulos en `x` o `z` mediante una estructura `switch` para orientar el dado correctamente, simulando que cada cara tiene un número específico.
+
+```csharp
+void Update()
+{
+    if (!_rolling) return;
+    
+    CombatJudge.CombatJudgeInstance.StartRolling();
+    Value = Random.Range(1, _maxValue + 1);
+    
+    // ... (cálculo de rotación según Value) ...
+    transform.rotation = Quaternion.Euler(vector3);
+}
+```
+
+### OnMouseDown
+Este método se invoca cuando el usuario presiona el botón del ratón mientras el puntero está sobre el collider del GameObject al que está adjunto el script.
+
+-   Primero, verifica si `CombatJudge.CombatJudgeInstance.FocusOnTurn()` es `true`. Esto asegura que el jugador solo pueda interactuar con el dado cuando sea su turno o el momento apropiado del juego, según lo determine el `CombatJudge`.
+-   Si la condición se cumple, se llama al método `Roll()` para iniciar el lanzamiento del dado.
+
+```csharp
+void OnMouseDown()
+{
+    if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Roll();
+}
+```
+
+### OnMouseExit
+Se invoca cuando el puntero del ratón deja de estar sobre el collider del GameObject.
+
+-   Similar a `OnMouseDown`, verifica `CombatJudge.CombatJudgeInstance.FocusOnTurn()`.
+-   Si la condición se cumple, se llama al método `Unroll()` para detener el lanzamiento del dado. Este comportamiento sugiere una posible interacción donde el jugador podría "flickear" o mover el ratón rápidamente fuera del dado para detener su giro, o simplemente soltarlo fuera del área del dado.
+
+```csharp
+void OnMouseExit()
+{
+    if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Unroll();
+}
+```
+
+### OnMouseUp
+Este método se invoca cuando el usuario suelta el botón del ratón mientras el puntero está sobre el collider del GameObject.
+
+-   Al igual que `OnMouseDown` y `OnMouseExit`, verifica `CombatJudge.CombatJudgeInstance.FocusOnTurn()`.
+-   Si la condición se cumple, se llama al método `Unroll()`. Este es un mecanismo común para finalizar una interacción de "mantener presionado y soltar", deteniendo el lanzamiento del dado cuando el jugador "suelta" el dado virtual.
+
+```csharp
+void OnMouseUp()
+{
+    if (CombatJudge.CombatJudgeInstance.FocusOnTurn()) Unroll();
+}
+```
+
+## Otros métodos
+
+### public void Roll()
+Este método público inicia el proceso de lanzamiento del dado.
+
+-   Verifica si el momento actual del juego, obtenido de `CombatJudge.CombatJudgeInstance.GetSetMoments()`, es igual a `SetMoments.PickDice`. Esta condición asegura que el dado solo puede ser lanzado durante una fase específica del juego donde se espera que el jugador elija un dado, previniendo lanzamientos en momentos inapropiados.
+-   Si la condición se cumple, establece la variable `_rolling` a `true`, lo que activa la lógica de giro continuo en el método `Update()`.
+
+```csharp
+public void Roll()
+{
+    if (CombatJudge.CombatJudgeInstance.GetSetMoments() == SetMoments.PickDice) _rolling = true;
+}
+```
+
+### public void Unroll()
+Este método público detiene el proceso de lanzamiento del dado.
+
+-   Primero, verifica si `_rolling` es `false`. Si ya lo es, significa que el dado no estaba girando o ya se detuvo, por lo que el método retorna para evitar acciones redundantes.
+-   Si el dado estaba girando, establece `_rolling` a `false`, lo que detiene la lógica de giro en el método `Update()`.
+-   Finalmente, llama a `CombatJudge.CombatJudgeInstance.Rolled()`. Esta notificación al `CombatJudge` es crucial, ya que le informa al sistema de combate que el dado ha terminado de girar y su valor final está listo para ser utilizado en la lógica del juego.
+
+```csharp
+public void Unroll()
+{
+    if (!_rolling) return;
+    
+    _rolling = false;
+    CombatJudge.CombatJudgeInstance.Rolled();
+}
+```
+
+## Getters y Setters
+
+1.  **Value: `int`**: Proporciona el valor entero actual del dado después de haber sido "lanzado". Este es el resultado numérico del giro del dado y es de solo lectura desde fuera del script.

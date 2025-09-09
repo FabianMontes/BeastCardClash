@@ -1,29 +1,74 @@
-# `FolowerText.cs`
+# FolowerText
+El script `FolowerText` es un componente `MonoBehaviour` diseñado para actualizar dinámicamente el texto de un componente `TextMeshProUGUI` en función de la información obtenida de un componente `Figther` (luchador) ubicado en un objeto padre. Su función principal es mostrar en la interfaz de usuario detalles específicos del "luchador", como su especie, su cantidad de "vida" (live) o su nombre, adaptándose a los requisitos del juego Beast Card Clash para visualizar los atributos de los personajes en las cartas o en el campo de juego.
 
-## 1. Propósito General
-Este script gestiona la visualización dinámica de texto en un componente `TextMeshProUGUI`. Su rol principal es mostrar información específica, como el nombre de la especie o los puntos de vida de un `Figther` (luchador), asegurando que el texto se actualice cuando los datos subyacentes cambian. Interactúa principalmente con los sistemas de UI (`TextMeshProUGUI`) y de lógica de juego (`Figther`).
+El script permite configurar, a través del Inspector de Unity, qué tipo de información del `Figther` debe seguir el texto. Una vez inicializado, obtiene la información y la muestra. Para el caso específico de la "vida" (live), el texto se actualiza continuamente, reflejando cualquier cambio en el valor de la vida del luchador en tiempo real.
 
-## 2. Componentes Clave
+# Métodos
 
-### `enum TypeFollow`
--   **Descripción:** Este enumerado define las dos categorías de información que el script `FolowerText` puede rastrear y mostrar. Es un mecanismo de configuración que permite especificar si el texto debe seguir la especie o los puntos de vida del luchador.
--   **Valores:**
-    -   `species`: Indica que el texto debe mostrar el nombre de la especie del `Figther`.
-    -   `live`: Indica que el texto debe mostrar los puntos de vida actuales del `Figther`.
+## Métodos de Unity
 
-### `class FolowerText : MonoBehaviour`
--   **Descripción:** `FolowerText` es un script de Unity que, al adjuntarse a un GameObject que también contiene un componente `TextMeshProUGUI`, se encarga de mostrar información de un `Figther` encontrado en un GameObject padre. Permite que elementos de la interfaz de usuario reflejen de manera reactiva datos clave del juego.
--   **Variables Públicas / Serializadas:**
-    -   `[SerializeField] TypeFollow typeFollow`: Una variable serializada que aparece en el Inspector de Unity. Su valor determina qué dato específico (especie o vida) del `Figther` el script debe obtener y mostrar. Permite al diseñador o desarrollador configurar fácilmente el comportamiento de cada instancia de texto.
--   **Métodos Principales:**
-    -   `void Start()`:
-        -   **Descripción:** Este método del ciclo de vida de Unity se llama una vez al inicio, después de que el objeto es instanciado y habilitado. Su función es inicializar las referencias necesarias y establecer el texto inicial.
-        -   **Lógica Clave:** Primero, obtiene una referencia al componente `TextMeshProUGUI` adjunto al mismo GameObject. Luego, busca un componente `Figther` en el árbol de jerarquía de los GameObjects padres (`GetComponentInParent<Figther>()`). Si encuentra un `Figther`, utiliza la configuración de `typeFollow` para determinar si debe mostrar el nombre de la especie (`player.GetSpecie().ToString()`) o los puntos de vida iniciales (`player.GetPlayerLive().ToString()`). Finalmente, actualiza el texto del componente `TextMeshProUGUI` con el valor obtenido.
-    -   `void Update()`:
-        -   **Descripción:** Este método del ciclo de vida de Unity se invoca una vez por cada frame del juego. Su propósito es mantener el texto actualizado en tiempo real si el `FolowerText` está configurado para mostrar los puntos de vida.
-        -   **Lógica Clave:** Contiene una lógica condicional sencilla: solo si `typeFollow` está configurado en `TypeFollow.live`, el texto del `TextMeshProUGUI` se actualizará con los puntos de vida actuales del `Figther` (`player.GetPlayerLive().ToString()`). Esto garantiza que el medidor de vida del jugador se refleje dinámicamente en la UI sin afectar el rendimiento con actualizaciones innecesarias para otros tipos de texto (como el de especie, que no cambia).
+### Start
+El método `Start` se ejecuta una única vez al inicio del ciclo de vida del script, después de que todos los objetos han sido instanciados y se han establecido las referencias iniciales. Su propósito es la inicialización del componente `FolowerText`.
 
-## 3. Dependencias y Eventos
--   **Componentes Requeridos:** Aunque no se utiliza el atributo `[RequireComponent]`, este script asume la existencia de un `TextMeshProUGUI` en el mismo GameObject y un componente `Figther` en uno de sus GameObjects padres para funcionar correctamente. Sin estos componentes, el script no podrá inicializar sus referencias y la funcionalidad de visualización de texto no operará.
--   **Eventos (Entrada):** Este script no se suscribe explícitamente a eventos personalizados (como `UnityEvent` o `Action`). Su funcionamiento se basa enteramente en los métodos de ciclo de vida de Unity (`Start`, `Update`).
--   **Eventos (Salida):** El script `FolowerText` no invoca ningún evento ni notifica a otros sistemas. Su función es puramente de visualización; no emite señales ni dispara acciones en otras partes del juego.
+1.  **Obtención del `TextMeshProUGUI`:**
+    Se recupera el componente `TextMeshProUGUI` adjunto al mismo `GameObject` donde reside `FolowerText`. Este es el componente visual de texto que el script controlará.
+
+    ```csharp
+    textMeshPro = GetComponent<TextMeshProUGUI>();
+    ```
+
+2.  **Búsqueda del `Figther` padre:**
+    El script busca un componente `Figther` en los `GameObject`s ascendentes (padres) de la jerarquía. Esto establece la conexión con el "luchador" del cual se obtendrá la información.
+
+    ```csharp
+    player = GetComponentInParent<Figther>();
+    ```
+
+3.  **Configuración inicial del texto:**
+    Si se encuentra un componente `Figther` padre, se procede a establecer el texto inicial basándose en el valor de la variable `typeFollow`, que se configura en el Inspector de Unity.
+
+    ```csharp
+    if (player != null)
+    {
+        switch (typeFollow)
+        {
+            case TypeFollow.species:
+                text = player.GetSpecie().ToString();
+                break;
+            case TypeFollow.live:
+                text = player.GetPlayerLive().ToString();
+                break;
+            case TypeFollow.name:
+                text = player.figtherName;
+                break;
+        }
+        textMeshPro.text = text;
+    }
+    ```
+    -   Si `typeFollow` es `species`, el texto mostrará la especie del luchador, obtenida a través de `player.GetSpecie()`.
+    -   Si `typeFollow` es `live`, el texto mostrará la vida actual del luchador, obtenida a través de `player.GetPlayerLive()`.
+    -   Si `typeFollow` es `name`, el texto mostrará el nombre del luchador, obtenido directamente de `player.figtherName`.
+
+### Update
+El método `Update` se invoca una vez por cada fotograma del juego. Su función principal en este script es garantizar que el texto que muestra la "vida" del luchador se mantenga siempre actualizado.
+
+1.  **Actualización condicional de la vida:**
+    Solo si `typeFollow` está configurado como `TypeFollow.live`, el texto del `TextMeshProUGUI` se actualiza con el valor actual de la vida del `Figther` padre. Esto asegura que cualquier cambio en la vida del luchador se refleje instantáneamente en la interfaz de usuario.
+
+    ```csharp
+    if (typeFollow == TypeFollow.live)
+    {
+        textMeshPro.text = player.GetPlayerLive().ToString();
+    }
+    ```
+    Para otros tipos de seguimiento (especie o nombre), no es necesaria una actualización constante, ya que se asume que estos valores no cambian durante el juego o se establecen una única vez al inicio.
+
+## Otros métodos
+El script `FolowerText` no define métodos adicionales propios fuera de los métodos del ciclo de vida de Unity. Su lógica se encapsula completamente en `Start` y `Update`.
+
+## Getters y Setters
+Este script interactúa con el componente `Figther` para obtener datos. A continuación, se detallan los métodos y propiedades que `FolowerText` utiliza del componente `Figther` para su funcionamiento:
+
+1.  `Figther.GetSpecie()`: Obtiene la especie del `Figther`.
+2.  `Figther.GetPlayerLive()`: Obtiene el valor actual de la "vida" (puntos de salud o vitalidad) del `Figther`.
+3.  `Figther.figtherName`: Accede al nombre del `Figther`.
