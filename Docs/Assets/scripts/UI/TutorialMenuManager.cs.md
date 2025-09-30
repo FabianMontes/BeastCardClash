@@ -1,56 +1,143 @@
-# `TutorialMenuManager.cs`
+# TutorialMenuManager
+El script `TutorialMenuManager` es el componente central encargado de gestionar la interfaz de usuario del menú de tutorial en "Beast Card Clash". Su función principal es controlar la visibilidad y el avance a través de las diferentes páginas del tutorial, las cuales están disponibles en español e inglés.
 
-## 1. Propósito General
-Este script es responsable de gestionar la interfaz de usuario del menú de tutorial dentro del juego Beast Card Clash. Coordina la visualización de diferentes paneles de tutorial basados en el idioma seleccionado por el jugador y maneja la navegación entre estas páginas del tutorial, así como la transición a la siguiente escena del juego.
+Este script interactúa directamente con el componente `GameState` del proyecto para determinar el idioma actual del juego y, en base a ello, activa y desactiva los paneles de tutorial correspondientes. Proporciona métodos públicos para navegar secuencialmente entre los paneles (`Panel1`, `Panel2`, `Panel3`) y para saltarse el tutorial, cargando la escena de selección de _skins_ (`SkinSelector`).
 
-## 2. Componentes Clave
+La implementación actual prioriza la funcionalidad y la experiencia de desarrollo, como se evidencia en la nota `TODO` para una futura refactorización de la lógica de activación/desactivación de paneles. Esto permite que los desarrolladores puedan seguir iterando rápidamente sin comprometer la entrega de una buena experiencia de usuario inicial.
 
-### `CurrentPanel` (Enum)
-`CurrentPanel` es una enumeración simple que define los estados posibles del panel de tutorial actualmente visible. Se utiliza para rastrear qué página del tutorial se está mostrando en un momento dado y para controlar la lógica de navegación.
+# Métodos
+
+## Métodos de Unity
+
+### Start
+`void Start()`
+Este método se invoca una vez al inicio del ciclo de vida del script. Su propósito es configurar el estado inicial del menú de tutorial. Primero, llama a `InitializePanels()` para asegurar que solo los paneles del idioma activo estén disponibles y que todos los paneles individuales estén inicialmente desactivados. Posteriormente, invoca a `ShowPanel1()` para mostrar la primera página del tutorial, garantizando que el jugador siempre comience desde el principio en el idioma correcto.
 
 ```csharp
-public enum CurrentPanel
+void Start()
 {
-    Panel1, Panel2, Panel3
+    // Desactiva la rama de páneles correspondientes al idioma no usado
+    // Y al iniciar, mostramos solo el primer panel
+    InitializePanels();
+    ShowPanel1();
 }
 ```
 
-### `TutorialMenuManager` (Clase)
-La clase `TutorialMenuManager` es un `MonoBehaviour` que orquesta la lógica del menú de tutorial. Se adjunta a un objeto de juego en la escena del menú de tutorial y gestiona los elementos de la UI para presentar las instrucciones del juego.
+## Otros métodos
 
-*   **Variables Públicas / Serializadas:**
-    *   `esPanels` (GameObject): Un `GameObject` padre que agrupa todos los paneles de tutorial en español. Se utiliza para activar o desactivar rápidamente la rama completa de paneles en español.
-    *   `panel1Es`, `panel2Es`, `panel3Es` (RawImage): Componentes `RawImage` individuales que representan las diferentes páginas del tutorial cuando el idioma es español. Solo uno de estos debe estar activo a la vez.
-    *   `enPanels` (GameObject): Similar a `esPanels`, pero para los paneles de tutorial en inglés.
-    *   `panel1En`, `panel2En`, `panel3En` (RawImage): Componentes `RawImage` individuales para las páginas del tutorial en inglés.
-    *   `gameState` (GameState): Una referencia a un script `GameState`. Este objeto es crucial para determinar el idioma actual del juego (`gameState.CurrentLanguage`) y así mostrar los paneles correctos.
-    *   `NextButton` (Button): El botón de la UI que permite al jugador avanzar a la siguiente página del tutorial o saltar el tutorial por completo al final.
+### InitializePanels
+`void InitializePanels()`
+Este método privado se encarga de preparar la interfaz del tutorial según el idioma seleccionado en el `GameState`. Su lógica se basa en el valor de `gameState.CurrentLanguage` para:
 
-*   **Métodos Principales:**
-    *   `void Start()`: Este método se invoca al inicio de la escena. Su función principal es inicializar el estado de los paneles de tutorial. Primero, llama a `InitializePanels()` para asegurar que solo los paneles del idioma activo estén disponibles, y luego llama a `ShowPanel1()` para mostrar la primera página del tutorial.
+1.  **Activar** el `GameObject` padre que contiene todos los paneles del idioma correspondiente (`esPanels` para español o `enPanels` para inglés).
+2.  **Desactivar** el `GameObject` padre del idioma no utilizado.
+3.  **Desactivar individualmente** todos los paneles (`RawImage`) del idioma activo (es decir, `panel1Es`, `panel2Es`, `panel3Es` si es español, o sus equivalentes en inglés). Esto asegura que al inicio, ninguna página individual esté visible hasta que `ShowPanel1()` sea llamado explícitamente, evitando así superposiciones o estados inconsistentes en la UI.
 
-    *   `void InitializePanels()`: Este método se encarga de preparar la UI de los tutoriales según el idioma seleccionado. Basándose en `gameState.CurrentLanguage`, activa el `GameObject` padre (`esPanels` o `enPanels`) correspondiente al idioma activo y desactiva el del idioma opuesto. Además, se asegura de que todos los paneles individuales dentro de la rama activa estén inicialmente desactivados, para que solo `ShowPanel1()` los active explícitamente.
+```csharp
+void InitializePanels()
+{
+    if (gameState.CurrentLanguage == Languages.spanish)
+    {
+        esPanels.gameObject.SetActive(true);
+        enPanels.gameObject.SetActive(false);
+        // Desactiva los paneles individuales de la rama activa
+        panel1Es.gameObject.SetActive(false);
+        panel2Es.gameObject.SetActive(false);
+        panel3Es.gameObject.SetActive(false);
+    }
+    else if (gameState.CurrentLanguage == Languages.english)
+    {
+        enPanels.gameObject.SetActive(true);
+        esPanels.gameObject.SetActive(false);
+        // Desactiva los paneles individuales de la rama activa
+        panel1En.gameObject.SetActive(false);
+        panel2En.gameObject.SetActive(false);
+        panel3En.gameObject.SetActive(false);
+    }
+}
+```
 
-    *   `public void ShowPanel1()`, `public void ShowPanel2()`, `public void ShowPanel3()`: Estos métodos son responsables de cambiar la página del tutorial visible. Cada método activa su panel correspondiente (por ejemplo, `panel1Es` o `panel1En`) y desactiva los otros dos paneles del mismo idioma. Después de activar el panel, actualizan la variable `CurrentPanel` para reflejar la página actualmente mostrada. Estos métodos están diseñados para ser asignados directamente a la interacción de botones o para ser llamados por la lógica de navegación.
+[!NOTE]
+El script incluye un `TODO` en la línea 12 (`// TODO: refactorizar este código, en las funciones de activación y desactivación del paneles`). Esto indica una mejora planificada para simplificar la lógica de gestión de paneles, aunque el código funciona correctamente en su estado actual. Se recomienda tenerlo en cuenta para futuras iteraciones del proyecto, buscando patrones más limpios o modularizados para el manejo de la activación/desactivación de elementos de UI.
 
-    *   `public void OnClick()`: Este método está diseñado para ser invocado por el evento `OnClick()` del `NextButton`. Contiene una estructura `switch` que evalúa el valor de `CurrentPanel`. Si el panel actual es `Panel1`, llama a `ShowPanel2()`; si es `Panel2`, llama a `ShowPanel3()`. Cuando el jugador está en `Panel3` (la última página del tutorial), este método invoca `SkipButton()`, lo que significa que el botón "Siguiente" se convierte en un botón de "Saltar" el tutorial al llegar al final.
+### ShowPanel1
+`public void ShowPanel1()`
+Este método público es responsable de mostrar la primera página del tutorial. Evalúa el idioma actual del juego a través de `gameState.CurrentLanguage` y, según sea español o inglés, realiza lo siguiente:
 
-    *   `public void SkipButton()`: Este método carga la escena "SkinSelector". Está separado para permitir su uso directo (por ejemplo, desde un botón "Saltar Tutorial" dedicado) o como parte de la lógica de navegación del botón "Siguiente" cuando se llega al final del tutorial.
+1.  Activa el `RawImage` correspondiente al `Panel1` (ej. `panel1Es` para español, `panel1En` para inglés).
+2.  Desactiva los `RawImage` de los `Panel2` y `Panel3` para el mismo idioma, asegurando que solo el primer panel sea visible.
+3.  Actualiza la variable interna `CurrentPanel` a `CurrentPanel.Panel1`, registrando la página actual del tutorial.
 
-*   **Lógica Clave:**
-    La lógica principal de este script reside en la gestión del estado bilingüe de los paneles y la navegación secuencial.
-    1.  **Inicialización de Idioma:** Al inicio, `InitializePanels` determina qué conjunto de paneles (español o inglés) debe estar activo basándose en el estado del juego. Esto garantiza que solo los recursos de UI necesarios para el idioma actual se procesen y se muestren.
-    2.  **Paginación del Tutorial:** Los métodos `ShowPanelX` (donde X es 1, 2 o 3) implementan una máquina de estados simple para la visualización de los paneles. Cada método asegura que solo una `RawImage` de tutorial esté activa para el idioma actual, desactivando las demás.
-    3.  **Navegación del Botón Siguiente:** El método `OnClick` utiliza un `switch` para dirigir el flujo del tutorial. En los primeros dos paneles, el botón "Siguiente" avanza a la siguiente página. Una vez en el último panel (`Panel3`), el mismo botón cambia su función implícitamente para cargar la siguiente escena del juego (`SkinSelector`), simulando un "saltar" el tutorial una vez completado.
+Este método puede ser invocado programáticamente (como en `Start()`) o asignado a un botón en la interfaz de usuario para permitir la navegación directa a la primera página.
 
-    La implementación de la activación/desactivación de paneles en `ShowPanel1`, `ShowPanel2`, `ShowPanel3` y `InitializePanels` se repite para cada idioma, lo que sugiere el `TODO` en el código para una posible refactorización que la haga más genérica y DRY (Don't Repeat Yourself).
+```csharp
+public void ShowPanel1()
+{
+    // Español
+    if (gameState.CurrentLanguage == Languages.spanish)
+    {
+        panel1Es.gameObject.SetActive(true);
+        panel2Es.gameObject.SetActive(false);
+        panel3Es.gameObject.SetActive(false);
+    }
+    // Inglés
+    else
+    {
+        panel1En.gameObject.SetActive(true);
+        panel2En.gameObject.SetActive(false);
+        panel3En.gameObject.SetActive(false);
+    }
+    CurrentPanel = CurrentPanel.Panel1;
+}
+```
 
-## 3. Dependencias y Eventos
+### ShowPanel2
+`public void ShowPanel2()`
+Similar a `ShowPanel1()`, este método muestra la segunda página del tutorial. Activa el `RawImage` del `Panel2` (ej. `panel2Es` o `panel2En`) y desactiva los otros dos paneles del mismo idioma. Actualiza la variable `CurrentPanel` a `CurrentPanel.Panel2`. Está diseñado para ser llamado como parte de la secuencia de navegación del tutorial.
 
-*   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, espera que los `GameObject`s asignados a sus variables serializadas tengan componentes `RawImage` o `Button` según corresponda, y que exista una instancia de `GameState` en la escena.
+### ShowPanel3
+`public void ShowPanel3()`
+Este método muestra la tercera y última página del tutorial. Activa el `RawImage` del `Panel3` (ej. `panel3Es` o `panel3En`) y desactiva los otros dos paneles del mismo idioma. Actualiza la variable `CurrentPanel` a `CurrentPanel.Panel3`. Una línea de código comentada (`NextButton.gameObject.SetActive(false);`) sugiere una posible futura funcionalidad para ocultar el botón "Siguiente" una vez que se llega a la última página, indicando el final del recorrido del tutorial.
 
-*   **Eventos (Entrada):**
-    *   Este script se suscribe implícitamente al evento `onClick` del `NextButton` a través de la asignación directa en el Inspector de Unity del método `OnClick()`. Cuando el `NextButton` es clickeado, `OnClick()` es invocado.
+### OnClick
+`public void OnClick()`
+Este método público es el principal controlador de la navegación secuencial a través de los paneles del tutorial. Está diseñado para ser invocado por el botón "Siguiente" (`NextButton`) en la interfaz de usuario. Utiliza una estructura `switch` basada en el valor de la variable `CurrentPanel` para determinar la acción a seguir:
 
-*   **Eventos (Salida):**
-    *   Este script no invoca ningún evento (`UnityEvent` o `Action`) para notificar a otros sistemas. Su interacción con otras partes del juego se limita a cargar una nueva escena (`SceneManager.LoadScene`) y consultar el estado del juego a través del objeto `gameState`.
+*   Si `CurrentPanel` es `Panel1`, llama a `ShowPanel2()` para avanzar a la siguiente página.
+*   Si `CurrentPanel` es `Panel2`, llama a `ShowPanel3()` para avanzar a la última página.
+*   Si `CurrentPanel` es `Panel3` (la última página), invoca a `SkipButton()`. Esto significa que, al llegar al final del tutorial, el botón "Siguiente" se transforma funcionalmente en un botón para finalizar el tutorial y pasar a la siguiente fase del juego.
+
+```csharp
+public void OnClick()
+{
+    switch (CurrentPanel)
+    {
+        case CurrentPanel.Panel1:
+            ShowPanel2();
+            break;
+        case CurrentPanel.Panel2:
+            ShowPanel3();
+            break;
+        case CurrentPanel.Panel3:
+            // Cuando llegamos al último panel, el botón hace la misma función de saltar
+            SkipButton();
+            break;
+        default:
+            break;
+    }
+}
+```
+
+### SkipButton
+`public void SkipButton()`
+Este método público tiene como única responsabilidad cargar la escena de Unity con el nombre "SkinSelector". Actúa como un punto de salida del tutorial, permitiendo a los jugadores omitir el resto de las explicaciones o finalizar el tutorial una vez que han llegado al final. Puede ser invocado por un botón "Saltar" dedicado en la UI o, como se ve en `OnClick()`, por el botón "Siguiente" cuando se encuentra en la última página del tutorial. La carga de la escena "SkinSelector" sugiere que el siguiente paso para el jugador es la personalización de su experiencia de juego (posiblemente de personajes o cartas) antes de entrar en la jugabilidad principal de "Beast Card Clash".
+
+```csharp
+public void SkipButton()
+{
+    SceneManager.LoadScene("SkinSelector");
+}
+```
+
+## Getters y Setters
+El script `TutorialMenuManager` no define explícitamente propiedades públicas con métodos `get` y `set` para exponer o modificar directamente sus campos privados. Los datos de configuración (`esPanels`, `panel1Es`, `enPanels`, etc., `gameState`, `NextButton`) se establecen a través del Inspector de Unity como campos `[SerializeField]`. La variable `CurrentPanel` es un campo privado que se gestiona y modifica internamente por los métodos `ShowPanel1()`, `ShowPanel2()` y `ShowPanel3()` para mantener el estado actual del tutorial.

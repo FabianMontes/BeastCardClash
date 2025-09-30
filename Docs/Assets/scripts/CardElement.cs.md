@@ -1,49 +1,56 @@
-# `CardElement.cs`
+# CardElement
+`CardElement` es un componente `MonoBehaviour` fundamental en la interfaz de usuario de **Beast Card Clash**, un juego de cartas de estrategia por turnos. Su función principal es **visualizar el elemento asociado a una carta** que se está mostrando en la mano del jugador. En el contexto del juego, donde la "estrategia elemental" es un pilar, este script se encarga de que el ícono correcto del elemento (Tierra, Agua, Fuego, etc.) se muestre dinámicamente en el lugar correspondiente de la carta en la UI.
 
-## 1. Propósito General
-Este script `CardElement` es responsable de visualizar el elemento elemental de una carta dentro del juego Beast Card Clash. Se encarga de mostrar el ícono correspondiente al tipo de elemento de la carta, asegurando que el visual se actualice dinámicamente según la carta asignada a su componente `HandCard` padre.
+Este script espera ser un componente en un GameObject que sea hijo de otro GameObject que contenga el script `HandCard`. Además, el GameObject donde reside `CardElement` debe tener un componente `Image` adjunto, el cual será utilizado para mostrar el sprite del elemento. La asignación de los sprites de los elementos se realiza a través del Inspector de Unity mediante el array `elements`.
 
-## 2. Componentes Clave
+El funcionamiento de `CardElement` es reactivo: cada fotograma, verifica si existe una carta válida asociada al componente `HandCard` de su padre. Si la hay, actualiza la imagen para mostrar el ícono del elemento de esa carta; si no hay carta, la imagen se deshabilita, haciéndola invisible.
 
-### `CardElement`
-- **Descripción:** La clase `CardElement` es un `MonoBehaviour` que se adjunta a un objeto de juego en la jerarquía de Unity. Su función principal es controlar la visualización del ícono elemental de una carta, obteniendo la información de la carta desde un componente `HandCard` ubicado en su padre o un ancestro.
+# Métodos
 
-- **Variables Públicas / Serializadas:**
-    - `private Sprite[] elements`: Un array de `Sprite` que almacena los diferentes íconos visuales para cada tipo de elemento del juego (e.g., agua, fuego, tierra). Estos sprites se configuran directamente desde el Inspector de Unity.
-    - `HandCard card`: Una referencia al componente `HandCard` que se encuentra en un objeto de juego padre. Este `HandCard` es crucial, ya que provee la instancia de la carta actual y, por ende, su tipo de elemento.
-    - `Image image`: Una referencia al componente `Image` que reside en el mismo objeto de juego donde está adjunto este script `CardElement`. Es el componente visual que mostrará el ícono del elemento.
+## Métodos de Unity
 
-- **Métodos Principales:**
-    - `void Start()`: Este método se ejecuta una vez al inicio del ciclo de vida del script. Su propósito es inicializar las referencias a otros componentes necesarios.
-        - Se obtiene una referencia al componente `HandCard` buscando en los padres del objeto de juego actual. Esto asume que el `CardElement` es un hijo de un objeto que contiene el `HandCard`.
-        - Se obtiene una referencia al componente `Image` que se encuentra en el mismo objeto de juego que `CardElement`.
+### Start
+Este método se invoca una única vez al inicio del ciclo de vida del script, antes del primer fotograma. Su propósito es inicializar las referencias a los componentes necesarios para el correcto funcionamiento de `CardElement`.
 
-        ```csharp
-        card = GetComponentInParent<HandCard>();
-        image = transform.GetComponent<Image>();
-        ```
+```csharp
+void Start()
+{
+    // Inicializa la carta y su imagen
+    card = GetComponentInParent<HandCard>();
+    image = transform.GetComponent<Image>();
+}
+```
 
-    - `void Update()`: Este método se llama una vez por cada frame. Su lógica principal es mantener actualizada la visualización del ícono del elemento de la carta.
-        - Primero, verifica si la `HandCard` tiene una carta asignada (`card.GetCard() == null`). Si no hay una carta, el componente `Image` se deshabilita (`image.enabled = false`) para ocultar cualquier ícono previo y la ejecución del método termina.
-        - Si hay una carta, el componente `Image` se habilita (`image.enabled = true`), y su `sprite` se actualiza. El sprite se selecciona del array `elements` utilizando el valor del elemento de la carta (`card.GetCard().GetElement()`) como índice, el cual se convierte a un entero. Esto implica que los valores de los elementos (probablemente un `enum`) corresponden directamente a los índices de los sprites en el array.
+1.  **Obtención de `HandCard`**: Busca y almacena una referencia al componente `HandCard` en el GameObject padre. Esto es crucial ya que `CardElement` no contiene directamente los datos de la carta, sino que los obtiene a través de su componente `HandCard` ascendente en la jerarquía.
+2.  **Obtención de `Image`**: Busca y almacena una referencia al componente `Image` adjunto al mismo GameObject que `CardElement`. Este componente será el encargado de mostrar el sprite del elemento de la carta en la interfaz de usuario.
 
-        ```csharp
-        if (card.GetCard() == null)
-        {
-            image.enabled = false;
-            return;
-        }
+### Update
+Este método se invoca una vez por cada fotograma del juego. Su responsabilidad principal es mantener la imagen del elemento actualizada, asegurándose de que refleje el elemento de la carta actual o se oculte si no hay ninguna carta presente.
 
-        image.enabled = true;
-        image.sprite = elements[(int)card.GetCard().GetElement()];
-        ```
+```csharp
+void Update()
+{
+    // Si no hay carta, deshabilita la imagen
+    if (card.GetCard() == null)
+    {
+        image.enabled = false;
+        return;
+    }
 
-- **Lógica Clave:**
-    La lógica central del script reside en el método `Update`, que actúa como un bucle de renderizado para el elemento de la carta. Constantemente verifica el estado de la `HandCard` a la que está asociada. Si la `HandCard` no contiene una carta activa (por ejemplo, cuando no hay una carta en la mano del jugador), el ícono del elemento se oculta. Por el contrario, si hay una carta presente, el script recupera su tipo de elemento y lo utiliza para seleccionar el sprite de ícono correcto de su colección predefinida, asegurando que la representación visual sea siempre coherente con los datos de la carta.
+    // Si hay carta, habilita la imagen y establece el ícono correspondiente
+    image.enabled = true;
+    image.sprite = elements[(int)card.GetCard().GetElement()];
+}
+```
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que un componente `Image` esté presente en el mismo GameObject para poder visualizar el ícono del elemento. Adicionalmente, requiere que un componente `HandCard` esté presente en un GameObject padre para poder obtener la información de la carta.
+El flujo de `Update` es el siguiente:
 
-- **Eventos (Entrada):** Este script no se suscribe explícitamente a ningún evento de Unity (`UnityEvent`) o C# (`Action`). Su actualización se basa en el ciclo de vida de `MonoBehaviour` a través del método `Update`, que se ejecuta continuamente.
+1.  **Verificación de la carta**: Primero, comprueba si la referencia a la carta obtenida a través de `card.GetCard()` es `null`.
+    *   Si es `null`, significa que no hay una carta asignada o disponible. En este caso, la imagen del elemento (`image`) se deshabilita (`image.enabled = false`), volviéndose invisible, y el método `Update` termina su ejecución para este fotograma.
+2.  **Actualización del sprite**: Si la referencia a la carta *no* es `null`:
+    *   La imagen del elemento se habilita (`image.enabled = true`), asegurándose de que sea visible.
+    *   El sprite de la imagen (`image.sprite`) se actualiza. Para ello, utiliza el array `elements` (que se configura en el Inspector con los íconos de los elementos). El índice del sprite se determina convirtiendo el valor del elemento de la carta a un entero. Esto implica que `card.GetCard().GetElement()` devuelve un valor (probablemente un `enum`) que puede ser directamente casteado a un `int` para usarse como índice en el array `elements`.
+    > [!NOTE]
+    > La forma en que `card.GetCard().GetElement()` se mapea a los índices del array `elements` es crítica y debe ser consistente. Se asume que el `enum` de elementos (o su equivalente) en el script `Card` tiene un orden que coincide con el orden de los sprites definidos en el array `elements` en el Inspector.
 
-- **Eventos (Salida):** El script `CardElement` no invoca ningún evento para notificar a otros sistemas o scripts sobre cambios en su estado o en la carta que está visualizando. Su rol es puramente de visualización y reacción a la información que obtiene de la `HandCard` padre.
+---

@@ -1,38 +1,72 @@
-# `cardborder.cs`
+# cardborder
+Este script, `cardborder`, es un componente fundamental para la representación visual de las cartas en la mano del jugador dentro de **Beast Card Clash**. Su función principal es gestionar dinámicamente el color del borde de una carta, adaptándolo según su elemento y su estado de interactividad. Se adjunta a un GameObject que contiene un componente `Image`, el cual es el encargado de mostrar visualmente este borde.
 
-## 1. Propósito General
-El script `cardborder` gestiona la apariencia visual del borde de una carta en el juego, específicamente su color y visibilidad. Su función principal es adaptar el color del borde de una carta basándose en su elemento y en su estado de interactividad (si es clicable o no), trabajando en conjunto con el componente `HandCard` de la carta.
+El script interactúa directamente con el componente `HandCard` de su padre, obteniendo información crucial sobre la carta actual (`Card`) que se encuentra en esa posición de la mano. Basándose en el elemento de la carta (`GetElement()`) y si es clicable (`isClickable()`) o es un `picker` (selector), `cardborder` ajusta el color del borde. Si una carta no es clicable y no es un `picker`, su borde se oscurece para proporcionar una clara retroalimentación visual al jugador sobre su estado interactivo.
 
-## 2. Componentes Clave
+> [!NOTE]
+> Actualmente, la clase `cardborder` no sigue la convención de nomenclatura PascalCase para clases en C#. Se recomienda renombrarla a `CardBorder` en una futura refactorización para adherirse a las buenas prácticas.
 
-### `cardborder` (Clase `MonoBehaviour`)
--   **Descripción:** Esta clase es un `MonoBehaviour`, lo que significa que debe adjuntarse a un GameObject en Unity. Su rol es renderizar visualmente el borde de una carta, ajustando su color según el tipo elemental de la carta y atenuándolo si la carta no está interactuable. Es probable que este script esté en un GameObject hijo del que contiene el script `HandCard`, ya que busca el `HandCard` en un componente padre.
--   **Variables Públicas / Serializadas:**
-    -   `Color[] colors`: Un array de objetos `Color`. Cada índice de este array se corresponde con un tipo elemental de carta (obtenido del método `GetElement()` de la carta) y se usa para establecer el color base del borde. Estas colores son configurables directamente en el Inspector de Unity.
-    -   `float darkValue`: Un valor flotante que determina la luminosidad a la que se reduce el color del borde cuando la carta no es interactuable. Un valor más bajo resultará en un color más oscuro. También se configura en el Inspector.
--   **Métodos Principales:**
-    -   `void Start()`: Este es un método del ciclo de vida de Unity, llamado una vez al inicio del ciclo de vida del script.
-        -   Inicializa las referencias a los componentes `HandCard` y `Image`.
-        -   Obtiene la referencia al script `HandCard` buscando un componente de ese tipo en los GameObjects padres (`GetComponentInParent<HandCard>()`).
-        -   Obtiene la referencia al componente `Image` adjunto al mismo GameObject donde reside este script (`transform.GetComponent<Image>()`). Este `Image` es el elemento visual que representa el borde de la carta.
-    -   `void Update()`: Este es un método del ciclo de vida de Unity, llamado una vez por cada frame.
-        -   Es responsable de actualizar continuamente el estado visual del borde.
-        -   Comprueba si la carta asociada (`card.GetCard()`) es `null`. Si no hay carta, el borde se deshabilita (`image.enabled = false;`) y la función termina, ocultando el borde.
-        -   Si hay una carta, el color base del borde se selecciona del array `colors` utilizando el elemento de la carta como índice. Por ejemplo, si `card.GetCard().GetElement()` devuelve `0`, se usará `colors[0]`.
-        -   El borde se habilita (`image.enabled = true;`) para asegurar su visibilidad.
-        -   Se aplica una lógica para oscurecer el borde:
-            -   Si la carta *no* es clicable (`!card.isClickable()`) Y *no* es un "picker" (`!card.picker`), el color del borde se modifica.
-            -   La modificación se realiza convirtiendo el color actual a su representación HSV (Tono, Saturación, Valor/Luminosidad), ajustando el valor de Luminosidad (`v`) al `darkValue` configurado, y luego convirtiéndolo de nuevo a RGB. Esto crea un efecto de atenuación.
-        -   Finalmente, el color resultante (original o atenuado) se asigna a la propiedad `color` del componente `Image` (`image.color = color;`).
--   **Lógica Clave:**
-    La lógica principal reside en el método `Update`, que se ejecuta constantemente para mantener el borde sincronizado con el estado de la carta. La detección de si la carta está presente (`card.GetCard() == null`) es crucial para alternar la visibilidad del borde. La atenuación del color, basada en los métodos `isClickable()` y la propiedad `picker` de la `HandCard`, utiliza una conversión de color RGB a HSV y viceversa para modificar solo la luminosidad, manteniendo el tono y la saturación originales, lo que proporciona una indicación visual clara de interactividad.
+# Métodos
 
-## 3. Dependencias y Eventos
--   **Componentes Requeridos:**
-    -   Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere:
-        -   Un componente `Image` en el mismo GameObject para modificar su apariencia visual.
-        -   Un script `HandCard` en un GameObject padre para obtener la información de la carta y su estado de interactividad.
--   **Eventos (Entrada):**
-    -   Este script no se suscribe explícitamente a ningún evento de Unity o C# (`UnityEvent`, `Action`). En su lugar, obtiene el estado de la carta directamente a través de llamadas a métodos (`GetCard()`, `GetElement()`, `isClickable()`) y la lectura de propiedades (`picker`) del objeto `HandCard` en cada `Update`.
--   **Eventos (Salida):**
-    -   Este script no invoca ningún evento de Unity o C# para notificar a otros sistemas. Su efecto se limita a modificar las propiedades visuales de un componente `Image` adjunto.
+## Métodos de Unity
+
+### Start
+Este método se invoca una vez en el ciclo de vida del script, justo antes de la primera actualización del frame. Su propósito principal es inicializar las referencias a los componentes necesarios para el funcionamiento del script.
+
+```csharp
+void Start()
+{
+    card = GetComponentInParent<HandCard>();
+    image = transform.GetComponent<Image>();
+}
+```
+
+*   **`card = GetComponentInParent<HandCard>();`**: Obtiene una referencia al componente `HandCard` que se encuentra en un GameObject padre. Esto es crucial ya que `cardborder` necesita interactuar con la lógica de la carta padre para determinar su estado y propiedades.
+*   **`image = transform.GetComponent<Image>();`**: Obtiene una referencia al componente `Image` adjunto al mismo GameObject que el script `cardborder`. Este componente `Image` será el encargado de visualizar el borde de la carta, y el script modificará su color.
+    > [!TODO]
+    > Se recomienda cambiar `transform.GetComponent<Image>()` por la versión abreviada `GetComponent<Image>()` para mayor claridad y eficiencia, ya que busca el componente en el propio GameObject.
+
+### Update
+Este método se invoca una vez por cada frame del juego. Es donde reside la lógica principal para actualizar el color del borde de la carta en tiempo real, respondiendo a los cambios en el estado de la carta.
+
+```csharp
+void Update()
+{
+    // Si no hay carta, deshabilita la imagen
+    if (card.GetCard() == null)
+    {
+        image.enabled = false;
+        return;
+    }
+
+    // Si hubo carta, establece su color y habilita la imagen
+    Color color = colors[(int)card.GetCard().GetElement()];
+    image.enabled = true;
+
+    // ... lógica de oscurecimiento ...
+
+    // Establece el color de la imagen
+    image.color = color;
+}
+```
+
+El método `Update` realiza los siguientes pasos en cada frame:
+
+1.  **Verificación de existencia de carta**: Primero, comprueba si el `HandCard` padre contiene una carta (`card.GetCard() == null`).
+    *   Si no hay carta, el componente `Image` del borde se deshabilita (`image.enabled = false`) para que no sea visible, y el método `Update` termina.
+2.  **Establecimiento del color base**: Si hay una carta, el `Image` del borde se habilita (`image.enabled = true`). El color base del borde se obtiene del array `colors` utilizando el elemento de la carta (`card.GetCard().GetElement()`) como índice. Esto permite que cada tipo de elemento (`Element`) tenga un color de borde distintivo.
+3.  **Lógica de oscurecimiento para no interactuables**:
+    ```csharp
+    if (!card.isClickable() && !card.picker)
+    {
+        float h, s, v;
+        Color.RGBToHSV(color, out h, out s, out v); // Convierte a HSV
+        v = darkValue; // Ajusta el valor de luminosidad
+        color = Color.HSVToRGB(h, s, v); // Vuelve a convertir a RGB
+    }
+    ```
+    *   Esta sección verifica si la carta **no es clicable** (`!card.isClickable()`) y **no es un `picker`** (`!card.picker`). Si ambas condiciones son verdaderas, se interpreta que la carta no debe ser interactuable en el estado actual del juego.
+    *   Para reflejar esto visualmente, el color se oscurece. Esto se logra convirtiendo el color actual a su representación HSV (Hue, Saturation, Value), modificando el componente `Value` (luminosidad) al `darkValue` predefinido, y luego convirtiendo el color de nuevo a RGB.
+    > [!TODO]
+    > Se sugiere pasar las variables `h`, `s`, `v` directamente como parámetros a los métodos `Color.RGBToHSV` y `Color.HSVToRGB` para mejorar la legibilidad y posible eficiencia.
+4.  **Aplicación del color final**: Finalmente, el color (ya sea el color base o el oscurecido) se aplica al componente `Image` (`image.color = color`), actualizando el aspecto visual del borde de la carta en el juego.

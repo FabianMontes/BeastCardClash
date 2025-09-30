@@ -1,53 +1,82 @@
-# `StartMenuManager.cs`
+# StartMenuManager
+Este script, `StartMenuManager`, es el encargado de gestionar la interfaz de usuario (UI) del menú de inicio del juego **Beast Card Clash**, centrándose principalmente en la funcionalidad de localización (cambio de idioma). Actúa como un puente entre la configuración global del juego (gestionada por `GameState`), los textos traducidos (gestionados por `MenuTexts`) y los elementos visuales de la UI del menú (botones y etiquetas).
 
-## 1. Propósito General
-Este script gestiona la interfaz de usuario del menú de inicio, específicamente los textos de los botones y etiquetas. Su rol principal es asegurar que estos elementos de la UI se muestren en el idioma correcto, interactuando directamente con los sistemas de gestión de estado del juego y de textos localizados.
+Su función principal es asegurar que los textos de los elementos clave del menú de inicio, como los botones "Inicio" y "Créditos" y la etiqueta de selección de idioma, se muestren correctamente en el idioma seleccionado por el jugador. Permite cambiar el idioma en tiempo de ejecución y actualiza la UI de forma reactiva para reflejar esta selección, contribuyendo a una experiencia de usuario fluida y accesible para una audiencia diversa, en línea con el enfoque cultural y educativo del proyecto.
 
-## 2. Componentes Clave
+El script se apoya en dos Singletons o managers globales: `GameState`, para conocer el idioma actual del juego y para almacenar cualquier cambio de idioma, y `MenuTexts`, un ScriptableObject (o similar) que contiene las cadenas de texto para cada idioma.
 
-### `StartMenuManager`
--   **Descripción:** `StartMenuManager` es una clase que hereda de `MonoBehaviour`, lo que significa que se adjunta a un GameObject en la escena de Unity y ejecuta lógica durante el ciclo de vida del juego. Su función principal es controlar los elementos textuales del menú inicial, como los botones de "Iniciar" y "Créditos", y la etiqueta de selección de idioma, asegurando que sus textos se actualicen según el idioma seleccionado por el usuario o el idioma predefinido del juego.
+# Métodos
 
--   **Variables Públicas / Serializadas:**
-    -   `[SerializeField] private GameState gameState;`: Una referencia al singleton `GameState`. Este objeto es crucial para determinar y almacenar el idioma actual del juego (`CurrentLanguage`). `StartMenuManager` consulta `GameState` para inicializar el idioma al inicio y le notifica cuando el idioma debe cambiar.
-    -   `[SerializeField] private MenuTexts menuTexts;`: Una referencia a un `ScriptableObject` de tipo `MenuTexts`. Este activo contiene todas las cadenas de texto traducidas necesarias para el menú de inicio (ej. textos en español e inglés para los botones). `StartMenuManager` utiliza este objeto para obtener las traducciones correctas.
-    -   `[SerializeField] private TextMeshProUGUI startButtonText;`: Una referencia al componente `TextMeshProUGUI` que muestra el texto del botón de inicio.
-    -   `[SerializeField] private TextMeshProUGUI creditsButtonText;`: Una referencia al componente `TextMeshProProUGUI` que muestra el texto del botón de créditos.
-    -   `[SerializeField] private TextMeshProUGUI languagesLabelText;`: Una referencia al componente `TextMeshProProUGUI` que muestra el texto de la etiqueta de idiomas.
+## Métodos de Unity
 
--   **Métodos Principales:**
-    -   `void Start()`: Este es un método del ciclo de vida de Unity, invocado una vez al comienzo cuando el script está habilitado por primera vez. Su propósito es inicializar los textos de la UI del menú de inicio. Llama a `UpdateUIText` para asegurarse de que los textos se muestren en el `CurrentLanguage` almacenado en `gameState` desde el principio.
-        ```csharp
-        void Start()
-        {
-            if (gameState != null) UpdateUIText(gameState.CurrentLanguage);
-        }
-        ```
-    -   `public void SetLanguage(int languageIndex)`: Este método público se expone para ser llamado por eventos externos, como un botón de la UI. Recibe un `languageIndex` (típicamente 0 para español, 1 para inglés) que se convierte al tipo `Languages` (presumiblemente una enumeración). Luego, actualiza el idioma en el `GameState` y procede a refrescar todos los textos de la UI llamando a `UpdateUIText`.
-        ```csharp
-        public void SetLanguage(int languageIndex)
-        {
-            Languages newLanguage = (Languages)languageIndex;
-            gameState.SetLanguage(newLanguage);
-            UpdateUIText(newLanguage);
-        }
-        ```
-    -   `private void UpdateUIText(Languages language)`: Este método privado es la lógica central para la localización de la UI del menú. Toma un valor del `enum Languages` y, basándose en él, asigna las cadenas de texto correspondientes obtenidas de `menuTexts` a los componentes `TextMeshProUGUI` del menú. Incluye una verificación de seguridad para asegurar que el `menuTexts` esté asignado antes de intentar acceder a sus propiedades.
-        ```csharp
-        private void UpdateUIText(Languages language)
-        {
-            if (menuTexts == null)
-            {
-                Debug.LogError("El asset 'MenuTexts' no está asignado en el StartMenuManager.");
-                return;
-            }
-            // Logic to update texts based on 'language'
-        }
-        ```
+### Start
+Este método se ejecuta una vez al inicio del ciclo de vida del script, cuando el objeto al que está asociado se activa en la escena.
 
--   **Lógica Clave:** La lógica principal del `StartMenuManager` radica en su capacidad para coordinar los cambios de idioma en la interfaz del menú. Al iniciar, carga el idioma guardado. Cuando el usuario interactúa con los controles de idioma, el método `SetLanguage` es invocado, el cual actualiza el estado global del idioma a través de `GameState` y luego dispara una actualización visual de todos los textos del menú usando el método privado `UpdateUIText`. Este método `UpdateUIText` utiliza las cadenas de texto predefinidas en el `ScriptableObject` `MenuTexts` para aplicar la traducción correcta.
+Su propósito en `StartMenuManager` es inicializar los textos de la UI del menú de inicio basándose en el idioma que esté configurado en ese momento en el `GameState` global del juego. Esto asegura que, al cargar el menú de inicio, los elementos de texto se presenten inmediatamente en el idioma correcto, evitando que se muestren en un idioma por defecto incorrecto o con placeholders.
 
-## 3. Dependencias y Eventos
--   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, funcionalmente requiere que los componentes `TextMeshProUGUI` referenciados (`startButtonText`, `creditsButtonText`, `languagesLabelText`) existan en la jerarquía de la escena y estén asignados en el Inspector de Unity.
--   **Eventos (Entrada):** Este script espera ser invocado por eventos de UI. Específicamente, el método público `SetLanguage(int languageIndex)` está diseñado para ser conectado a un `UnityEvent` de botones o dropdowns en el Inspector de Unity (ej. `onClick` de un botón de cambio de idioma).
--   **Eventos (Salida):** `StartMenuManager` no invoca ni emite eventos (como `UnityEvent` o `Action`) para notificar a otros sistemas sobre cambios o acciones realizadas. Su interacción con `GameState` es directa a través de la llamada a `gameState.SetLanguage()`.
+```csharp
+void Start()
+{
+    // Al iniciar, actualizamos el texto con el idioma que ya está guardado en GameState
+    if (gameState != null) UpdateUIText(gameState.CurrentLanguage);
+}
+```
+Como se puede ver en el código, el método realiza una comprobación sencilla para asegurar que la referencia a `gameState` no sea `null` antes de intentar acceder a su propiedad `CurrentLanguage` y llamar a `UpdateUIText`.
+
+## Otros métodos
+
+### SetLanguage (public void SetLanguage(int languageIndex))
+Este método es público y se expone para ser llamado desde otros componentes, típicamente desde elementos de la UI como botones o desplegables de selección de idioma.
+
+Recibe un entero (`languageIndex`) que representa el índice del idioma deseado (por ejemplo, `0` para español, `1` para inglés). Su funcionalidad principal es la siguiente:
+
+1.  **Conversión de Índice a Idioma:** Convierte el `int` recibido a un tipo `Languages` (presumiblemente un `enum` definido en otro lugar del proyecto), lo que permite trabajar con nombres de idiomas más claros y tipado fuerte.
+    ```csharp
+    Languages newLanguage = (Languages)languageIndex;
+    ```
+2.  **Actualización de `GameState`:** Notifica al `gameState` global sobre el cambio de idioma. Esto es crucial porque `gameState` es la fuente de verdad del idioma actual del juego y otros componentes pueden depender de esta información.
+    ```csharp
+    gameState.SetLanguage(newLanguage);
+    ```
+3.  **Actualización Inmediata de UI:** Después de actualizar el estado global, llama inmediatamente al método privado `UpdateUIText` para que los textos de la UI del menú de inicio se refresquen y muestren las cadenas correspondientes al nuevo idioma.
+    ```csharp
+    UpdateUIText(newLanguage);
+    ```
+Este método encapsula la lógica para cambiar el idioma del juego y actualizar la UI de manera consistente.
+
+### UpdateUIText (private void UpdateUIText(Languages language))
+Este es un método auxiliar privado, lo que significa que solo puede ser llamado desde dentro de la clase `StartMenuManager`. Su responsabilidad es aplicar las cadenas de texto traducidas a los componentes de `TextMeshProUGUI` del menú de inicio.
+
+Recibe el idioma deseado como un parámetro `Languages`. El flujo de funcionamiento es el siguiente:
+
+1.  **Validación de Dependencia:** Primero, verifica si el componente `menuTexts` (que contiene las traducciones) ha sido asignado en el Inspector de Unity. Si no lo está, emite un error en la consola para alertar a los desarrolladores y detiene la ejecución del método para evitar errores de `NullReferenceException`.
+    ```csharp
+    if (menuTexts == null)
+    {
+        Debug.LogError("El asset 'MenuTexts' no está asignado en el StartMenuManager.");
+        return;
+    }
+    ```
+2.  **Lógica de Traducción:** Utiliza una estructura condicional (`if-else`) para determinar qué conjunto de textos debe usar:
+    *   Si el `language` es `Languages.spanish`, asigna los textos con sufijo `_es` de `menuTexts` a los respectivos `TextMeshProUGUI` (startButtonText, creditsButtonText, languagesLabelText).
+    *   Si no es español (asumiendo que `Languages.english` es la única otra opción o el idioma por defecto), asigna los textos con sufijo `_en`.
+    ```csharp
+    if (language == Languages.spanish)
+    {
+        startButtonText.text = menuTexts.startButton_es;
+        creditsButtonText.text = menuTexts.creditsButton_es;
+        languagesLabelText.text = menuTexts.languagesLabel_es;
+    }
+    // Inglés
+    else
+    {
+        startButtonText.text = menuTexts.startButton_en;
+        creditsButtonText.text = menuTexts.creditsButton_en;
+        languagesLabelText.text = menuTexts.languagesLabel_en;
+    }
+    ```
+Este método garantiza que los elementos de texto del menú de inicio siempre reflejen el idioma actual de manera correcta y centralizada.
+
+## Getters y Setters
+
+1.  `SetLanguage (void)`: Este método permite establecer el idioma actual del juego a través de un índice numérico, actualizando tanto el estado global (`GameState`) como la interfaz de usuario del menú.

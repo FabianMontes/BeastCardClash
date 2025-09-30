@@ -1,27 +1,40 @@
-# `Player.cs`
+# Player
+Este script, `Player.cs`, es una pieza fundamental para la gestión del movimiento de una entidad controlada por el jugador dentro del entorno del juego. Su función principal es facilitar el desplazamiento autónomo y la navegación de la entidad a través de un `NavMesh`, dirigiéndola continuamente hacia un punto de interés definido por el jugador.
 
-## 1. Propósito General
-Este script gestiona el movimiento principal del jugador dentro del juego. Su rol fundamental es hacer que el GameObject al que está adjunto (que representa al jugador) siga continuamente la posición de un `Transform` objetivo específico, utilizando el sistema de navegación `NavMesh` de Unity.
+El script integra dos componentes clave de Unity: un `Transform` (`target`) que representa el destino deseado por el jugador, y un `NavMeshAgent` que utiliza la información del `target` para calcular y ejecutar la ruta de movimiento, evitando obstáculos de forma inteligente. En cada ciclo de actualización del juego (fotograma), `Player.cs` se asegura de que la entidad asignada siga de cerca la posición actual del `target`, lo que permite un control de movimiento fluido y reactivo.
 
-## 2. Componentes Clave
+# Métodos
 
-### Player
-- **Descripción:** La clase `Player` hereda de `MonoBehaviour`, lo que significa que puede adjuntarse a un GameObject en la jerarquía de Unity. Su función principal es controlar el desplazamiento del jugador, dirigiéndolo automáticamente hacia un punto designado en el mundo del juego.
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] Transform target;`: Un objeto `Transform` que define el punto al que el jugador debe moverse. Esta variable es serializada y visible en el Inspector de Unity, permitiendo asignar el objetivo desde el editor.
-    - `NavMeshAgent agent;`: Una referencia al componente `NavMeshAgent` adjunto al mismo GameObject. `NavMeshAgent` es crucial para permitir que el jugador navegue por el entorno, evitando obstáculos y encontrando el camino.
-- **Métodos Principales:**
-    - `void Start()`: Este método es parte del ciclo de vida de Unity y se ejecuta una vez al inicio del script.
-        - Se encarga de obtener el componente `NavMeshAgent` del GameObject actual utilizando `TryGetComponent<NavMeshAgent>(out agent)`. Esta es una forma segura de obtener el componente, ya que no lanzará un error si el componente no está presente. Si el componente no se encuentra, el script no podrá controlar el movimiento del jugador.
-    - `void Update()`: Este método es parte del ciclo de vida de Unity y se ejecuta en cada frame del juego.
-        - `agent.SetDestination(target.position);`: En cada frame, se actualiza el destino del `NavMeshAgent` a la posición actual del `target`. Esto provoca que el jugador siga de manera continua y fluida el objetivo asignado.
-- **Lógica Clave:**
-    La lógica central del script es bastante directa: al inicio, el script busca un componente `NavMeshAgent` en el GameObject. Luego, en cada fotograma del juego, le indica a ese `NavMeshAgent` que calcule y siga una ruta hacia la posición actual del `Transform` definido como `target`. Esto establece un comportamiento de "seguir al objetivo" para el jugador.
+## Métodos de Unity
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:**
-    Aunque el script no utiliza el atributo `[RequireComponent]`, la funcionalidad del `Player` depende críticamente de la existencia de un componente `NavMeshAgent` en el mismo GameObject. Sin él, el jugador no podrá navegar ni moverse.
-- **Eventos (Entrada):**
-    Este script no se suscribe directamente a eventos personalizados (`UnityEvent` o `Action`). Su funcionamiento se basa en los métodos de ciclo de vida de Unity: `Start` (para inicialización) y `Update` (para la lógica de movimiento constante).
-- **Eventos (Salida):**
-    Este script no invoca ningún evento personalizado para notificar a otros sistemas sobre el estado o acciones del jugador. Se enfoca exclusivamente en la lógica de movimiento.
+### Start
+El método `Start` se ejecuta una única vez al comienzo de la vida del script, antes de la primera actualización del fotograma. Su propósito es inicializar las referencias a los componentes necesarios para el correcto funcionamiento del script.
+
+```csharp
+void Start()
+{
+    TryGetComponent<NavMeshAgent>(out agent);
+}
+```
+
+En esta implementación, `Start` intenta obtener una referencia al componente `NavMeshAgent` que se espera esté adjunto al mismo GameObject donde reside el script `Player`. La referencia obtenida se almacena en la variable privada `agent`. Es crucial que un `NavMeshAgent` esté presente en el GameObject para que el script pueda controlar el movimiento; de lo contrario, la variable `agent` podría ser `null`, lo que resultaría en errores en tiempo de ejecución al intentar interactuar con ella.
+
+### Update
+El método `Update` se invoca en cada fotograma del juego, lo que lo convierte en el lugar ideal para la lógica de movimiento continuo.
+
+```csharp
+void Update()
+{
+    agent.SetDestination(target.position);
+}
+```
+
+Dentro de `Update`, el script instruye al `NavMeshAgent` (`agent`) para que establezca su destino. La posición de destino se obtiene directamente del componente `Transform` asignado a la variable `target` (`target.position`). Esto significa que, mientras el juego se esté ejecutando, la entidad que utiliza este script se moverá constantemente hacia la posición actual del objeto `target`. Este patrón permite que el jugador manipule el `target` (por ejemplo, con un clic en el terreno o mediante un control de interfaz de usuario), y la entidad del `Player` se encargará de seguirlo automáticamente a través del camino generado por el NavMesh.
+
+## Otros métodos
+No hay métodos personalizados definidos en este script más allá de los métodos del ciclo de vida de Unity.
+
+## Getters y Setters
+Este script no define métodos o propiedades públicas explícitas para obtener o establecer valores. Sin embargo, gestiona un parámetro importante que se configura directamente desde el Inspector de Unity para influir en su comportamiento:
+
+1. `target` (Transform): Establece el objeto `Transform` que el `NavMeshAgent` del jugador seguirá como destino. Esta referencia se configura directamente en el Inspector de Unity, permitiendo al desarrollador asignar el punto hacia el cual la entidad controlada por este script se moverá.

@@ -1,21 +1,35 @@
-# `CameraMovement.cs`
+# CameraMovement
+Este script, `CameraMovement`, es un componente de Unity diseñado para gestionar el seguimiento de la cámara principal sobre un objetivo específico en el escenario. Su función principal es asegurar que el objeto `GameObject` al que está adjunto (presumiblemente la cámara del juego) mantenga su posición sincronizada con la posición de un `Transform` objetivo predefinido.
 
-## 1. Propósito General
+La implementación de este comportamiento es directa y sencilla, lo que lo hace ideal para proyectos donde la agilidad en el desarrollo y la claridad del código son prioritarias, como en nuestro proyecto **Beast Card Clash**. Permite a los desarrolladores establecer rápidamente un comportamiento de cámara de "seguir al jugador" sin configuraciones complejas, facilitando así la iteración y el prototipado rápido de las mecánicas de juego.
 
-Este script gestiona el movimiento de la cámara principal del juego, asegurando que siga constantemente la posición de un objeto `Transform` designado, que en este caso es el "jugador". Su rol principal es mantener el enfoque de la vista del juego sobre el personaje controlado por el jugador.
+El script solo requiere que se le asigne el `Transform` del objetivo, que en el contexto de **Beast Card Clash** será la entidad que la cámara debe seguir, como el personaje del jugador o la unidad activa en un turno.
 
-## 2. Componentes Clave
+```csharp
+public class CameraMovement : MonoBehaviour
+{
+    [Header("Player")]
+    [SerializeField] Transform player;
 
-### `CameraMovement`
-- **Descripción:** La clase `CameraMovement` es un componente de Unity que hereda de `MonoBehaviour`. Su función es actualizar la posición del GameObject al que está adjunta (presumiblemente la cámara del juego) para que coincida con la posición de un objeto `Transform` de referencia en cada fotograma. Esto crea un efecto de "cámara sígueme".
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] Transform player;`: Esta variable de tipo `Transform` es el objetivo que la cámara seguirá. Está serializada (`[SerializeField]`) para que pueda ser asignada y configurada directamente desde el Inspector de Unity, permitiendo a los diseñadores o a otros ingenieros especificar fácilmente qué objeto debe seguir la cámara (por ejemplo, el GameObject del personaje principal).
+    void Update()
+    {
+        transform.position = player.position;
+    }
+}
+```
 
-- **Métodos Principales:**
-    - `void Update()`: Este es un método del ciclo de vida de Unity que se invoca una vez por fotograma. Dentro de este método, el script actualiza la propiedad `transform.position` del GameObject al que está adjunto. Al asignar `player.position` a `transform.position`, la cámara se mueve instantáneamente para coincidir con la ubicación actual del GameObject del jugador en el mundo.
+# Métodos
 
-- **Lógica Clave:**
-La lógica central de este script es muy sencilla: en cada fotograma del juego, la posición de la cámara se sincroniza directamente con la posición del objeto `player`. Esto garantiza un seguimiento constante y directo sin suavizado o retrasos, haciendo que la cámara permanezca fijada sobre el jugador en todo momento.
+## Métodos de Unity
+
+### Update
+El método `Update` es parte del ciclo de vida de Unity y se invoca una vez por cada frame del juego. Es el corazón de la lógica de seguimiento de la cámara en este script.
+
+Su funcionamiento es el siguiente:
+1.  En cada frame, `Update` accede a la propiedad `transform` del `GameObject` al que está adjunto este script (`CameraMovement`). Esta propiedad representa el `Transform` de dicho `GameObject` (es decir, la cámara, si el script está en ella).
+2.  Luego, actualiza la `position` de este `Transform` para que sea idéntica a la `position` del `Transform` asignado a la variable `player`.
+
+Esta operación continua asegura que la cámara siempre estará centrada en la misma ubicación que el `GameObject` referenciado como `player`, creando un efecto de seguimiento directo.
 
 ```csharp
 void Update()
@@ -24,7 +38,7 @@ void Update()
 }
 ```
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`, por lo que no impone la necesidad de que el GameObject al que se adjunta tenga componentes específicos adicionales.
-- **Eventos (Entrada):** El script se basa únicamente en el método `Update()` del ciclo de vida de Unity, que es invocado automáticamente por el motor en cada fotograma. No se suscribe a eventos externos ni a entradas específicas del usuario.
-- **Eventos (Salida):** `CameraMovement` no invoca ningún evento (`UnityEvent` o `Action`) para notificar a otros sistemas o componentes sobre cambios en su estado o posición. Su función es puramente reactiva, actualizando su propia posición.
+## Getters y Setters
+Este script no define métodos `getter` o `setter` públicos explícitos. La variable `player` es un campo serializado que se expone directamente en el Inspector de Unity para su asignación.
+
+1.  `player` (Transform): Es un campo `SerializeField` que permite asignar el `Transform` del objeto que la cámara debe seguir directamente desde el Inspector de Unity. Esto elimina la necesidad de `getters` o `setters` programáticos para esta funcionalidad en este contexto.

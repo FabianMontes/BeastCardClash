@@ -1,23 +1,78 @@
-# `SelectType.cs`
+# SelectType
+Este script es responsable de gestionar la interfaz de usuario (UI) para la selección de un tipo elemental durante una fase específica del combate. Su función principal es mostrar u ocultar los botones de selección elemental al jugador, basándose en el estado actual del combate y el turno del jugador, y luego comunicar la elección realizada al sistema central de combate. Está diseñado para estar asociado con un `Figther` (personaje de combate) y controlar su respectiva UI de selección.
 
-## 1. Propósito General
-El script `SelectType.cs` es responsable de gestionar la visibilidad y la interacción del panel de selección de tipo elemental para el primer "Figther" (luchador) del jugador durante la fase de combate `SelecCombat`. Permite al jugador elegir un elemento para su criatura y comunica esta selección al sistema central de combate.
+La lógica del script se centra en detectar cuándo es el momento adecuado para que el jugador (específicamente, el `Figther` con `indexFigther == 0`) elija un elemento, y una vez que se ha hecho una selección, informar al sistema de combate y ocultar la UI nuevamente.
 
-## 2. Componentes Clave
+# Métodos
 
-### `SelectType`
--   **Descripción:** Esta clase hereda de `MonoBehaviour` y actúa como un controlador para un panel de interfaz de usuario (UI) que permite al jugador seleccionar un tipo elemental para una criatura. Su función principal es determinar cuándo este panel debe ser visible y procesar la selección del jugador, interactuando con otros sistemas clave del juego como `Figther` y `Combatjudge`.
--   **Variables Públicas / Serializadas:**
-    Este script no expone variables públicas ni serializadas directamente en el Inspector de Unity. Internamente, mantiene una referencia privada a un componente `Figther` llamado `figther`, el cual se obtiene del GameObject padre en tiempo de ejecución.
--   **Métodos Principales:**
-    -   `void Start()`: Este método se invoca una vez al inicio del ciclo de vida del script. Su propósito es inicializar la referencia al componente `Figther` buscando en los GameObjects padres (`GetComponentInParent<Figther>()`). Inmediatamente después de obtener esta referencia, llama a `Visib(false)` para asegurar que el panel de selección de tipo elemental esté oculto por defecto al inicio del juego o de la escena.
-    -   `void Update()`: Se ejecuta en cada fotograma. Su lógica principal es monitorear el estado actual del combate para decidir cuándo mostrar el panel de selección de tipo. Utiliza la clase `Combatjudge` para consultar la fase actual del juego (`GetSetMoments()`), verificar si es el turno del jugador (`FocusONTurn()`), y si el `Figther` asociado a este script es el primero del jugador (identificado por `figther.indexFigther == 0`). Si todas estas condiciones se cumplen, el panel se hace visible.
-    -   `private void Visib(bool isVisible)`: Este es un método auxiliar privado que controla la visibilidad del panel de selección de tipo. Accede al primer hijo del GameObject al que está adjunto este script (presumiblemente el panel que contiene los botones de selección) y activa o desactiva su estado llamando a `gameObject.SetActive(isVisible)`.
-    -   `public void PickElement(int element)`: Este método público está diseñado para ser invocado externamente, típicamente por un evento de UI, como el `onClick` de un botón. Recibe un entero que representa el tipo elemental seleccionado. Internamente, intenta registrar esta selección con el sistema `Combatjudge` a través de `Combatjudge.combatjudge.pickElement((Element)element)`. Si la selección es exitosa (es decir, `pickElement` devuelve `true`), el método llama a `Visib(false)` para ocultar el panel, indicando que la selección ha sido completada.
--   **Lógica Clave:**
-    La lógica central del script reside en su ciclo de `Update`, que actúa como un "observador de estado". El script espera la fase de combate `SelecCombat` y que sea el turno del jugador con el primer `Figther` para activar su interfaz. Una vez visible, el jugador puede hacer una selección a través del método `PickElement`, el cual delega la validación y el procesamiento de la selección al sistema `Combatjudge`. Si la selección es válida, el panel se oculta, completando su ciclo de interacción para esa ronda.
+## Métodos de Unity
 
-## 3. Dependencias y Eventos
--   **Componentes Requeridos:** Este script no utiliza el atributo `[RequireComponent]`. Sin embargo, depende de la existencia de un componente `Figther` en uno de sus GameObjects padres en la jerarquía, el cual es buscado y asignado en el método `Start`.
--   **Eventos (Entrada):** El método `public void PickElement(int element)` está diseñado para ser un receptor de eventos. Aunque el script no se suscribe internamente a ningún `UnityEvent`, se espera que este método sea invocado por eventos externos, como los `onClick()` de botones en la interfaz de usuario, donde cada botón pasaría el valor entero correspondiente a un tipo elemental.
--   **Eventos (Salida):** Este script no emite sus propios `UnityEvent`s o `Action`s para notificar a otros sistemas. En su lugar, interactúa directamente con el sistema `Combatjudge` invocando su método `pickElement()`.
+### Start()
+Este método se ejecuta una única vez al inicio del ciclo de vida del script, antes de la primera actualización de `Update()`.
+
+Su propósito es inicializar la referencia al componente `Figther` y asegurar que la UI de selección elemental esté oculta al comienzo.
+
+```csharp
+void Start()
+{
+    figther = GetComponentInParent<Figther>();
+    Visib(false);
+}
+```
+
+*   `figther = GetComponentInParent<Figther>();`: Busca y asigna una referencia al componente `Figther` que se encuentra en uno de los GameObjects padre de este objeto. Esto vincula la instancia de `SelectType` a un personaje específico en el juego.
+*   `Visib(false);`: Llama al método `Visib` para establecer la visibilidad de la UI de selección en `false`, asegurando que no se muestre al inicio del juego o de la escena.
+
+### Update()
+Este método se ejecuta en cada fotograma del juego. Contiene la lógica principal para determinar si la UI de selección elemental debe ser visible.
+
+```csharp
+void Update()
+{
+    SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();
+    if (momo == SetMoments.SelectCombat && CombatJudge.CombatJudgeInstance.FocusOnTurn() && figther.indexFigther == 0)
+    {
+        Visib(true);
+    }
+}
+```
+
+*   `SetMoments momo = CombatJudge.CombatJudgeInstance.GetSetMoments();`: Obtiene el momento o fase actual del combate a través de la instancia singleton de `CombatJudge`. La enumeración `SetMoments` define las diferentes etapas de un turno de combate.
+*   `if (momo == SetMoments.SelectCombat && CombatJudge.CombatJudgeInstance.FocusOnTurn() && figther.indexFigther == 0)`: Esta condición compleja verifica tres criterios para mostrar la UI:
+    *   `momo == SetMoments.SelectCombat`: Confirma que el combate se encuentra en la fase específica donde se espera que el jugador elija un elemento.
+    *   `CombatJudge.CombatJudgeInstance.FocusOnTurn()`: Verifica si el turno actual está enfocado en el jugador (o entidad) que esta instancia de `SelectType` representa.
+    *   `figther.indexFigther == 0`: Asegura que esta UI de selección solo se active para el `Figther` principal del jugador, asumiendo que `indexFigther == 0` identifica al jugador activo en lugar de un oponente o un compañero.
+*   `Visib(true);`: Si todas las condiciones anteriores son verdaderas, se llama al método `Visib` para hacer visible la UI de selección elemental.
+
+## Otros métodos
+
+### `private void Visib(bool isVisible)`
+Este método privado controla la visibilidad de la interfaz de usuario de selección elemental.
+
+```csharp
+private void Visib(bool isVisible)
+{
+    transform.GetChild(0).gameObject.SetActive(isVisible);
+}
+```
+
+*   `transform.GetChild(0).gameObject.SetActive(isVisible);`: Accede al primer objeto hijo del GameObject al que está adjunto este script. Se espera que este primer hijo sea el panel o contenedor que agrupa todos los elementos visuales de la UI de selección (como botones para cada tipo elemental). Su estado `active` se establece en `true` o `false` según el valor del parámetro `isVisible`.
+
+### `public void PickElement(int element)`
+Este método público es el punto de entrada para procesar la selección de un elemento por parte del jugador. Probablemente esté conectado a eventos de UI, como los botones de selección de tipo elemental.
+
+```csharp
+public void PickElement(int element)
+{
+    if (CombatJudge.CombatJudgeInstance.PickElement((Element)element)) Visib(false);
+}
+```
+
+*   `CombatJudge.CombatJudgeInstance.PickElement((Element)element)`: Llama al método `PickElement` del sistema `CombatJudge` para registrar la elección del elemento. El parámetro `element` se pasa como un entero y se castea explícitamente a la enumeración `Element`, lo que implica que cada valor entero corresponde a un tipo elemental diferente (e.g., 0 para Agua, 1 para Fuego, etc.). Este método en `CombatJudge` probablemente maneja la lógica de validación y aplicación del elemento elegido en el combate.
+*   `if (...) Visib(false);`: Si el método `PickElement` del `CombatJudge` devuelve `true` (indicando que la selección del elemento fue exitosa y procesada), se llama a `Visib(false)` para ocultar inmediatamente la UI de selección, ya que la elección ha sido realizada.
+
+## Getters y Setters
+Este script no define propiedades C# explícitas con los modificadores `get` y `set`. Sin embargo, los siguientes métodos actúan de manera similar en cuanto a establecer valores o modificar el estado:
+
+1.  `public void PickElement(int element)`: Establece el elemento elegido por el jugador en el sistema `CombatJudge`.
+2.  `private void Visib(bool isVisible)`: Establece la visibilidad del panel de selección elemental.

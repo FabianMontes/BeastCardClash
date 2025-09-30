@@ -1,33 +1,61 @@
-# `teamselect.cs`
+# teamselect
+El script `teamselect` es un componente fundamental para la interfaz de usuario (UI) de selección de equipos en Beast Card Clash. Su función principal es gestionar y visualizar el equipo actualmente seleccionado en el juego. Para ello, se encarga de:
 
-## 1. Propósito General
-Este script de Unity gestiona la visualización del equipo seleccionado en la interfaz de usuario y permite la selección del mismo. Sirve como un puente entre el estado global del juego (`GameState`) y un elemento visual (`Image`) que representa el equipo actual.
+1.  **Mostrar visualmente el equipo activo:** Asigna el `Sprite` correspondiente al equipo seleccionado a un componente `Image` adjunto al mismo GameObject, permitiendo una representación gráfica clara en la UI.
+2.  **Permitir la selección de un equipo:** Proporciona un método público para que otros elementos de la UI (como botones) puedan cambiar el equipo actualmente activo a través del sistema de gestión de estado global (`GameState`).
+3.  **Seguimiento opcional del estado global:** Puede configurarse para que su visualización siga automáticamente los cambios del equipo en el `GameState.singleton`, asegurando que la UI esté siempre sincronizada con la selección global.
 
-## 2. Componentes Clave
+Este script es crucial en las pantallas de preparación o selección donde el jugador elige qué "facultad" o "bando" representará, lo cual se alinea con la temática de las facultades de la UNAL y los animales colombianos del proyecto Beast Card Clash.
 
-### `teamselect`
-- **Descripción:** La clase `teamselect` es un `MonoBehaviour` que se encarga de actualizar dinámicamente el `Sprite` de un componente `Image` en función del equipo actual seleccionado en el juego. También proporciona un método para cambiar el equipo a través de la interfaz de usuario. Este script espera estar adjunto a un `GameObject` que también tenga un componente `Image`.
+# Métodos
 
-- **Variables Públicas / Serializadas:**
-    - `[SerializeField] bool Follow`: Un booleano que, cuando es `true`, indica que el `Sprite` del componente `Image` adjunto debe actualizarse continuamente para reflejar el equipo seleccionado en `GameState.singleton.team` durante cada cuadro. Si es `false`, el script no actualizará automáticamente el `Sprite`.
-    - `[SerializeField] Sprite[] teams`: Un array de `Sprite` que almacena los diferentes `Sprites` (imágenes) para cada equipo disponible en el juego. Se espera que el índice de este array corresponda al valor numérico del `enum` que representa a cada equipo.
-    - `Image image`: Una referencia al componente `Image` adjunto al mismo `GameObject` que este script. Esta referencia se obtiene automáticamente en el método `Start()` y es el componente cuyo `Sprite` será modificado.
+## Métodos de Unity
 
-- **Métodos Principales:**
-    - `void Start()`: Este método del ciclo de vida de Unity se llama una vez al inicio, después de que el script se ha cargado. Su función principal es obtener una referencia al componente `Image` que está adjunto al mismo `GameObject`. Esto es crucial para que el script pueda manipular la imagen mostrada.
+### Start
+Este método se ejecuta una vez al inicio del ciclo de vida del script, antes de que se llame a `Update` por primera vez. Su propósito es inicializar la referencia al componente `Image` necesario para la funcionalidad del script.
 
-    - `void Update()`: Este método del ciclo de vida de Unity se llama una vez por cuadro. Contiene la lógica para actualizar el `Sprite` de la imagen. Si la variable `Follow` está configurada a `true`, el `Sprite` de la imagen se establece al `Sprite` correspondiente del array `teams`, utilizando el valor del equipo actual (`GameState.singleton.team`) como índice. Esto permite una actualización visual en tiempo real del equipo.
+```csharp
+void Start()
+{
+    image = GetComponent<Image>();
+}
+```
 
-    - `public void selectTeam(int team)`: Este método público está diseñado para ser invocado desde la interfaz de usuario, típicamente a través de un evento `onClick` de un botón. Toma un entero `team` como parámetro, el cual se convierte a un tipo `Team` (presumiblemente un `enum` definido en otro lugar) y luego se utiliza para actualizar el equipo seleccionado globalmente a través del método `SetTeam` del singleton `GameState`.
+Durante su ejecución, `Start` obtiene una referencia al componente `Image` que debe estar adjunto al mismo GameObject donde reside este script `teamselect`. Esta referencia se almacena en la variable privada `image`, lo que permite al script manipular el `Sprite` de la UI durante la ejecución. Si no hay un componente `Image` en el mismo GameObject, se generará un error en tiempo de ejecución.
 
-- **Lógica Clave:**
-    La lógica central de este script reside en la sincronización del `Sprite` visible con el estado del equipo actual del juego. El método `Update` monitorea la bandera `Follow` para determinar si debe mantener la representación visual del equipo actualizada. Cuando `Follow` es `true`, utiliza el valor numérico del equipo almacenado en `GameState.singleton.team` para indexar el array `teams` y asignar el `Sprite` correspondiente a la `Image`. La función `selectTeam` proporciona el mecanismo para que elementos externos (como botones de la UI) puedan interactuar y cambiar el equipo globalmente.
+### Update
+El método `Update` se invoca una vez por cada frame del juego. Su lógica principal se centra en la actualización visual condicional del `Sprite` del equipo.
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Aunque no se utiliza el atributo `[RequireComponent]`, este script implícitamente requiere un componente `UnityEngine.UI.Image` en el mismo `GameObject` para funcionar correctamente, ya que intenta obtener y manipular este componente en tiempo de ejecución.
+```csharp
+void Update()
+{
+    if (Follow)
+    {
+        image.sprite = teams[(int)GameState.singleton.team];
+    }
+}
+```
 
-- **Eventos (Entrada):**
-    - El método público `selectTeam(int team)` está diseñado para ser invocado externamente, muy probablemente por eventos de interfaz de usuario, como el `onClick()` de un `Button` en Unity, donde el valor `int` del equipo sería pasado como un parámetro dinámico.
+Este método verifica el valor de la variable booleana `Follow`. Si `Follow` es `true`, el script actualiza el `Sprite` del componente `image` para que coincida con el equipo actualmente seleccionado en el sistema de estado global del juego. Para ello, accede a `GameState.singleton.team`, que representa el equipo activo globalmente. Dado que `teams` es un array de `Sprite`, el valor de `GameState.singleton.team` (que probablemente es un `enum` de tipo `Team`) se convierte explícitamente a un entero (`int`) para usarlo como índice del array. Esto significa que la posición de cada `Sprite` en el array `teams` debe corresponder al valor numérico del `enum Team` asociado.
 
-- **Eventos (Salida):**
-    - Este script no expone ni invoca explícitamente ningún evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas. Su interacción con el resto del juego se realiza a través del singleton `GameState` (modificando `GameState.singleton.SetTeam` y leyendo `GameState.singleton.team`).
+> 📝 **Nota:** El uso de `GameState.singleton` indica que existe un componente central en el proyecto que mantiene el estado global del juego, incluyendo la selección de equipos. Esto es una práctica común en el desarrollo de videojuegos para acceder a datos compartidos de forma sencilla.
+
+## Otros métodos
+
+### selectTeam(int team)
+Este es un método público diseñado para ser invocado externamente, típicamente desde eventos de la UI, como el evento `OnClick()` de un `Button`. Su propósito es cambiar el equipo seleccionado globalmente en el juego.
+
+```csharp
+public void selectTeam(int team)
+{
+    GameState.singleton.SetTeam((Team)team);
+}
+```
+
+Cuando se llama a `selectTeam`, recibe un valor entero (`int team`) que representa el nuevo equipo a seleccionar. Este valor entero se convierte explícitamente al tipo `Team` (que debe ser un `enum` definido en el proyecto) antes de pasarlo al método `SetTeam` del `GameState.singleton`. Esto asegura que el `GameState` actualice correctamente el equipo activo, y si la variable `Follow` del script `teamselect` está activa, la visualización se actualizará en el siguiente `Update`.
+
+## Campos Configurable o de Estado
+
+1.  `bool Follow`: Controla si el script debe actualizar automáticamente el `Sprite` de la UI para reflejar el equipo seleccionado en `GameState.singleton`. Si es `true`, la UI seguirá el estado global; si es `false`, la UI solo cambiará cuando el método `selectTeam` sea invocado directamente, o cuando otros scripts modifiquen el `sprite` de la `Image` directamente. Este campo es serializado (`[SerializeField]`) y puede configurarse desde el Inspector de Unity.
+2.  `Sprite[] teams`: Un array de `Sprite`s. Cada `Sprite` en este array representa una de las posibles opciones de equipo disponibles en el juego. La posición (índice) de cada `Sprite` en el array se corresponde con el valor numérico del `enum Team` que representa. Este campo es serializado (`[SerializeField]`) y se configura desde el Inspector de Unity, permitiendo asignar los recursos gráficos para cada equipo.
+3.  `Image image`: Una referencia al componente `UnityEngine.UI.Image` adjunto al mismo GameObject. Este componente es el encargado de mostrar visualmente el `Sprite` del equipo en la interfaz de usuario. Se inicializa en el método `Start()` mediante `GetComponent<Image>()`.

@@ -65,46 +65,71 @@ def generar_documentacion_para_archivo(archivo: pathlib.Path, base_dir: pathlib.
 ---
 
 """
-    prompt = f"""{contexto_readme_str}
+    prompt = f"""
+## Resumen de documentación
+Eres un programador con experiencia en el desarrollo de videojuegos con Unity y C#, así como también en el proceso de documentación y cumplimiento de buenas prácticas en los proyectos que manejas.
 
-Actúa como un ingeniero de software senior documentando código para un nuevo miembro del equipo en un proyecto de Unity llamado "BeastCardClash".
+Con el contenido del archivo del script que tienes adjunto, y teniendo en cuenta los detalles del proyecto del archivo README que también esta adjunto, crea un texto de documentación que explique de forma clara y exhaustiva su estructura, su funcionamiento y la forma en la que parece interactúar con el resto de los componentes del proyecto.
 
-Tu tarea es generar una documentación técnica clara, concisa y bien estructurada en formato Markdown (GFM) para el siguiente archivo de código C#.
+Los archivos que crees están orientados a ser leídas por los demás miembros del proyecto, por lo que el nivel técnico y contenido debe estar al nivel de sus necesidades y no contener obviedades o explicaciones inútiles, así como tampoco ignorar información.
 
-Sigue esta estructura estrictamente:
+El proyecto, en complemento del README y lo que explica, consiste en un videojuego indie, cuyo enfoque no es el seguimiento de reglas precisas ni buenas prácticas perfectas, sino el desarrollo de una buena experiencia de jugador y sobre todo, de desarrollo para los programadores. Tenlo en cuenta.
 
-# `{archivo.name}`
+----
 
-## 1. Propósito General
-Describe en 1-2 frases el rol principal de este script dentro del juego. ¿Qué gestiona? ¿Con qué otros sistemas principales interactúa?
+Para el archivo a crear sigue la siguiente estructura
 
-## 2. Componentes Clave
-Enumera y explica las clases, structs o enums más importantes definidos en el archivo. Para cada clase principal:
+```Markdown
+# [Nombre del script sin la extensión]
+[Resumen completo y explicado de la función del script y su funcionamiento]
 
-### [Nombre de la Clase]
-- **Descripción:** Una explicación detallada de lo que hace la clase. Si hereda de `MonoBehaviour`, menciónalo.
-- **Variables Públicas / Serializadas:** Lista las variables más importantes que son visibles en el Inspector de Unity (`[SerializeField]`) o públicas. Explica para qué se usa cada una.
-- **Métodos Principales:**
-    - `void MetodoImportante(parametro)`: Describe qué hace el método, qué significan sus parámetros y qué devuelve (si aplica). Presta especial atención a los métodos del ciclo de vida de Unity (`Awake`, `Start`, `Update`, `FixedUpdate`, etc.).
-- **Lógica Clave:** Si hay algún algoritmo, máquina de estados o flujo de trabajo complejo, explícalo aquí de forma sencilla.
+# Métodos
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Menciona si este script usa `[RequireComponent(typeof(UnComponente))]`.
-- **Eventos (Entrada):** ¿A qué eventos se suscribe este script? (Ej: `button.onClick.AddListener(...)`).
-- **Eventos (Salida):** ¿Este script invoca algún evento (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas?
+## Métodos de Unity
+
+### [Nombre del método (Awake, Start, Update)]
+[Explicación completa del funcionamiento del método]
+
+## Otros métodos
+
+### [Nombre y tipado del método]
+[Explicación completa del funcionamiento del método]
+
+[Repite este bloque de título + descripción por cada método que haya]
+
+## Getters y Setters
+
+1. [Nombre y tipado del método, sin los paréntesis de los parámetros]: [Explica el dato que pide o establece.]
+
+[Repite este bloque numerado de método + dato por cada getter o setter que haya]
+```
 
 ---
 
-**Instrucciones Adicionales:**
-- **Precisión:** Basa tu documentación únicamente en el código proporcionado. No inventes funcionalidades.
-- **Claridad:** Usa un lenguaje claro y directo. Evita la jerga innecesaria.
-- **Fragmentos de Código:** Incluye pequeños fragmentos de código relevantes para ilustrar tus explicaciones, pero no copies funciones enteras a menos que sea crucial.
-- **Llano**: Usa un formato simple, con menos listas y más párrafos explicativos.
+Algunos detalles extra para el contenido del documento:
 
-Aquí está el archivo a documentar:
+1. No incluyas información ajena al contenido buscado: no incluyas descripciones iniciales ("Aquí tienes tu documento..."), preguntas de seguimiento o formato Markdown fuera de la estructura planeada.
+2. Mantén un tono neutral y no dirigido, al estilo de la documentación real de un proyecto... tus documentos tambien lo serán.
+3. Usa formato Markdown GFM o Obsidian Markdown en su defecto. Sé consistente y aprovecha caracteristicas como callouts o bloques de código en el texto.
+4. Incluye secciones reales del código para explicar partes críticas y mejorar la comprensión del documento. Los scripts están en C# siempre. Usa igualmente nombres de métodos, variables o componentes para incorporar las explicaciones al flujo del código.
+5. Mantén el contexto autocontenido. Como se supone que no tienes acceso a otros scripts, actúa dentro del contexto del que tienes adjunto solamente y no hagas suposiciones riesgosas sobre lo que sea externo.
 
-```{archivo.suffix[1:]}
+---
+
+Adjunto tienes el archivo a documentar:
+
+---
+
+{archivo.suffix[1:]}
+
+```csharp
 {contenido}
+```
+
+Y el README.md del proyecto:
+
+```markdown
+{contexto_readme_str}
 ```
 """
 
@@ -123,7 +148,7 @@ Aquí está el archivo a documentar:
     try:
         with open(salida, "w", encoding="utf-8") as f:
             f.write(texto)
-        print(f"✅ Documentado: {archivo} → {salida}")
+        print(f"✅ Documentado: {salida}")
     except Exception as e:
         print(f"❌ Error guardando archivo {salida}: {e}")
 

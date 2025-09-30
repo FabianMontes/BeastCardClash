@@ -1,29 +1,124 @@
-# `Sfxcombatmanager.cs`
+# Sfxcombatmanager
+Este script `Sfxcombatmanager` es el componente encargado de gestionar la reproducción de efectos de sonido (SFX) durante las distintas fases del combate en "Beast Card Clash". Su función principal es reaccionar a los cambios de estado en el sistema de combate, orquestado por el `CombatJudge`, y reproducir los clips de audio correspondientes para proporcionar una retroalimentación sonora clara y envolvente al jugador.
 
-## 1. Propósito General
-Este script es responsable de gestionar y reproducir los efectos de sonido (SFX) asociados a las diferentes fases o "momentos" del combate dentro del juego. Interactúa directamente con el sistema `Combatjudge` para determinar cuándo y qué sonido debe reproducirse.
+El script mantiene una referencia a un `AudioSource` para la reproducción y un array de `AudioClip` asignados a través del Inspector de Unity. Utiliza un patrón de "polling" en su método `Update` para consultar continuamente el estado actual del combate y, basándose en este, activa la reproducción de SFX específicos. Esto contribuye directamente a la "buena experiencia de jugador" mencionada en el README, al dotar de impacto auditivo a cada momento clave de la batalla. Además, su diseño sencillo y directo facilita la comprensión y el mantenimiento para los programadores del proyecto.
 
-## 2. Componentes Clave
+# Métodos
 
-### `Sfxcombatmanager`
-- **Descripción:** Esta clase, que hereda de `MonoBehaviour`, actúa como un controlador central para los efectos de sonido durante el ciclo de combate. Su función principal es reaccionar a los cambios de estado del combate y reproducir el clip de audio correspondiente. Para ello, requiere que haya un componente `AudioSource` adjunto al mismo GameObject donde se encuentre este script.
+## Métodos de Unity
 
-- **Variables Públicas / Serializadas:**
-    - `clips`: Un array de `AudioClip` (`AudioClip[]`). Esta variable está serializada (`[SerializeField]`), lo que permite que sea configurada y poblada directamente desde el Inspector de Unity. Contiene la colección de todos los efectos de sonido que pueden ser reproducidos por este manager. Cada elemento en el array representa un sonido específico que se puede invocar por su índice.
+### Start
+Este método se ejecuta una única vez al inicio del ciclo de vida del script, antes de la primera actualización de `Update`. Su propósito es inicializar la referencia al componente `AudioSource` necesario para la reproducción de los sonidos.
 
-- **Métodos Principales:**
-    - `void Start()`: Este es un método del ciclo de vida de Unity que se invoca una única vez al inicio, antes de la primera actualización del frame. Su propósito es inicializar la referencia al componente `AudioSource` que se encuentra en el mismo GameObject, utilizando `GetComponent<AudioSource>()`. Este `AudioSource` será el encargado de reproducir todos los clips de audio.
-    - `void Update()`: Un método del ciclo de vida de Unity que se ejecuta una vez por cada fotograma. Contiene la lógica principal de este manager. En cada fotograma, consulta el estado actual del combate a través de `Combatjudge.combatjudge.GetSetMoments()`. Utiliza una sentencia `switch` para evaluar este estado y, dependiendo del "momento" actual del combate (ej., `RollDice`, `MoveToRock`, `Result`), llama al método `changeSource` para reproducir el efecto de sonido apropiado.
-    - `public void changeSource(int index, bool Force, bool loop)`: Este método es el encargado de controlar la reproducción de los clips de audio.
-        - `index` (int): El índice del `AudioClip` dentro del array `clips` que se desea reproducir. Un valor de `-1` indica que se debe detener cualquier sonido en reproducción sin iniciar uno nuevo.
-        - `Force` (bool): Un indicador booleano. Si es `true`, forzará la reproducción del sonido especificado, incluso si ya hay un sonido en curso o si es el mismo clip que el último reproducido. Si es `false`, el método evitará la reproducción si el audio ya está sonando y no se fuerza, o si el `index` es el mismo que el del último clip reproducido.
-        - `loop` (bool): Un booleano que determina si el `AudioClip` debe reproducirse en un bucle continuo.
-        La implementación del método primero verifica las condiciones para evitar la reproducción (`Force` y el `last` clip). Luego, actualiza el índice del último clip reproducido (`last`), detiene cualquier sonido actual del `AudioSource` y, si el `index` no es `-1`, asigna el `AudioClip` correspondiente del array `clips` a la propiedad `resource` del `AudioSource` (Nota: la propiedad estándar para asignar un clip a un `AudioSource` en Unity es `AudioSource.clip`; la presencia de `resource` aquí es inusual y podría implicar una extensión personalizada del `AudioSource` o ser un error de tipografía). Finalmente, reproduce el sonido y configura su propiedad `loop`.
+```csharp
+void Start()
+{
+    audio = GetComponent<AudioSource>();
+}
+```
 
-- **Lógica Clave:**
-    La lógica central del `Sfxcombatmanager` se basa en un patrón de sondeo de estado dentro de su método `Update`. El script monitorea constantemente el progreso del combate a través del enum `SetMoments` del `Combatjudge`. Cada fase crítica del combate está mapeada a un índice específico del array `clips`. El método `changeSource` es fundamental para gestionar la reproducción, incluyendo la prevención de repeticiones innecesarias (mediante la variable `last` y el parámetro `Force`) y la capacidad de detener todos los sonidos o reproducir un clip en bucle.
+Es crucial que el GameObject al que este script esté adjunto tenga un componente `AudioSource`, ya que `GetComponent<AudioSource>()` intentará obtenerlo de este. Si no se encuentra, la variable `audio` será nula, lo que podría provocar errores en tiempo de ejecución.
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Este script depende de la existencia de un componente `AudioSource` en el mismo GameObject donde está adjunto. Si este componente no está presente, el script no podrá inicializar su referencia de audio y, por lo tanto, no podrá reproducir ningún sonido.
-- **Eventos (Entrada):** El `Sfxcombatmanager` no se suscribe explícitamente a eventos de Unity (`UnityEvent` o `Action`). En su lugar, opera mediante un bucle de sondeo (`Update` method) que consulta activamente el estado del sistema `Combatjudge` (`Combatjudge.combatjudge.GetSetMoments()`) para determinar cuándo actuar.
-- **Eventos (Salida):** Este script no invoca ni publica ningún evento propio (`UnityEvent`, `Action`, etc.) para notificar a otros sistemas. Su función se limita a la reproducción de sonido basada en el estado externo del combate.
+### Update
+`Update` se invoca en cada frame del juego. Su función principal es monitorizar el estado actual del combate y disparar los efectos de sonido apropiados. Para ello, consulta el "momento" actual del combate a través del sistema `CombatJudge`.
+
+```csharp
+void Update()
+{
+    switch (CombatJudge.CombatJudgeInstance.GetSetMoments())
+    {
+        case SetMoments.PickDice:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.RollDice:
+            changeSource(0,true,true); // Reproduce el SFX de lanzar dados.
+            break;
+        case SetMoments.RevealDice:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.GlowRock:
+            changeSource(-1, true, false); // Detiene cualquier SFX en reproducción.
+            break;
+        case SetMoments.MoveToRock:
+            changeSource(1, true, true); // Reproduce el SFX de movimiento a la roca.
+            break;
+        case SetMoments.SelectCombat:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.PickCard:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.Reveal:
+            changeSource(2, true, false); // Reproduce el SFX de revelación.
+            break;
+        case SetMoments.Result:
+            changeSource(CombatJudge.CombatJudgeInstance.HurtPlayer()? 3:4, true, false); // SFX condicional según si el jugador fue dañado.
+            break;
+        case SetMoments.End:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.Loop:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.Round:
+            // No SFX específico para este momento.
+            break;
+        case SetMoments.Rounded:
+            // No SFX específico para este momento.
+            break;
+    }
+}
+```
+
+Utiliza una sentencia `switch` para evaluar el valor devuelto por `CombatJudge.CombatJudgeInstance.GetSetMoments()`, que se espera sea una enumeración `SetMoments`. Dependiendo del momento del combate, invoca el método `changeSource` con diferentes parámetros:
+*   **`RollDice`**: Activa el clip en el índice `0`.
+*   **`GlowRock`**: Llama a `changeSource` con `-1`, lo que tiene el efecto de detener la reproducción de cualquier sonido actual sin iniciar uno nuevo.
+*   **`MoveToRock`**: Activa el clip en el índice `1`.
+*   **`Reveal`**: Activa el clip en el índice `2`.
+*   **`Result`**: Este es un caso especial donde el clip reproducido depende de si el jugador ha sido dañado, consultando `CombatJudge.CombatJudgeInstance.HurtPlayer()`. Si el jugador fue dañado, reproduce el clip en el índice `3`; de lo contrario, el clip en el índice `4`.
+*   Para otros `SetMoments` (como `PickDice`, `RevealDice`, `SelectCombat`, etc.), actualmente no se reproduce ningún sonido. Esto puede ser una decisión de diseño para mantener ciertos momentos silenciosos o una oportunidad para futuras implementaciones de SFX.
+
+## Otros métodos
+
+### changeSource(int index, bool Force, bool loop)
+Este método público es la interfaz principal para controlar la reproducción de los efectos de sonido. Permite iniciar o detener un clip de audio específico, con opciones para forzar la reproducción y definir si el sonido debe repetirse.
+
+```csharp
+public void changeSource(int index,bool Force,bool loop)
+{
+    // Evita reproducir el mismo clip si ya está sonando y no se fuerza, o si el índice es el mismo que el último reproducido.
+    if ((audio.isPlaying && !Force )|| index == last)
+    {
+        return;
+    }
+    last = index; // Actualiza el índice del último clip reproducido.
+    audio.Stop(); // Detiene cualquier clip que se esté reproduciendo actualmente.
+
+    if(index == -1) // Si el índice es -1, significa que solo se debe detener el sonido.
+    {
+        return;
+    }
+    audio.resource = clips[index]; // Asigna el nuevo AudioClip de la lista.
+    audio.Play(); // Inicia la reproducción del nuevo clip.
+    audio.loop = loop; // Configura si el clip debe repetirse.
+}
+```
+
+**Parámetros:**
+*   `index` (int): El índice del `AudioClip` dentro del array `clips` que se desea reproducir. Un valor de `-1` es un caso especial para detener la reproducción actual sin iniciar un nuevo sonido.
+*   `Force` (bool): Si es `true`, la reproducción del nuevo clip forzará la detención del clip actual y comenzará la reproducción del clip especificado, incluso si el mismo clip ya estaba sonando. Si es `false`, la reproducción solo ocurrirá si no hay un sonido activo o si el nuevo sonido es diferente al último reproducido.
+*   `loop` (bool): Si es `true`, el clip de audio se repetirá indefinidamente después de su finalización. Si es `false`, se reproducirá una sola vez.
+
+**Funcionamiento detallado:**
+1.  **Condición de Salida Temprana**: Primero, verifica si el `AudioSource` ya está reproduciendo un sonido (`audio.isPlaying`) y si el parámetro `Force` es `false`. También verifica si el `index` solicitado es el mismo que el `last` clip reproducido. Si alguna de estas condiciones se cumple, el método retorna para evitar la reproducción redundante o no deseada.
+    > [!NOTE]
+    > La variable `last` es un mecanismo simple para evitar la repetición constante del mismo sonido si el estado del `CombatJudge` no cambia rápidamente entre frames, mejorando la "experiencia de desarrollo" al simplificar la lógica de control.
+2.  **Actualización de `last`**: Si el método continúa, `last` se actualiza con el `index` del nuevo clip a reproducir.
+3.  **Detener Actual**: Se llama a `audio.Stop()` para detener cualquier clip que esté sonando en ese momento en el `AudioSource`.
+4.  **Manejo de `-1`**: Si el `index` proporcionado es `-1`, el método retorna inmediatamente después de detener cualquier sonido, lo que efectivamente silencia el `AudioSource`.
+5.  **Asignar y Reproducir**: Si el `index` es válido (no `-1`), se asigna el `AudioClip` correspondiente de la lista `clips` al `AudioSource.clip` (observar que el código usa `audio.resource` que probablemente sea un error de escritura y debería ser `audio.clip` o `audio.clip = clips[index]`).
+6.  **Iniciar Reproducción**: Se llama a `audio.Play()` para comenzar la reproducción del clip asignado.
+7.  **Configurar Bucle**: Finalmente, se establece la propiedad `audio.loop` según el valor del parámetro `loop`.
+
+## Getters y Setters
+No se encuentran getters o setters públicos definidos explícitamente en este script que gestionen propiedades internas de forma directa. Las interacciones con el `AudioSource` y el array `clips` se manejan a través del método `changeSource` y la serialización pública de `clips` en el Inspector de Unity.

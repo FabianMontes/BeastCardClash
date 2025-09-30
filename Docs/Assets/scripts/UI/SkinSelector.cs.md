@@ -1,65 +1,68 @@
-# `SkinSelector.cs`
+# SkinSelector
+Este script, `SkinSelector`, es un componente fundamental para la interacción del jugador con las representaciones visuales de los personajes en el juego `Beast Card Clash`. Su función principal es permitir la selección de un "skin" o personaje específico a través de una interfaz interactiva, proporcionando retroalimentación visual al jugador y comunicando la selección al sistema de gestión del estado del juego.
 
-## 1. Propósito General
-Este script `SkinSelector.cs` es un componente de `MonoBehaviour` que gestiona la interacción del usuario con un objeto en la escena para seleccionar una "skin" (apariencia visual) específica. Su rol principal es detectar eventos del ratón (clics y sobrevuelos) y comunicar la selección al sistema global `GameState`, además de proporcionar retroalimentación visual mediante un efecto de contorno.
+En el contexto de `Beast Card Clash`, donde cada personaje representa un animal autóctono y una facultad, este script se encarga de que la representación 3D o 2D de dicho personaje sea seleccionable. Cuando el jugador pasa el cursor por encima de un personaje, este se ilumina. Al hacer clic, se registra la selección del personaje, lo que permite al `GameState` del juego procesar esta elección y preparar al personaje para la partida. Además, asegura que los personajes se presenten con una animación inicial adecuada para el entorno de juego.
 
-## 2. Componentes Clave
+El script funciona detectando las interacciones del ratón (entrada/salida del cursor y clic) sobre el `Collider` asociado al GameObject donde reside. Utiliza un componente `Outline` (del paquete `OutlineFx`) para generar el efecto de resaltado visual y un `Animator` para controlar el estado de animación inicial del personaje. La selección final se comunica a una instancia global del `GameState` a través de un índice de skin configurable en el Inspector de Unity.
 
-### `SkinSelector`
-- **Descripción:** La clase `SkinSelector` es un script de Unity (`MonoBehaviour`) que se adjunta a un GameObject en la escena. Se encarga de la lógica de selección de una apariencia específica (skin) y de la retroalimentación visual al interactuar con el mouse. Cuando el usuario hace clic en el objeto al que está adjunto este script, se le indica al sistema `GameState` qué skin ha sido seleccionada.
+# Métodos
 
-- **Variables Públicas / Serializadas:**
-    - `skinIndex`: Una variable entera privada (`int`) que se serializa y es visible en el Inspector de Unity gracias a `[SerializeField]`. Este índice es el identificador único de la skin que representa este `SkinSelector` particular. Cuando se selecciona el objeto, este `skinIndex` se pasa al sistema `GameState` para registrar la skin elegida.
-    - `outline`: Una referencia privada de tipo `Outline` (del namespace `OutlineFx`). Esta variable almacena el componente de contorno que se encuentra en uno de los hijos del GameObject actual. Se utiliza para habilitar o deshabilitar un efecto visual (un "outline" o contorno) cuando el ratón interactúa con el objeto, sirviendo como feedback visual al jugador.
+## Métodos de Unity
 
-- **Métodos Principales:**
-    - `void Start()`: Este es un método del ciclo de vida de Unity que se llama una vez al inicio, antes de la primera actualización del frame. Su función es inicializar el script:
-        - Busca y asigna el componente `Outline` presente en uno de los GameObjects hijos.
-        - Deshabilita inmediatamente el `outline` para asegurar que no sea visible por defecto.
-        - Obtiene el componente `Animator` adjunto al mismo GameObject y establece el parámetro booleano "isFigthing" a `true`. Esto podría iniciar una animación predeterminada o un estado relacionado con el combate.
-        ```csharp
-        private void Start()
-        {
-            outline = GetComponentInChildren<Outline>();
-            outline.enabled = false;
-            GetComponent<Animator>().SetBool("isFigthing", true);
-        }
-        ```
-    - `void OnMouseDown()`: Este método es un callback de evento de Unity que se invoca cuando el usuario presiona el botón del mouse mientras el cursor está sobre el collider del GameObject. Su propósito es notificar al sistema del juego sobre la selección de la skin:
-        - Accede a la instancia singleton del `GameState`.
-        - Llama al método `SetSkin` de `GameState`, pasándole el `skinIndex` de este `SkinSelector`. Esto registra la skin como seleccionada en el estado global del juego.
-        ```csharp
-        void OnMouseDown()
-        {
-            GameState.singleton.SetSkin(skinIndex);
-        }
-        ```
-    - `void OnMouseEnter()`: Este método de evento de Unity se llama cuando el puntero del mouse entra en el área del collider del GameObject. Cuando esto ocurre, el script activa el `outline` visual, lo que suele indicar al jugador que el objeto está bajo el cursor y es interactuable.
-        ```csharp
-        private void OnMouseEnter()
-        {
-            outline.enabled = true;
-        }
-        ```
-    - `void OnMouseExit()`: Este método de evento de Unity se invoca cuando el puntero del mouse sale del área del collider del GameObject. Como contraparte de `OnMouseEnter`, deshabilita el `outline` visual, retirando la retroalimentación una vez que el cursor ya no está sobre el objeto.
-        ```csharp
-        private void OnMouseExit()
-        {
-            outline.enabled = false;
-        }
-        ```
+### Start
+Este método se ejecuta una vez al inicio del ciclo de vida del script, cuando se habilita el GameObject o la escena comienza. Su propósito es inicializar los componentes necesarios y establecer el estado inicial del personaje en la interfaz de selección.
 
-- **Lógica Clave:** La lógica central de `SkinSelector` se basa en la interacción del ratón. El script monitorea los eventos de entrada del ratón (clic, entrada y salida del puntero) sobre el collider del GameObject. Al hacer clic, transmite un `skinIndex` específico al sistema `GameState` para registrar la selección de una skin. Durante los eventos de "hover" (cuando el mouse está sobre el objeto), alterna el estado del componente `Outline` para proporcionar una señal visual al jugador. El método `Start` asegura una configuración inicial adecuada, como la desactivación del contorno por defecto y el ajuste de un parámetro del `Animator`.
+```csharp
+private void Start()
+{
+    // Inicializa el Outline y el Animator y desactiva este último
+    outline = GetComponentInChildren<Outline>();
+    outline.enabled = false;
+    GetComponent<Animator>().SetBool("isFigthing", true);
+}
+```
 
-## 3. Dependencias y Eventos
-- **Componentes Requeridos:** Aunque no se utiliza explícitamente el atributo `[RequireComponent]`, para que este script funcione correctamente, el GameObject al que se adjunta, o uno de sus hijos, debe tener los siguientes componentes:
-    - Un componente `Outline` (del sistema `OutlineFx`) en uno de sus GameObjects hijos.
-    - Un componente `Animator` en el mismo GameObject.
-    - Un componente `Collider` (como `BoxCollider`, `SphereCollider`, etc.) en el mismo GameObject, para que los métodos `OnMouseDown`, `OnMouseEnter` y `OnMouseExit` puedan detectar la interacción del ratón.
+*   **Inicialización del `Outline`**: Se obtiene una referencia al componente `Outline` del personaje. Es importante notar que se utiliza `GetComponentInChildren<Outline>()`, lo que significa que el componente `Outline` no está directamente en el mismo GameObject que `SkinSelector`, sino en uno de sus hijos (probablemente el modelo 3D del personaje). Esto permite una mayor flexibilidad en la estructura de los prefabs de personaje. Una vez obtenido, el `outline` se desactiva por defecto (`outline.enabled = false;`) para que no aparezca resaltado hasta que el ratón interactúe con él.
+*   **Configuración del `Animator`**: Se obtiene el componente `Animator` del GameObject actual (el que contiene el `SkinSelector`) y se establece el parámetro booleano `"isFigthing"` a `true`. Esto indica que el personaje debe comenzar en un estado de animación particular, posiblemente una pose de "listo para la batalla" o una pose de presentación activa, acorde con la naturaleza competitiva de `Beast Card Clash`.
 
-- **Eventos (Entrada):** Este script se suscribe y responde a los siguientes eventos de entrada de Unity, que son activados por la interacción del ratón con el collider del GameObject:
-    - `OnMouseDown()`: Activado al hacer clic con el ratón sobre el objeto.
-    - `OnMouseEnter()`: Activado cuando el cursor del ratón entra en el área del collider del objeto.
-    - `OnMouseExit()`: Activado cuando el cursor del ratón sale del área del collider del objeto.
+### OnMouseDown
+Este método es un *callback* de Unity que se invoca cuando el usuario presiona el botón principal del ratón mientras el puntero está sobre el `Collider` asociado a este GameObject. En el contexto de un selector de personajes, esta es la acción que confirma la elección del jugador.
 
-- **Eventos (Salida):** Este script invoca una acción externa al llamar directamente a `GameState.singleton.SetSkin(skinIndex)`. Esta llamada actúa como un evento de "salida", notificando al sistema global `GameState` qué skin ha sido seleccionada por el jugador.
+```csharp
+void OnMouseDown()
+{
+    GameState.singleton.SetSkin(skinIndex);
+}
+```
+
+*   **Selección de Skin**: Cuando el personaje es clicado, el script notifica al sistema de gestión de estado del juego (`GameState`) que un nuevo skin ha sido seleccionado. Esto se logra llamando al método `SetSkin` de la instancia *singleton* de `GameState`, pasándole el `skinIndex` configurado para este `SkinSelector`. El `skinIndex` actúa como un identificador único para el personaje elegido, permitiendo a `GameState` cargar o configurar los datos correspondientes (habilidades, estadísticas, etc.) para la partida.
+
+### OnMouseEnter
+Este método es un *callback* de Unity que se invoca cuando el puntero del ratón entra en el área del `Collider` del GameObject. Se utiliza para proporcionar retroalimentación visual al jugador, indicando que el personaje es interactuable.
+
+```csharp
+private void OnMouseEnter()
+{
+    outline.enabled = true;
+}
+```
+
+*   **Activación del `Outline`**: Al entrar el ratón, el componente `outline` se habilita (`outline.enabled = true;`), haciendo que el personaje se resalte visualmente. Este efecto le comunica al jugador que puede interactuar con el personaje.
+
+### OnMouseExit
+Este método es un *callback* de Unity que se invoca cuando el puntero del ratón sale del área del `Collider` del GameObject. Complementa a `OnMouseEnter` al eliminar la retroalimentación visual cuando el personaje ya no está bajo el cursor.
+
+```csharp
+private void OnMouseExit()
+{
+    outline.enabled = false;
+}
+```
+
+*   **Desactivación del `Outline`**: Al salir el ratón, el componente `outline` se desactiva (`outline.enabled = false;`), eliminando el resaltado visual y devolviendo al personaje a su apariencia normal.
+
+## Otros métodos
+No hay métodos personalizados definidos en este script fuera de los callbacks de Unity.
+
+## Getters y Setters
+Este script no define getters o setters explícitos en forma de propiedades o métodos públicos para sus campos privados. El `skinIndex` es un campo privado pero configurable directamente desde el Inspector de Unity gracias al atributo `[SerializeField]`.
