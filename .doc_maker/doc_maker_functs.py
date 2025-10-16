@@ -8,7 +8,12 @@ import sys
 # Lee la clave desde una variable de entorno
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-SCAN_DIR = "Assets"  # Directorio a escanear
+# Directorios a escanear, de salida y de prompt
+SCAN_DIR = "Assets"
+OUTPUT_DIR = "Docs"
+PROMPT_PATH = pathlib.Path(".doc_maker") / "doc_maker_prompt.md"
+
+# Directorios a excluir
 EXCLUDED_DIRS = {
     ".doc_maker",
     ".git",
@@ -17,11 +22,11 @@ EXCLUDED_DIRS = {
     "Library",
     "TutorialInfo",
     "Outline",
-}  # Directorios a excluir
-OUTPUT_DIR = "Docs"
+}
+
+# Modelo a utilizar: Gemini 2.5 Flash
 MODEL_NAME = "gemini-2.5-flash"
 
-PROMPT_PATH = pathlib.Path(".doc_maker") / "doc_maker_prompt.md"
 
 # Configura la llave API
 if not API_KEY:
@@ -33,11 +38,11 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel(MODEL_NAME)
 
 
-def _read_file(file_path: pathlib.Path) -> Optional[str]:
-    """
-    Función auxiliar para leer un archivo de forma segura.
+def read_file(file_path: pathlib.Path) -> Optional[str]:
+    """Función auxiliar para leer un archivo de forma segura.
     Devuelve el contenido del archivo o None si ocurre un error.
     """
+
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
@@ -47,9 +52,13 @@ def _read_file(file_path: pathlib.Path) -> Optional[str]:
 
 
 def get_scripts(scan_root: str):
+    """Obtiene las rutas de los scripts dada la carpeta de entrada"""
+
     for dirpath, dirnames, filenames in os.walk(scan_root):
         # Elimina carpetas excluidas del recorrido
         dirnames[:] = [d for d in dirnames if d not in EXCLUDED_DIRS]
+
+        # Recorre y retorna solo los scripts C#
         for file in filenames:
             ruta = pathlib.Path(dirpath) / file
             if ruta.suffix == ".cs":
@@ -59,14 +68,14 @@ def get_scripts(scan_root: str):
 def document_script(
     script_path: pathlib.Path, base_dir: pathlib.Path, readme_context: str
 ):
-    """
-    Genera la documentación para un único script de C#.
-    """
-    script_content = _read_file(script_path)
+    """Genera la documentación para un único script de C#."""
+    # Verifica el contenido del script a documentar
+    script_content = read_file(script_path)
     if script_content is None:
         return
 
-    prompt_template = _read_file(PROMPT_PATH)
+    # Verifica el contenido del texto de prompt
+    prompt_template = read_file(PROMPT_PATH)
     if prompt_template is None:
         return
 
@@ -85,11 +94,12 @@ def document_script(
         print(f"❌ Error inesperado con Gemini al procesar {script_path}: {e}")
         return
 
-    # Guarda el archivo de documentación
+    # Genera el archivo de documentación
     output_path = pathlib.Path(OUTPUT_DIR) / script_path.relative_to(base_dir)
     output_path = output_path.with_suffix(".md")
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Guarda el contenido en el archivo final
     try:
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(response_text)
@@ -99,6 +109,7 @@ def document_script(
 
 
 def main():
+    # Rutas adaptadas desde las variables globales
     repo_root = pathlib.Path(".").resolve()
     scan_path = repo_root / SCAN_DIR
     readme_path = repo_root / "README.md"
@@ -106,7 +117,7 @@ def main():
     # Carga el contenido del README en la variable global
     readme_context = ""
     if readme_path.is_file():
-        content = _read_file(readme_path)
+        content = read_file(readme_path)
         if content:
             readme_context = content
             print("ℹ️  Contexto del README.md cargado.")

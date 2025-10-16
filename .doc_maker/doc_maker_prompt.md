@@ -15,7 +15,7 @@ El proyecto, en complemento del README y lo que explica, consiste en un videojue
 Para el archivo a crear sigue la siguiente estructura
 
 ```Markdown
-# [Nombre del script/clase sin la extensión]
+# [Nombre del script/clase sin la extensión, encerrado en backticks (`)]
 [Resumen completo y explicado de la función del script y su funcionamiento]
 
 # Métodos
